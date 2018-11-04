@@ -1,0 +1,8 @@
+{
+  "name": "box2dweb",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "git@github.com:mysterycommand/box2dweb.git",
+  "author": "Matt Hayes <matt@mysterycommand.com>",
+  "license": "MIT"
+}
