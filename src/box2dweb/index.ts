@@ -27,8 +27,8 @@ import i from './i';
 import j from './j';
 import k from './k';
 
-// tslint:disable-next-line no-empty
-const Ctor = (function inheritor() {} as any) as { new (): any };
+// // tslint:disable-next-line no-empty
+// const Ctor = (function inheritor() {} as any) as { new (): any };
 
 // package structure
 export const Box2D = {
@@ -57,45 +57,45 @@ export const Box2D = {
 
   postDefs: [],
 
-  inherit(ctor: () => void, base: () => void) {
-    const tempCtor = ctor;
-    Ctor.prototype = base.prototype;
-    ctor.prototype = new Ctor();
-    ctor.prototype.constructor = tempCtor;
-  },
+  // inherit(ctor: () => void, base: () => void) {
+  //   const tempCtor = ctor;
+  //   Ctor.prototype = base.prototype;
+  //   ctor.prototype = new Ctor();
+  //   ctor.prototype.constructor = tempCtor;
+  // },
 
-  generateCallback(context: any, cb: () => void) {
-    return () => {
-      cb.apply(context, arguments);
-    };
-  },
+  // generateCallback(context: any, cb: () => void) {
+  //   return () => {
+  //     cb.apply(context, arguments);
+  //   };
+  // },
 
-  NVector(length = 0) {
-    return new Array(length).fill(0);
-  },
+  // NVector(length = 0) {
+  //   return new Array(length).fill(0);
+  // },
 
-  is(o1: any, o2: any) {
-    if (o1 === null) {
-      return false;
-    }
+  // is(o1: any, o2: any) {
+  //   if (o1 === null) {
+  //     return false;
+  //   }
 
-    if (o2 instanceof Function && o1 instanceof o2) {
-      return true;
-    }
+  //   if (o2 instanceof Function && o1 instanceof o2) {
+  //     return true;
+  //   }
 
-    if (
-      o1.constructor.__implements !== undefined &&
-      o1.constructor.__implements[o2]
-    ) {
-      return true;
-    }
+  //   if (
+  //     o1.constructor.__implements !== undefined &&
+  //     o1.constructor.__implements[o2]
+  //   ) {
+  //     return true;
+  //   }
 
-    return false;
-  },
+  //   return false;
+  // },
 
-  parseUInt(v: number) {
-    return Math.abs(parseInt(`${v}`, 10));
-  },
+  // parseUInt(v: number) {
+  //   return Math.abs(parseInt(`${v}`, 10));
+  // },
 };
 
 // pre-definitions
