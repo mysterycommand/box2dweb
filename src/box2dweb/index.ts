@@ -16,7 +16,6 @@
 * 3. This notice may not be removed or altered from any source distribution.
 */
 
-import a from './a';
 import b from './b';
 import c from './c';
 import d from './d';
@@ -65,11 +64,11 @@ export const Box2D = {
     ctor.prototype.constructor = tempCtor;
   },
 
-  // generateCallback(context: any, cb: () => void) {
-  //   return () => {
-  //     cb.apply(context, arguments);
-  //   };
-  // },
+  generateCallback(context: any, cb: () => void) {
+    return (...args: any[]) => {
+      cb.apply(context, args);
+    };
+  },
 
   NVector(length = 0) {
     return new Array(length).fill(0);
@@ -98,8 +97,6 @@ export const Box2D = {
     return Math.abs(parseInt(`${v}`, 10));
   },
 };
-
-a(Box2D);
 
 // pre-definitions
 b(Box2D);
