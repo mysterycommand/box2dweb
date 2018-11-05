@@ -33,26 +33,26 @@ const Ctor = (function inheritor() {} as any) as { new (): any };
 // package structure
 export const Box2D = {
   Collision: {
-    b2AABB: null,
-    Shapes: { b2PolygonShape: null, b2CircleShape: null },
+    b2AABB: {},
+    Shapes: { b2PolygonShape: {}, b2CircleShape: {} },
   },
 
   Common: {
     Math: {
-      b2Vec2: null,
+      b2Vec2: {},
     },
   },
 
   Dynamics: {
-    b2BodyDef: null,
-    b2Body: null,
-    b2FixtureDef: null,
-    b2World: null,
-    b2DebugDraw: null,
+    b2BodyDef: {},
+    b2Body: {},
+    b2FixtureDef: {},
+    b2World: {},
+    b2DebugDraw: {},
 
-    Contacts: null,
-    Controllers: null,
-    Joints: { b2MouseJointDef: null },
+    Contacts: {},
+    Controllers: {},
+    Joints: { b2MouseJointDef: {} },
   },
 
   postDefs: [],
@@ -97,8 +97,6 @@ export const Box2D = {
     return Math.abs(parseInt(`${v}`, 10));
   },
 };
-
-a(Box2D);
 
 // pre-definitions
 b(Box2D);
