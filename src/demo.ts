@@ -130,6 +130,7 @@ function init() {
 
   function handleMouseMove(event: MouseEvent | TouchEvent) {
     event.preventDefault();
+    event.stopPropagation();
 
     let clientX;
     let clientY;
@@ -207,34 +208,6 @@ function init() {
     world.DrawDebugData();
     world.ClearForces();
   }
-
-  // helpers
-
-  // // http://js-tut.aardon.de/js-tut/tutorial/position.html
-  // function getElementPosition(element) {
-  //   const elem = element;
-  //   let tagname = '';
-  //   let x = 0;
-  //   let y = 0;
-
-  //   while (typeof elem === 'object' && typeof elem.tagName !== 'undefined') {
-  //     y += elem.offsetTop;
-  //     x += elem.offsetLeft;
-  //     tagname = elem.tagName.toUpperCase();
-
-  //     if (tagname === 'BODY') {
-  //       elem = 0;
-  //     }
-
-  //     if (typeof elem === 'object') {
-  //       if (typeof elem.offsetParent === 'object') {
-  //         elem = elem.offsetParent;
-  //       }
-  //     }
-  //   }
-
-  //   return { x, y };
-  // }
 }
 
 addEventListener('load', ({ target }) => {
