@@ -198,6 +198,7 @@ export default function b(Box2D) {
     if (this.constructor === b2Shape) this.b2Shape.apply(this, arguments);
   }
   Box2D.Collision.Shapes.b2Shape = b2Shape;
+
   Box2D.Common.b2internal = 'Box2D.Common.b2internal';
 
   function b2Color() {

@@ -1,20 +1,14 @@
 export default function e(Box2D) {
   const b2Color = Box2D.Common.b2Color;
-  const b2internal = Box2D.Common.b2internal;
   const b2Settings = Box2D.Common.b2Settings;
-  const b2Mat22 = Box2D.Common.Math.b2Mat22;
-  const b2Mat33 = Box2D.Common.Math.b2Mat33;
   const b2Math = Box2D.Common.Math.b2Math;
-  const b2Sweep = Box2D.Common.Math.b2Sweep;
-  const b2Transform = Box2D.Common.Math.b2Transform;
-  const b2Vec2 = Box2D.Common.Math.b2Vec2;
-  const b2Vec3 = Box2D.Common.Math.b2Vec3;
 
   b2Color.b2Color = function() {
     this._r = 0;
     this._g = 0;
     this._b = 0;
   };
+
   b2Color.prototype.b2Color = function(rr, gg, bb) {
     if (rr === undefined) rr = 0;
     if (gg === undefined) gg = 0;
@@ -31,6 +25,7 @@ export default function e(Box2D) {
     this._g = Box2D.parseUInt(255 * b2Math.Clamp(gg, 0.0, 1.0));
     this._b = Box2D.parseUInt(255 * b2Math.Clamp(bb, 0.0, 1.0));
   };
+
   Object.defineProperty(b2Color.prototype, 'r', {
     enumerable: false,
     configurable: true,
@@ -39,6 +34,7 @@ export default function e(Box2D) {
       this._r = Box2D.parseUInt(255 * b2Math.Clamp(rr, 0.0, 1.0));
     },
   });
+
   Object.defineProperty(b2Color.prototype, 'g', {
     enumerable: false,
     configurable: true,
@@ -47,6 +43,7 @@ export default function e(Box2D) {
       this._g = Box2D.parseUInt(255 * b2Math.Clamp(gg, 0.0, 1.0));
     },
   });
+
   Object.defineProperty(b2Color.prototype, 'b', {
     enumerable: false,
     configurable: true,
@@ -55,6 +52,7 @@ export default function e(Box2D) {
       this._b = Box2D.parseUInt(255 * b2Math.Clamp(bb, 0.0, 1.0));
     },
   });
+
   Object.defineProperty(b2Color.prototype, 'color', {
     enumerable: false,
     configurable: true,
@@ -62,22 +60,26 @@ export default function e(Box2D) {
       return (this._r << 16) | (this._g << 8) | this._b;
     },
   });
+
   b2Settings.b2Settings = function() {};
   b2Settings.b2MixFriction = function(friction1, friction2) {
     if (friction1 === undefined) friction1 = 0;
     if (friction2 === undefined) friction2 = 0;
     return Math.sqrt(friction1 * friction2);
   };
+
   b2Settings.b2MixRestitution = function(restitution1, restitution2) {
     if (restitution1 === undefined) restitution1 = 0;
     if (restitution2 === undefined) restitution2 = 0;
     return restitution1 > restitution2 ? restitution1 : restitution2;
   };
+
   b2Settings.b2Assert = function(a) {
     if (!a) {
       throw 'Assertion Failed';
     }
   };
+
   Box2D.postDefs.push(function() {
     Box2D.Common.b2Settings.VERSION = '2.1alpha';
     Box2D.Common.b2Settings.USHRT_MAX = 0x0000ffff;
