@@ -6,42 +6,35 @@ const {
   Common: {
     Math: { b2Vec2: Vec2 },
   },
-  Collision: { b2AABB: Aabb },
-  Dynamics: { b2BodyDef: BodyDef },
-  Dynamics: { b2Body: Body },
-  Dynamics: { b2FixtureDef: FixtureDef },
-  Dynamics: { b2Fixture: Fixture },
-  Dynamics: { b2World: World },
   Collision: {
-    Shapes: { b2MassData: MassData },
+    b2AABB: Aabb,
+    Shapes: { b2PolygonShape: PolygonShape, b2CircleShape: CircleShape },
   },
-  Collision: {
-    Shapes: { b2PolygonShape: PolygonShape },
-  },
-  Collision: {
-    Shapes: { b2CircleShape: CircleShape },
-  },
-  Dynamics: { b2DebugDraw: DebugDraw },
   Dynamics: {
+    b2BodyDef: BodyDef,
+    b2Body: Body,
+    b2FixtureDef: FixtureDef,
+    b2World: World,
+    b2DebugDraw: DebugDraw,
     Joints: { b2MouseJointDef: MouseJointDef },
   },
 } = Box2D;
 
-const c = document.getElementById('canvas');
+const c = document.getElementById('canvas') as HTMLCanvasElement;
 const ctx = c.getContext('2d');
 
 function init() {
-  var world = new World(
-    new Vec2(0, 30), //gravity
-    true, //allow sleep
+  const world = new World(
+    new Vec2(0, 30), // gravity
+    true, // allow sleep
   );
 
-  var fixDef = new FixtureDef();
+  const fixDef = new FixtureDef();
   fixDef.density = 1.0;
   fixDef.friction = 0.5;
   fixDef.restitution = 0.2;
 
-  var bodyDef = new BodyDef();
+  const bodyDef = new BodyDef();
 
   // create ground
   bodyDef.type = Body.b2_staticBody;
@@ -65,16 +58,16 @@ function init() {
 
   // create some objects
   bodyDef.type = Body.b2_dynamicBody;
-  for (var i = 0; i < 10; ++i) {
+  for (let i = 0; i < 10; ++i) {
     if (Math.random() > 0.5) {
       fixDef.shape = new PolygonShape();
       fixDef.shape.SetAsBox(
-        Math.random() + 0.1, //half width
-        Math.random() + 0.1, //half height
+        Math.random() + 0.1, // half width
+        Math.random() + 0.1, // half height
       );
     } else {
       fixDef.shape = new CircleShape(
-        Math.random() + 0.1, //radius
+        Math.random() + 0.1, // radius
       );
     }
     bodyDef.position.x = Math.random() * 10;
@@ -83,7 +76,7 @@ function init() {
   }
 
   // setup debug draw
-  var debugDraw = new DebugDraw();
+  const debugDraw = new DebugDraw();
   debugDraw.SetSprite(ctx);
   debugDraw.SetDrawScale(30.0);
   debugDraw.SetFillAlpha(0.5);
@@ -94,12 +87,19 @@ function init() {
   window.setInterval(update, 1000 / 60);
 
   // mouse
-  var mouseX, mouseY, mousePVec, isMouseDown, selectedBody, mouseJoint;
-  var canvasPosition = getElementPosition(document.getElementById('canvas'));
+  let mouseX: number = c.width / 2;
+  let mouseY: number = c.height / 2;
+  let mousePVec: any;
+  let isMouseDown: boolean;
+  let selectedBody: any;
+  let mouseJoint: any;
 
-  function handleMouseDown(e) {
+  const canvasPosition = c.getBoundingClientRect() as DOMRect;
+
+  function handleMouseDown(event: MouseEvent | TouchEvent) {
     isMouseDown = true;
-    handleMouseMove(e);
+    handleMouseMove(event);
+
     document.addEventListener('mousemove', handleMouseMove, true);
     document.addEventListener('touchmove', handleMouseMove, true);
   }
@@ -110,34 +110,51 @@ function init() {
   function handleMouseUp() {
     document.removeEventListener('mousemove', handleMouseMove, true);
     document.removeEventListener('touchmove', handleMouseMove, true);
+
     isMouseDown = false;
-    mouseX = undefined;
-    mouseY = undefined;
+
+    mouseX = c.width / 2;
+    mouseY = c.height / 2;
   }
 
   document.addEventListener('mouseup', handleMouseUp, true);
   document.addEventListener('touchend', handleMouseUp, true);
 
-  function handleMouseMove(e) {
-    var clientX, clientY;
-    if (e.clientX) {
-      clientX = e.clientX;
-      clientY = e.clientY;
-    } else if (e.changedTouches && e.changedTouches.length > 0) {
-      var touch = e.changedTouches[e.changedTouches.length - 1];
+  const isMouseEvent = (event: any): event is MouseEvent => {
+    return event.type.includes('mouse');
+  };
+
+  const isTouchEvent = (event: any): event is TouchEvent => {
+    return event.type.includes('touch');
+  };
+
+  function handleMouseMove(event: MouseEvent | TouchEvent) {
+    event.preventDefault();
+
+    let clientX;
+    let clientY;
+
+    if (isMouseEvent(event)) {
+      clientX = event.clientX;
+      clientY = event.clientY;
+    } else if (isTouchEvent(event)) {
+      // TODO: @mysterycommand - not sure if we always have changedTouches
+      const touch = event.changedTouches[event.changedTouches.length - 1];
+
       clientX = touch.clientX;
       clientY = touch.clientY;
     } else {
       return;
     }
+
     mouseX = (clientX - canvasPosition.x) / 30;
     mouseY = (clientY - canvasPosition.y) / 30;
-    e.preventDefault();
   }
 
   function getBodyAtMouse() {
     mousePVec = new Vec2(mouseX, mouseY);
-    var aabb = new Aabb();
+    const aabb = new Aabb();
+
     aabb.lowerBound.Set(mouseX - 0.001, mouseY - 0.001);
     aabb.upperBound.Set(mouseX + 0.001, mouseY + 0.001);
 
@@ -147,8 +164,8 @@ function init() {
     return selectedBody;
   }
 
-  function getBodyCB(fixture) {
-    if (fixture.GetBody().GetType() != Body.b2_staticBody) {
+  function getBodyCB(fixture: any) {
+    if (fixture.GetBody().GetType() !== Body.b2_staticBody) {
       if (
         fixture
           .GetShape()
@@ -164,9 +181,9 @@ function init() {
   // update
   function update() {
     if (isMouseDown && !mouseJoint) {
-      var body = getBodyAtMouse();
+      const body = getBodyAtMouse();
       if (body) {
-        var md = new MouseJointDef();
+        const md = new MouseJointDef();
         md.bodyA = world.GetGroundBody();
         md.bodyB = body;
         md.target.Set(mouseX, mouseY);
@@ -191,36 +208,43 @@ function init() {
     world.ClearForces();
   }
 
-  //helpers
+  // helpers
 
-  //http://js-tut.aardon.de/js-tut/tutorial/position.html
-  function getElementPosition(element) {
-    var elem = element,
-      tagname = '',
-      x = 0,
-      y = 0;
+  // // http://js-tut.aardon.de/js-tut/tutorial/position.html
+  // function getElementPosition(element) {
+  //   const elem = element;
+  //   let tagname = '';
+  //   let x = 0;
+  //   let y = 0;
 
-    while (typeof elem == 'object' && typeof elem.tagName != 'undefined') {
-      y += elem.offsetTop;
-      x += elem.offsetLeft;
-      tagname = elem.tagName.toUpperCase();
+  //   while (typeof elem === 'object' && typeof elem.tagName !== 'undefined') {
+  //     y += elem.offsetTop;
+  //     x += elem.offsetLeft;
+  //     tagname = elem.tagName.toUpperCase();
 
-      if (tagname == 'BODY') elem = 0;
+  //     if (tagname === 'BODY') {
+  //       elem = 0;
+  //     }
 
-      if (typeof elem == 'object') {
-        if (typeof elem.offsetParent == 'object') elem = elem.offsetParent;
-      }
-    }
+  //     if (typeof elem === 'object') {
+  //       if (typeof elem.offsetParent === 'object') {
+  //         elem = elem.offsetParent;
+  //       }
+  //     }
+  //   }
 
-    return { x: x, y: y };
-  }
+  //   return { x, y };
+  // }
 }
 
 addEventListener('load', ({ target }) => {
   const { innerWidth: w, innerHeight: h } = window;
 
-  c.width = c.style.width = w;
-  c.height = c.style.height = h;
+  c.width = w;
+  c.style.width = `${w}px`;
+
+  c.height = h;
+  c.style.height = `${h}px`;
 
   init();
 });
