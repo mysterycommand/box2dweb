@@ -1,4 +1,5 @@
 import Color from './common/color';
+import Settings from './common/settings';
 
 export default function b(Box2D) {
   Box2D.Collision.IBroadPhase = 'Box2D.Collision.IBroadPhase';
@@ -204,10 +205,10 @@ export default function b(Box2D) {
   Box2D.Common.b2internal = 'Box2D.Common.b2internal';
   Box2D.Common.b2Color = Color;
 
-  function b2Settings() {
-    b2Settings.b2Settings.apply(this, arguments);
-  }
-  Box2D.Common.b2Settings = b2Settings;
+  // function b2Settings() {
+  //   b2Settings.b2Settings.apply(this, arguments);
+  // }
+  Box2D.Common.b2Settings = Settings;
 
   function b2Mat22() {
     b2Mat22.b2Mat22.apply(this, arguments);
