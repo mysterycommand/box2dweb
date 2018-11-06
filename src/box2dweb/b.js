@@ -1,5 +1,5 @@
 import Color from './common/color';
-import Settings from './common/settings';
+import * as Settings from './common/settings';
 
 export default function b(Box2D) {
   Box2D.Collision.IBroadPhase = 'Box2D.Collision.IBroadPhase';
