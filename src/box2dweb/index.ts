@@ -24,7 +24,6 @@ import g from './g';
 import h from './h';
 import i from './i';
 import j from './j';
-import k from './k';
 
 // tslint:disable-next-line no-empty
 const Ctor = (function inheritor() {} as any) as { new (): any };
@@ -108,7 +107,6 @@ g(Box2D);
 h(Box2D);
 i(Box2D);
 j(Box2D);
-k(Box2D);
 
 // post-definitions
 for (const postDef of Box2D.postDefs as Array<() => void>) {
