@@ -3,21 +3,13 @@ export default function c(Box2D) {
   const Vector_a2j_Number = Box2D.NVector;
 
   const b2CircleShape = Box2D.Collision.Shapes.b2CircleShape;
-  const b2EdgeChainDef = Box2D.Collision.Shapes.b2EdgeChainDef;
-  const b2EdgeShape = Box2D.Collision.Shapes.b2EdgeShape;
-  const b2MassData = Box2D.Collision.Shapes.b2MassData;
   const b2PolygonShape = Box2D.Collision.Shapes.b2PolygonShape;
   const b2Shape = Box2D.Collision.Shapes.b2Shape;
-  const b2Color = Box2D.Common.b2Color;
-  const b2internal = Box2D.Common.b2internal;
   const b2Settings = Box2D.Common.b2Settings;
-  const b2Mat22 = Box2D.Common.Math.b2Mat22;
-  const b2Mat33 = Box2D.Common.Math.b2Mat33;
   const b2Math = Box2D.Common.Math.b2Math;
   const b2Sweep = Box2D.Common.Math.b2Sweep;
   const b2Transform = Box2D.Common.Math.b2Transform;
   const b2Vec2 = Box2D.Common.Math.b2Vec2;
-  const b2Vec3 = Box2D.Common.Math.b2Vec3;
   const b2AABB = Box2D.Collision.b2AABB;
   const b2Bound = Box2D.Collision.b2Bound;
   const b2BoundValues = Box2D.Collision.b2BoundValues;

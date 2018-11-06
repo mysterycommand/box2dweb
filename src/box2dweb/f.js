@@ -1,8 +1,4 @@
 export default function f(Box2D) {
-  const b2AABB = Box2D.Collision.b2AABB;
-  const b2Color = Box2D.Common.b2Color;
-  const b2internal = Box2D.Common.b2internal;
-  const b2Settings = Box2D.Common.b2Settings;
   const b2Mat22 = Box2D.Common.Math.b2Mat22;
   const b2Mat33 = Box2D.Common.Math.b2Mat33;
   const b2Math = Box2D.Common.Math.b2Math;

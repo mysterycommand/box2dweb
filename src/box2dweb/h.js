@@ -3,9 +3,7 @@ export default function h(Box2D) {
   const Vector_a2j_Number = Box2D.NVector;
 
   const b2CircleShape = Box2D.Collision.Shapes.b2CircleShape;
-  const b2EdgeChainDef = Box2D.Collision.Shapes.b2EdgeChainDef;
   const b2EdgeShape = Box2D.Collision.Shapes.b2EdgeShape;
-  const b2MassData = Box2D.Collision.Shapes.b2MassData;
   const b2PolygonShape = Box2D.Collision.Shapes.b2PolygonShape;
   const b2Shape = Box2D.Collision.Shapes.b2Shape;
   const b2CircleContact = Box2D.Dynamics.Contacts.b2CircleContact;
@@ -26,59 +24,17 @@ export default function h(Box2D) {
   const b2PositionSolverManifold =
     Box2D.Dynamics.Contacts.b2PositionSolverManifold;
   const b2Body = Box2D.Dynamics.b2Body;
-  const b2BodyDef = Box2D.Dynamics.b2BodyDef;
-  const b2ContactFilter = Box2D.Dynamics.b2ContactFilter;
-  const b2ContactImpulse = Box2D.Dynamics.b2ContactImpulse;
-  const b2ContactListener = Box2D.Dynamics.b2ContactListener;
-  const b2ContactManager = Box2D.Dynamics.b2ContactManager;
-  const b2DebugDraw = Box2D.Dynamics.b2DebugDraw;
-  const b2DestructionListener = Box2D.Dynamics.b2DestructionListener;
-  const b2FilterData = Box2D.Dynamics.b2FilterData;
-  const b2Fixture = Box2D.Dynamics.b2Fixture;
-  const b2FixtureDef = Box2D.Dynamics.b2FixtureDef;
-  const b2Island = Box2D.Dynamics.b2Island;
   const b2TimeStep = Box2D.Dynamics.b2TimeStep;
-  const b2World = Box2D.Dynamics.b2World;
-  const b2Color = Box2D.Common.b2Color;
-  const b2internal = Box2D.Common.b2internal;
   const b2Settings = Box2D.Common.b2Settings;
   const b2Mat22 = Box2D.Common.Math.b2Mat22;
-  const b2Mat33 = Box2D.Common.Math.b2Mat33;
   const b2Math = Box2D.Common.Math.b2Math;
-  const b2Sweep = Box2D.Common.Math.b2Sweep;
-  const b2Transform = Box2D.Common.Math.b2Transform;
   const b2Vec2 = Box2D.Common.Math.b2Vec2;
-  const b2Vec3 = Box2D.Common.Math.b2Vec3;
-  const b2AABB = Box2D.Collision.b2AABB;
-  const b2Bound = Box2D.Collision.b2Bound;
-  const b2BoundValues = Box2D.Collision.b2BoundValues;
   const b2Collision = Box2D.Collision.b2Collision;
   const b2ContactID = Box2D.Collision.b2ContactID;
-  const b2ContactPoint = Box2D.Collision.b2ContactPoint;
-  const b2Distance = Box2D.Collision.b2Distance;
-  const b2DistanceInput = Box2D.Collision.b2DistanceInput;
-  const b2DistanceOutput = Box2D.Collision.b2DistanceOutput;
-  const b2DistanceProxy = Box2D.Collision.b2DistanceProxy;
-  const b2DynamicTree = Box2D.Collision.b2DynamicTree;
-  const b2DynamicTreeBroadPhase = Box2D.Collision.b2DynamicTreeBroadPhase;
-  const b2DynamicTreeNode = Box2D.Collision.b2DynamicTreeNode;
-  const b2DynamicTreePair = Box2D.Collision.b2DynamicTreePair;
   const b2Manifold = Box2D.Collision.b2Manifold;
-  const b2ManifoldPoint = Box2D.Collision.b2ManifoldPoint;
-  const b2Point = Box2D.Collision.b2Point;
-  const b2RayCastInput = Box2D.Collision.b2RayCastInput;
-  const b2RayCastOutput = Box2D.Collision.b2RayCastOutput;
-  const b2Segment = Box2D.Collision.b2Segment;
-  const b2SeparationFunction = Box2D.Collision.b2SeparationFunction;
-  const b2Simplex = Box2D.Collision.b2Simplex;
-  const b2SimplexCache = Box2D.Collision.b2SimplexCache;
-  const b2SimplexVertex = Box2D.Collision.b2SimplexVertex;
   const b2TimeOfImpact = Box2D.Collision.b2TimeOfImpact;
   const b2TOIInput = Box2D.Collision.b2TOIInput;
   const b2WorldManifold = Box2D.Collision.b2WorldManifold;
-  const ClipVertex = Box2D.Collision.ClipVertex;
-  const Features = Box2D.Collision.Features;
-  const IBroadPhase = Box2D.Collision.IBroadPhase;
 
   /**
    * b2CircleContact
