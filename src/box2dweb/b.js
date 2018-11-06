@@ -1,3 +1,5 @@
+import Color from './common/color';
+
 export default function b(Box2D) {
   Box2D.Collision.IBroadPhase = 'Box2D.Collision.IBroadPhase';
 
@@ -200,12 +202,7 @@ export default function b(Box2D) {
   Box2D.Collision.Shapes.b2Shape = b2Shape;
 
   Box2D.Common.b2internal = 'Box2D.Common.b2internal';
-
-  function b2Color() {
-    b2Color.b2Color.apply(this, arguments);
-    if (this.constructor === b2Color) this.b2Color.apply(this, arguments);
-  }
-  Box2D.Common.b2Color = b2Color;
+  Box2D.Common.b2Color = Color;
 
   function b2Settings() {
     b2Settings.b2Settings.apply(this, arguments);
