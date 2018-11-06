@@ -15,8 +15,10 @@ export default function i(Box2D) {
     Box2D.Dynamics.Controllers.b2TensorDampingController;
 
   Box2D.inherit(b2BuoyancyController, Box2D.Dynamics.Controllers.b2Controller);
+
   b2BuoyancyController.prototype.__super =
     Box2D.Dynamics.Controllers.b2Controller.prototype;
+
   b2BuoyancyController.b2BuoyancyController = function() {
     Box2D.Dynamics.Controllers.b2Controller.b2Controller.apply(this, arguments);
     this.normal = new b2Vec2(0, -1);
@@ -29,6 +31,7 @@ export default function i(Box2D) {
     this.useWorldGravity = true;
     this.gravity = null;
   };
+
   b2BuoyancyController.prototype.Step = function(step) {
     if (!this.m_bodyList) return;
     if (this.useWorldGravity) {
@@ -92,6 +95,7 @@ export default function i(Box2D) {
       );
     }
   };
+
   b2BuoyancyController.prototype.Draw = function(debugDraw) {
     var r = 1000;
     var p1 = new b2Vec2();
@@ -103,16 +107,20 @@ export default function i(Box2D) {
     var color = new b2Color(0, 0, 1);
     debugDraw.DrawSegment(p1, p2, color);
   };
+
   Box2D.inherit(
     b2ConstantAccelController,
     Box2D.Dynamics.Controllers.b2Controller,
   );
+
   b2ConstantAccelController.prototype.__super =
     Box2D.Dynamics.Controllers.b2Controller.prototype;
+
   b2ConstantAccelController.b2ConstantAccelController = function() {
     Box2D.Dynamics.Controllers.b2Controller.b2Controller.apply(this, arguments);
     this.A = new b2Vec2(0, 0);
   };
+
   b2ConstantAccelController.prototype.Step = function(step) {
     var smallA = new b2Vec2(this.A.x * step.dt, this.A.y * step.dt);
     for (var i = this.m_bodyList; i; i = i.nextBody) {
@@ -126,16 +134,20 @@ export default function i(Box2D) {
       );
     }
   };
+
   Box2D.inherit(
     b2ConstantForceController,
     Box2D.Dynamics.Controllers.b2Controller,
   );
+
   b2ConstantForceController.prototype.__super =
     Box2D.Dynamics.Controllers.b2Controller.prototype;
+
   b2ConstantForceController.b2ConstantForceController = function() {
     Box2D.Dynamics.Controllers.b2Controller.b2Controller.apply(this, arguments);
     this.F = new b2Vec2(0, 0);
   };
+
   b2ConstantForceController.prototype.Step = function(step) {
     for (var i = this.m_bodyList; i; i = i.nextBody) {
       var body = i.body;
@@ -143,9 +155,13 @@ export default function i(Box2D) {
       body.ApplyForce(this.F, body.GetWorldCenter());
     }
   };
+
   b2Controller.b2Controller = function() {};
+
   b2Controller.prototype.Step = function(step) {};
+
   b2Controller.prototype.Draw = function(debugDraw) {};
+
   b2Controller.prototype.AddBody = function(body) {
     var edge = new b2ControllerEdge();
     edge.controller = this;
@@ -161,6 +177,7 @@ export default function i(Box2D) {
     if (edge.nextController) edge.nextController.prevController = edge;
     body.m_controllerCount++;
   };
+
   b2Controller.prototype.RemoveBody = function(body) {
     var edge = body.m_controllerList;
     while (edge && edge.controller != this) edge = edge.nextController;
@@ -176,27 +193,36 @@ export default function i(Box2D) {
     body.m_controllerCount--;
     this.m_bodyCount--;
   };
+
   b2Controller.prototype.Clear = function() {
     while (this.m_bodyList) this.RemoveBody(this.m_bodyList.body);
   };
+
   b2Controller.prototype.GetNext = function() {
     return this.m_next;
   };
+
   b2Controller.prototype.GetWorld = function() {
     return this.m_world;
   };
+
   b2Controller.prototype.GetBodyList = function() {
     return this.m_bodyList;
   };
+
   b2ControllerEdge.b2ControllerEdge = function() {};
+
   Box2D.inherit(b2GravityController, Box2D.Dynamics.Controllers.b2Controller);
+
   b2GravityController.prototype.__super =
     Box2D.Dynamics.Controllers.b2Controller.prototype;
+
   b2GravityController.b2GravityController = function() {
     Box2D.Dynamics.Controllers.b2Controller.b2Controller.apply(this, arguments);
     this.G = 1;
     this.invSqr = true;
   };
+
   b2GravityController.prototype.Step = function(step) {
     var i = null;
     var body1 = null;
@@ -249,17 +275,21 @@ export default function i(Box2D) {
       }
     }
   };
+
   Box2D.inherit(
     b2TensorDampingController,
     Box2D.Dynamics.Controllers.b2Controller,
   );
+
   b2TensorDampingController.prototype.__super =
     Box2D.Dynamics.Controllers.b2Controller.prototype;
+
   b2TensorDampingController.b2TensorDampingController = function() {
     Box2D.Dynamics.Controllers.b2Controller.b2Controller.apply(this, arguments);
     this.T = new b2Mat22();
     this.maxTimestep = 0;
   };
+
   b2TensorDampingController.prototype.SetAxisAligned = function(
     xDamping,
     yDamping,
@@ -276,6 +306,7 @@ export default function i(Box2D) {
       this.maxTimestep = 0;
     }
   };
+
   b2TensorDampingController.prototype.Step = function(step) {
     var timestep = step.dt;
     if (timestep <= Number.MIN_VALUE) return;
