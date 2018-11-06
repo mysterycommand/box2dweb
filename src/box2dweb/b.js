@@ -1,5 +1,6 @@
 import Color from './common/color';
 import * as Settings from './common/settings';
+import DebugDraw from './dynamics/debug-draw';
 
 export default function b(Box2D) {
   Box2D.Collision.IBroadPhase = 'Box2D.Collision.IBroadPhase';
@@ -285,12 +286,7 @@ export default function b(Box2D) {
   }
   Box2D.Dynamics.b2ContactManager = b2ContactManager;
 
-  function b2DebugDraw() {
-    b2DebugDraw.b2DebugDraw.apply(this, arguments);
-    if (this.constructor === b2DebugDraw)
-      this.b2DebugDraw.apply(this, arguments);
-  }
-  Box2D.Dynamics.b2DebugDraw = b2DebugDraw;
+  Box2D.Dynamics.b2DebugDraw = DebugDraw;
 
   function b2DestructionListener() {
     b2DestructionListener.b2DestructionListener.apply(this, arguments);
