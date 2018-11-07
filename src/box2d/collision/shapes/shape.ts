@@ -1,17 +1,17 @@
 // tslint:disable variable-name
 
 import { b2_linearSlop } from '../../common/settings';
-// import Vec2 from '../../common/math/vec2';
 import Transform from '../../common/math/transform';
 import DistanceInput from '../distance-input';
 import DistanceOutput from '../distance-output';
 import DistanceProxy from '../distance-proxy';
-// import RayCastOutput from '../ray-cast-output';
-// import RayCastInput from '../ray-cast-input';
 import SimplexCache from '../simplex-cache';
 import { Distance } from '../distance';
 import Vec2 from '../../common/math/vec2';
-// import Aabb from '../aabb';
+import RayCastOutput from '../ray-cast-output';
+import RayCastInput from '../ray-cast-input';
+import MassData from './mass-data';
+import Aabb from '../aabb';
 
 export default class Shape {
   public static e_unknownShape = parseInt('-1', 10);
@@ -70,21 +70,19 @@ export default class Shape {
     return false;
   }
 
-  // public RayCast(
-  //   output: RayCastOutput,
-  //   input: RayCastInput,
-  //   transform: Transform,
-  // ) {
-  //   return false;
-  // }
+  public RayCast(
+    output: RayCastOutput,
+    input: RayCastInput,
+    transform: Transform,
+  ) {
+    return false;
+  }
 
   // tslint:disable-next-line no-empty
-  // public ComputeAABB(aabb: Aabb, xf: Transform) {}
+  public ComputeAABB(aabb: Aabb, xf: Transform) {}
 
-  // public ComputeMass(
-  //   massData: { mass: number; center: Vec2; I: number },
-  //   density = 0,
-  // ) {} // tslint:disable-line no-empty
+  // tslint:disable-next-line no-empty
+  public ComputeMass(massData: MassData, density = 0) {}
 
   // public ComputeSubmergedArea(normal: Vec2, offset = 0, xf: Transform, c: any) {
   //   return 0;

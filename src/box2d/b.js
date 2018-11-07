@@ -44,19 +44,19 @@ import SeparationFunction from './collision/separation-function';
 import * as TimeOfImpact from './collision/time-of-impact';
 import ToiInput from './collision/toi-input';
 import WorldManifold from './collision/world-manifold';
+import Body from './dynamics/body';
+import BodyDef from './dynamics/body-def';
+import Fixture from './dynamics/fixture';
 
 /**
  * @see: ./g.js
  */
-// import Body from './dynamics/body';
-// import BodyDef from './dynamics/body-def';
 // import ContactFilter from './dynamics/contact-filter';
 // import ContactImpulse from './dynamics/contact-impulse';
 // import ContactListener from './dynamics/contact-listener';
 // import ContactManager from './dynamics/contact-manager';
 // import DestructionListener from './dynamics/destruction-listener';
 // import FilterData from './dynamics/filter-data';
-// import Fixture from './dynamics/fixture';
 // import FixtureDef from './dynamics/fixture-def';
 // import Island from './dynamics/island';
 // import World from './dynamics/world';
@@ -165,17 +165,17 @@ export default function b(Box2D) {
   Box2D.Common.Math.b2Vec2 = Vec2;
   Box2D.Common.Math.b2Vec3 = Vec3;
 
-  function b2Body() {
-    b2Body.b2Body.apply(this, arguments);
-    if (this.constructor === b2Body) this.b2Body.apply(this, arguments);
-  }
-  Box2D.Dynamics.b2Body = b2Body;
+  // function b2Body() {
+  //   b2Body.b2Body.apply(this, arguments);
+  //   if (this.constructor === b2Body) this.b2Body.apply(this, arguments);
+  // }
+  Box2D.Dynamics.b2Body = Body;
 
-  function b2BodyDef() {
-    b2BodyDef.b2BodyDef.apply(this, arguments);
-    if (this.constructor === b2BodyDef) this.b2BodyDef.apply(this, arguments);
-  }
-  Box2D.Dynamics.b2BodyDef = b2BodyDef;
+  // function b2BodyDef() {
+  //   b2BodyDef.b2BodyDef.apply(this, arguments);
+  //   if (this.constructor === b2BodyDef) this.b2BodyDef.apply(this, arguments);
+  // }
+  Box2D.Dynamics.b2BodyDef = BodyDef;
 
   function b2ContactFilter() {
     b2ContactFilter.b2ContactFilter.apply(this, arguments);
@@ -211,11 +211,11 @@ export default function b(Box2D) {
   }
   Box2D.Dynamics.b2FilterData = b2FilterData;
 
-  function b2Fixture() {
-    b2Fixture.b2Fixture.apply(this, arguments);
-    if (this.constructor === b2Fixture) this.b2Fixture.apply(this, arguments);
-  }
-  Box2D.Dynamics.b2Fixture = b2Fixture;
+  // function b2Fixture() {
+  //   b2Fixture.b2Fixture.apply(this, arguments);
+  //   if (this.constructor === b2Fixture) this.b2Fixture.apply(this, arguments);
+  // }
+  Box2D.Dynamics.b2Fixture = Fixture;
 
   function b2FixtureDef() {
     b2FixtureDef.b2FixtureDef.apply(this, arguments);
