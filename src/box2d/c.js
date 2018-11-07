@@ -53,8 +53,6 @@ export default function c(Box2D) {
   // b2Segment
   // b2SeparationFunction
   // b2Simplex
-  // b2SimplexCache
-  // b2SimplexVertex
   // b2TimeOfImpact
   // b2TOIInput
   // b2WorldManifold
@@ -1250,27 +1248,6 @@ export default function c(Box2D) {
     this.m_v2.a = d123_2 * inv_d123;
     this.m_v3.a = d123_3 * inv_d123;
     this.m_count = 3;
-  };
-
-  /**
-   * b2SimplexCache
-   */
-  b2SimplexCache.b2SimplexCache = function() {
-    this.indexA = new Vector_a2j_Number(3);
-    this.indexB = new Vector_a2j_Number(3);
-  };
-
-  /**
-   * b2SimplexVertex
-   */
-  b2SimplexVertex.b2SimplexVertex = function() {};
-  b2SimplexVertex.prototype.Set = function(other) {
-    this.wA.SetV(other.wA);
-    this.wB.SetV(other.wB);
-    this.w.SetV(other.w);
-    this.a = other.a;
-    this.indexA = other.indexA;
-    this.indexB = other.indexB;
   };
 
   /**

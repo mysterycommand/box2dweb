@@ -1,4 +1,6 @@
-b2SimplexCache.b2SimplexCache = function() {
-  this.indexA = new Vector_a2j_Number(3);
-  this.indexB = new Vector_a2j_Number(3);
-};
+export default class SimplexCache {
+  public indexA = new Array(3).fill(0);
+  public indexB = new Array(3).fill(0);
+  public count = 0;
+  public metric = 0;
+}

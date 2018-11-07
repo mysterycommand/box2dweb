@@ -20,6 +20,8 @@ import Features from './collision/features';
 import * as Collision from './collision';
 import ManifoldPoint from './collision/manifold-point';
 import Manifold from './collision/manifold';
+import SimplexCache from './collision/simplex-cache';
+import SimplexVertex from './collision/simplex-vertex';
 
 /**
  * @see: ./c.js
@@ -38,8 +40,6 @@ import Manifold from './collision/manifold';
 // import Segment from './collision/segment';
 // import SeparationFunction from './collision/separation-function';
 // import Simplex from './collision/simplex';
-// import SimplexCache from './collision/simplex-cache';
-// import SimplexVertex from './collision/simplex-vertex';
 // import TimeOfImpact from './collision/time-of-impact';
 // import ToiInput from './collision/toi-input';
 // import WorldManifold from './collision/world-manifold';
@@ -213,15 +213,8 @@ export default function b(Box2D) {
   }
   Box2D.Collision.b2Simplex = b2Simplex;
 
-  function b2SimplexCache() {
-    b2SimplexCache.b2SimplexCache.apply(this, arguments);
-  }
-  Box2D.Collision.b2SimplexCache = b2SimplexCache;
-
-  function b2SimplexVertex() {
-    b2SimplexVertex.b2SimplexVertex.apply(this, arguments);
-  }
-  Box2D.Collision.b2SimplexVertex = b2SimplexVertex;
+  Box2D.Collision.b2SimplexCache = SimplexCache;
+  Box2D.Collision.b2SimplexVertex = SimplexVertex;
 
   function b2TimeOfImpact() {
     b2TimeOfImpact.b2TimeOfImpact.apply(this, arguments);
