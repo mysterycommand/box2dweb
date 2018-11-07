@@ -1,4 +1,4 @@
-import { Box2D } from './box2dweb';
+import { Box2D } from './box2d';
 
 const scale = 1 / 29.075;
 
