@@ -1,11 +1,14 @@
-b2Point.b2Point = function() {
-  this.p = new b2Vec2();
-};
-b2Point.prototype.Support = function(xf, vX, vY) {
-  if (vX === undefined) vX = 0;
-  if (vY === undefined) vY = 0;
-  return this.p;
-};
-b2Point.prototype.GetFirstVertex = function(xf) {
-  return this.p;
-};
+import Vec2 from '../common/math/vec2';
+import Transform from '../common/math/transform';
+
+export default class Point {
+  public p = new Vec2();
+
+  public Support(xf: Transform, vX = 0, vY = 0) {
+    return this.p;
+  }
+
+  public GetFirstVertex(xf: Transform) {
+    return this.p;
+  }
+}

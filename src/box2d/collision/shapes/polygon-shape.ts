@@ -15,6 +15,8 @@ import Transform from '../../common/math/transform';
 import Aabb from '../aabb';
 import MassData from './mass-data';
 import Shape from './shape';
+import RayCastOutput from '../ray-cast-output';
+import RayCastInput from '../ray-cast-input';
 
 export default class PolygonShape extends Shape {
   public static s_mat = new Mat22();
@@ -320,71 +322,71 @@ export default class PolygonShape extends Shape {
     return true;
   }
 
-  // public RayCast(
-  //   output: RayCastOutput,
-  //   input: RayCastInput,
-  //   transform: Transform,
-  // ) {
-  //   let lower = 0;
-  //   let upper = input.maxFraction;
+  public RayCast(
+    output: RayCastOutput,
+    input: RayCastInput,
+    transform: Transform,
+  ) {
+    let lower = 0;
+    let upper = input.maxFraction;
 
-  //   let tX = 0;
-  //   let tY = 0;
-  //   let tMat;
-  //   let tVec;
-  //   tX = input.p1.x - transform.position.x;
-  //   tY = input.p1.y - transform.position.y;
-  //   tMat = transform.R;
+    let tX = 0;
+    let tY = 0;
+    let tMat;
+    let tVec;
+    tX = input.p1.x - transform.position.x;
+    tY = input.p1.y - transform.position.y;
+    tMat = transform.R;
 
-  //   const p1X = tX * tMat.col1.x + tY * tMat.col1.y;
-  //   const p1Y = tX * tMat.col2.x + tY * tMat.col2.y;
-  //   tX = input.p2.x - transform.position.x;
-  //   tY = input.p2.y - transform.position.y;
-  //   tMat = transform.R;
+    const p1X = tX * tMat.col1.x + tY * tMat.col1.y;
+    const p1Y = tX * tMat.col2.x + tY * tMat.col2.y;
+    tX = input.p2.x - transform.position.x;
+    tY = input.p2.y - transform.position.y;
+    tMat = transform.R;
 
-  //   const p2X = tX * tMat.col1.x + tY * tMat.col1.y;
-  //   const p2Y = tX * tMat.col2.x + tY * tMat.col2.y;
-  //   const dX = p2X - p1X;
-  //   const dY = p2Y - p1Y;
+    const p2X = tX * tMat.col1.x + tY * tMat.col1.y;
+    const p2Y = tX * tMat.col2.x + tY * tMat.col2.y;
+    const dX = p2X - p1X;
+    const dY = p2Y - p1Y;
 
-  //   let index = parseInt('-1', 10);
-  //   for (let i = 0; i < this.m_vertexCount; ++i) {
-  //     tVec = this.m_vertices[i];
-  //     tX = tVec.x - p1X;
-  //     tY = tVec.y - p1Y;
-  //     tVec = this.m_normals[i];
+    let index = parseInt('-1', 10);
+    for (let i = 0; i < this.m_vertexCount; ++i) {
+      tVec = this.m_vertices[i];
+      tX = tVec.x - p1X;
+      tY = tVec.y - p1Y;
+      tVec = this.m_normals[i];
 
-  //     const numerator = tVec.x * tX + tVec.y * tY;
-  //     const denominator = tVec.x * dX + tVec.y * dY;
-  //     if (denominator === 0) {
-  //       if (numerator < 0) {
-  //         return false;
-  //       }
-  //     } else {
-  //       if (denominator < 0 && numerator < lower * denominator) {
-  //         lower = numerator / denominator;
-  //         index = i;
-  //       } else if (denominator > 0 && numerator < upper * denominator) {
-  //         upper = numerator / denominator;
-  //       }
-  //     }
+      const numerator = tVec.x * tX + tVec.y * tY;
+      const denominator = tVec.x * dX + tVec.y * dY;
+      if (denominator === 0) {
+        if (numerator < 0) {
+          return false;
+        }
+      } else {
+        if (denominator < 0 && numerator < lower * denominator) {
+          lower = numerator / denominator;
+          index = i;
+        } else if (denominator > 0 && numerator < upper * denominator) {
+          upper = numerator / denominator;
+        }
+      }
 
-  //     if (upper < lower - Number.MIN_VALUE) {
-  //       return false;
-  //     }
-  //   }
+      if (upper < lower - Number.MIN_VALUE) {
+        return false;
+      }
+    }
 
-  //   if (index >= 0) {
-  //     output.fraction = lower;
-  //     tMat = transform.R;
-  //     tVec = this.m_normals[index];
-  //     output.normal.x = tMat.col1.x * tVec.x + tMat.col2.x * tVec.y;
-  //     output.normal.y = tMat.col1.y * tVec.x + tMat.col2.y * tVec.y;
-  //     return true;
-  //   }
+    if (index >= 0) {
+      output.fraction = lower;
+      tMat = transform.R;
+      tVec = this.m_normals[index];
+      output.normal.x = tMat.col1.x * tVec.x + tMat.col2.x * tVec.y;
+      output.normal.y = tMat.col1.y * tVec.x + tMat.col2.y * tVec.y;
+      return true;
+    }
 
-  //   return false;
-  // }
+    return false;
+  }
 
   public ComputeAABB(aabb: Aabb, xf: Transform) {
     const tMat = xf.R;

@@ -9,6 +9,8 @@ import Transform from '../../common/math/transform';
 // import RayCastInput from '../ray-cast-input';
 import Aabb from '../aabb';
 import MassData from './mass-data';
+import RayCastOutput from '../ray-cast-output';
+import RayCastInput from '../ray-cast-input';
 
 export default class CircleShape extends Shape {
   public m_p = new Vec2();
@@ -46,50 +48,50 @@ export default class CircleShape extends Shape {
     return dX * dX + dY * dY <= this.m_radius * this.m_radius;
   }
 
-  // public RayCast(
-  //   output: RayCastOutput,
-  //   input: RayCastInput,
-  //   transform: Transform,
-  // ) {
-  //   const tMat = transform.R;
+  public RayCast(
+    output: RayCastOutput,
+    input: RayCastInput,
+    transform: Transform,
+  ) {
+    const tMat = transform.R;
 
-  //   const positionX =
-  //     transform.position.x +
-  //     (tMat.col1.x * this.m_p.x + tMat.col2.x * this.m_p.y);
+    const positionX =
+      transform.position.x +
+      (tMat.col1.x * this.m_p.x + tMat.col2.x * this.m_p.y);
 
-  //   const positionY =
-  //     transform.position.y +
-  //     (tMat.col1.y * this.m_p.x + tMat.col2.y * this.m_p.y);
+    const positionY =
+      transform.position.y +
+      (tMat.col1.y * this.m_p.x + tMat.col2.y * this.m_p.y);
 
-  //   const sX = input.p1.x - positionX;
-  //   const sY = input.p1.y - positionY;
+    const sX = input.p1.x - positionX;
+    const sY = input.p1.y - positionY;
 
-  //   const b = sX * sX + sY * sY - this.m_radius * this.m_radius;
-  //   const rX = input.p2.x - input.p1.x;
-  //   const rY = input.p2.y - input.p1.y;
+    const b = sX * sX + sY * sY - this.m_radius * this.m_radius;
+    const rX = input.p2.x - input.p1.x;
+    const rY = input.p2.y - input.p1.y;
 
-  //   const c = sX * rX + sY * rY;
-  //   const rr = rX * rX + rY * rY;
+    const c = sX * rX + sY * rY;
+    const rr = rX * rX + rY * rY;
 
-  //   const sigma = c * c - rr * b;
-  //   if (sigma < 0.0 || rr < Number.MIN_VALUE) {
-  //     return false;
-  //   }
+    const sigma = c * c - rr * b;
+    if (sigma < 0.0 || rr < Number.MIN_VALUE) {
+      return false;
+    }
 
-  //   let a = -(c + Math.sqrt(sigma));
-  //   if (0.0 <= a && a <= input.maxFraction * rr) {
-  //     a /= rr;
+    let a = -(c + Math.sqrt(sigma));
+    if (0.0 <= a && a <= input.maxFraction * rr) {
+      a /= rr;
 
-  //     output.fraction = a;
-  //     output.normal.x = sX + a * rX;
-  //     output.normal.y = sY + a * rY;
-  //     output.normal.Normalize();
+      output.fraction = a;
+      output.normal.x = sX + a * rX;
+      output.normal.y = sY + a * rY;
+      output.normal.Normalize();
 
-  //     return true;
-  //   }
+      return true;
+    }
 
-  //   return false;
-  // }
+    return false;
+  }
 
   public ComputeAABB(aabb: Aabb, transform: Transform) {
     const tMat = transform.R;

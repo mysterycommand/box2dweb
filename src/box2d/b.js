@@ -34,9 +34,9 @@ import DistanceProxy from './collision/distance-proxy';
 // import DynamicTreeBroadPhase from './collision/dynamic-tree-broad-phase';
 // import DynamicTreeNode from './collision/dynamic-tree-node';
 // import DynamicTreePair from './collision/dynamic-tree-pair';
-// import Point from './collision/point';
-// import RayCastInput from './collision/ray-cast-input';
-// import RayCastOutput from './collision/ray-cast-output';
+import Point from './collision/point';
+import RayCastInput from './collision/ray-cast-input';
+import RayCastOutput from './collision/ray-cast-output';
 // import Segment from './collision/segment';
 // import SeparationFunction from './collision/separation-function';
 import Simplex from './collision/simplex';
@@ -163,23 +163,9 @@ export default function b(Box2D) {
 
   Box2D.Collision.b2Manifold = Manifold;
   Box2D.Collision.b2ManifoldPoint = ManifoldPoint;
-
-  function b2Point() {
-    b2Point.b2Point.apply(this, arguments);
-  }
-  Box2D.Collision.b2Point = b2Point;
-
-  function b2RayCastInput() {
-    b2RayCastInput.b2RayCastInput.apply(this, arguments);
-    if (this.constructor === b2RayCastInput)
-      this.b2RayCastInput.apply(this, arguments);
-  }
-  Box2D.Collision.b2RayCastInput = b2RayCastInput;
-
-  function b2RayCastOutput() {
-    b2RayCastOutput.b2RayCastOutput.apply(this, arguments);
-  }
-  Box2D.Collision.b2RayCastOutput = b2RayCastOutput;
+  Box2D.Collision.b2Point = Point;
+  Box2D.Collision.b2RayCastInput = RayCastInput;
+  Box2D.Collision.b2RayCastOutput = RayCastOutput;
 
   function b2Segment() {
     b2Segment.b2Segment.apply(this, arguments);

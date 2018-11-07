@@ -34,9 +34,6 @@ export default function c(Box2D) {
   // b2DynamicTreeBroadPhase
   // b2DynamicTreeNode
   // b2DynamicTreePair
-  // b2Point
-  // b2RayCastInput
-  // b2RayCastOutput
   // b2Segment
   // b2SeparationFunction
   // b2TimeOfImpact
@@ -424,44 +421,6 @@ export default function c(Box2D) {
    * b2DynamicTreePair
    */
   b2DynamicTreePair.b2DynamicTreePair = function() {};
-
-  /**
-   * b2Point
-   */
-  b2Point.b2Point = function() {
-    this.p = new b2Vec2();
-  };
-  b2Point.prototype.Support = function(xf, vX, vY) {
-    if (vX === undefined) vX = 0;
-    if (vY === undefined) vY = 0;
-    return this.p;
-  };
-  b2Point.prototype.GetFirstVertex = function(xf) {
-    return this.p;
-  };
-
-  /**
-   * b2RayCastInput
-   */
-  b2RayCastInput.b2RayCastInput = function() {
-    this.p1 = new b2Vec2();
-    this.p2 = new b2Vec2();
-  };
-  b2RayCastInput.prototype.b2RayCastInput = function(p1, p2, maxFraction) {
-    if (p1 === undefined) p1 = null;
-    if (p2 === undefined) p2 = null;
-    if (maxFraction === undefined) maxFraction = 1;
-    if (p1) this.p1.SetV(p1);
-    if (p2) this.p2.SetV(p2);
-    this.maxFraction = maxFraction;
-  };
-
-  /**
-   * b2RayCastOutput
-   */
-  b2RayCastOutput.b2RayCastOutput = function() {
-    this.normal = new b2Vec2();
-  };
 
   /**
    * b2Segment
