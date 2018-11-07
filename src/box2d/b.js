@@ -15,6 +15,7 @@ import Bound from './collision/bound';
 import BoundValues from './collision/bound-values';
 import ClipVertex from './collision/clip-vertex';
 import ContactId from './collision/contact-id';
+import ContactPoint from './collision/contact-point';
 import Features from './collision/features';
 import * as Collision from './collision';
 import ManifoldPoint from './collision/manifold-point';
@@ -23,7 +24,6 @@ import Manifold from './collision/manifold';
 /**
  * @see: ./c.js
  */
-// import ContactPoint from './collision/contact-point';
 // import Distance from './collision/distance';
 // import DistanceInput from './collision/distance-input';
 // import DistanceOutput from './collision/distance-output';
@@ -133,11 +133,7 @@ export default function b(Box2D) {
   Box2D.Collision.b2BoundValues = BoundValues;
   Box2D.Collision.b2Collision = Collision;
   Box2D.Collision.b2ContactID = ContactId;
-
-  function b2ContactPoint() {
-    b2ContactPoint.b2ContactPoint.apply(this, arguments);
-  }
-  Box2D.Collision.b2ContactPoint = b2ContactPoint;
+  Box2D.Collision.b2ContactPoint = ContactPoint;
 
   function b2Distance() {
     b2Distance.b2Distance.apply(this, arguments);

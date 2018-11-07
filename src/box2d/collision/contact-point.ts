@@ -1,6 +1,9 @@
-b2ContactPoint.b2ContactPoint = function() {
-  this.position = new b2Vec2();
-  this.velocity = new b2Vec2();
-  this.normal = new b2Vec2();
-  this.id = new b2ContactID();
-};
+import Vec2 from '../common/math/vec2';
+import ContactId from './contact-id';
+
+export default class ContactPoint {
+  public position = new Vec2();
+  public velocity = new Vec2();
+  public normal = new Vec2();
+  public id = new ContactId();
+}

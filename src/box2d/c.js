@@ -39,7 +39,6 @@ export default function c(Box2D) {
   const b2Transform = Box2D.Common.Math.b2Transform;
   const b2Vec2 = Box2D.Common.Math.b2Vec2;
 
-  // b2ContactPoint
   // b2Distance
   // b2DistanceInput
   // b2DistanceOutput
@@ -59,16 +58,6 @@ export default function c(Box2D) {
   // b2TimeOfImpact
   // b2TOIInput
   // b2WorldManifold
-
-  /**
-   * b2ContactPoint
-   */
-  b2ContactPoint.b2ContactPoint = function() {
-    this.position = new b2Vec2();
-    this.velocity = new b2Vec2();
-    this.normal = new b2Vec2();
-    this.id = new b2ContactID();
-  };
 
   /**
    * b2Distance
