@@ -1,4 +1,7 @@
 import Color from './common/color';
+import * as Maths from './common/math';
+import Mat22 from './common/math/mat22';
+import Transform from './common/math/transform';
 import Vec2 from './common/math/vec2';
 import * as Settings from './common/settings';
 import DebugDraw from './dynamics/debug-draw';
@@ -206,17 +209,8 @@ export default function b(Box2D) {
 
   Box2D.Common.b2internal = 'Box2D.Common.b2internal';
   Box2D.Common.b2Color = Color;
-
-  // function b2Settings() {
-  //   b2Settings.b2Settings.apply(this, arguments);
-  // }
   Box2D.Common.b2Settings = Settings;
-
-  function b2Mat22() {
-    b2Mat22.b2Mat22.apply(this, arguments);
-    if (this.constructor === b2Mat22) this.b2Mat22.apply(this, arguments);
-  }
-  Box2D.Common.Math.b2Mat22 = b2Mat22;
+  Box2D.Common.Math.b2Mat22 = Mat22;
 
   function b2Mat33() {
     b2Mat33.b2Mat33.apply(this, arguments);
@@ -224,22 +218,14 @@ export default function b(Box2D) {
   }
   Box2D.Common.Math.b2Mat33 = b2Mat33;
 
-  function b2Math() {
-    b2Math.b2Math.apply(this, arguments);
-  }
-  Box2D.Common.Math.b2Math = b2Math;
+  Box2D.Common.Math.b2Math = Maths;
 
   function b2Sweep() {
     b2Sweep.b2Sweep.apply(this, arguments);
   }
   Box2D.Common.Math.b2Sweep = b2Sweep;
 
-  function b2Transform() {
-    b2Transform.b2Transform.apply(this, arguments);
-    if (this.constructor === b2Transform)
-      this.b2Transform.apply(this, arguments);
-  }
-  Box2D.Common.Math.b2Transform = b2Transform;
+  Box2D.Common.Math.b2Transform = Transform;
 
   Box2D.Common.Math.b2Vec2 = Vec2;
 
