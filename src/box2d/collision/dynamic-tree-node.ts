@@ -1,6 +1,12 @@
-b2DynamicTreeNode.b2DynamicTreeNode = function() {
-  this.aabb = new b2AABB();
-};
-b2DynamicTreeNode.prototype.IsLeaf = function() {
-  return this.child1 == null;
-};
+import Aabb from './aabb';
+
+export default class DynamicTreeNode {
+  public aabb = new Aabb();
+  public child1?: any;
+  public child2?: any;
+  public parent?: any;
+
+  public IsLeaf() {
+    return this.child1 == null;
+  }
+}

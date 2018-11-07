@@ -1,1 +1,4 @@
-b2DynamicTreePair.b2DynamicTreePair = function() {};
+export default class DynamicTreePair {
+  public proxyA?: any;
+  public proxyB?: any;
+}

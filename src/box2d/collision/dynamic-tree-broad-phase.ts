@@ -1,105 +1,133 @@
-b2DynamicTreeBroadPhase.b2DynamicTreeBroadPhase = function() {
-  this.m_tree = new b2DynamicTree();
-  this.m_moveBuffer = new Vector();
-  this.m_pairBuffer = new Vector();
-  this.m_pairCount = 0;
-};
-b2DynamicTreeBroadPhase.prototype.CreateProxy = function(aabb, userData) {
-  var proxy = this.m_tree.CreateProxy(aabb, userData);
-  ++this.m_proxyCount;
-  this.BufferMove(proxy);
-  return proxy;
-};
-b2DynamicTreeBroadPhase.prototype.DestroyProxy = function(proxy) {
-  this.UnBufferMove(proxy);
-  --this.m_proxyCount;
-  this.m_tree.DestroyProxy(proxy);
-};
-b2DynamicTreeBroadPhase.prototype.MoveProxy = function(
-  proxy,
-  aabb,
-  displacement,
-) {
-  var buffer = this.m_tree.MoveProxy(proxy, aabb, displacement);
-  if (buffer) {
-    this.BufferMove(proxy);
-  }
-};
-b2DynamicTreeBroadPhase.prototype.TestOverlap = function(proxyA, proxyB) {
-  var aabbA = this.m_tree.GetFatAABB(proxyA);
-  var aabbB = this.m_tree.GetFatAABB(proxyB);
-  return aabbA.TestOverlap(aabbB);
-};
-b2DynamicTreeBroadPhase.prototype.GetUserData = function(proxy) {
-  return this.m_tree.GetUserData(proxy);
-};
-b2DynamicTreeBroadPhase.prototype.GetFatAABB = function(proxy) {
-  return this.m_tree.GetFatAABB(proxy);
-};
-b2DynamicTreeBroadPhase.prototype.GetProxyCount = function() {
-  return this.m_proxyCount;
-};
-b2DynamicTreeBroadPhase.prototype.UpdatePairs = function(callback) {
-  var __this = this;
-  __this.m_pairCount = 0;
-  var i = 0,
-    queryProxy;
-  for (i = 0; i < __this.m_moveBuffer.length; ++i) {
-    queryProxy = __this.m_moveBuffer[i];
+// tslint:disable variable-name
 
-    function QueryCallback(proxy) {
-      if (proxy == queryProxy) return true;
-      if (__this.m_pairCount == __this.m_pairBuffer.length) {
-        __this.m_pairBuffer[__this.m_pairCount] = new b2DynamicTreePair();
-      }
-      var pair = __this.m_pairBuffer[__this.m_pairCount];
-      pair.proxyA = proxy < queryProxy ? proxy : queryProxy;
-      pair.proxyB = proxy >= queryProxy ? proxy : queryProxy;
-      ++__this.m_pairCount;
-      return true;
-    }
-    var fatAABB = __this.m_tree.GetFatAABB(queryProxy);
-    __this.m_tree.Query(QueryCallback, fatAABB);
+import Aabb from './aabb';
+import DynamicTree from './dynamic-tree';
+import DynamicTreePair from './dynamic-tree-pair';
+import RayCastInput from './ray-cast-input';
+
+export default class DynamicTreeBroadPhase {
+  public m_tree = new DynamicTree();
+  public m_moveBuffer: any[] = [];
+  public m_pairBuffer: any[] = [];
+  public m_pairCount = 0;
+  public m_proxyCount = 0;
+
+  public CreateProxy(aabb: Aabb, userData: any) {
+    const proxy = this.m_tree.CreateProxy(aabb, userData);
+    ++this.m_proxyCount;
+
+    this.BufferMove(proxy);
+    return proxy;
   }
-  __this.m_moveBuffer.length = 0;
-  for (var i = 0; i < __this.m_pairCount; ) {
-    var primaryPair = __this.m_pairBuffer[i];
-    var userDataA = __this.m_tree.GetUserData(primaryPair.proxyA);
-    var userDataB = __this.m_tree.GetUserData(primaryPair.proxyB);
-    callback(userDataA, userDataB);
-    ++i;
-    while (i < __this.m_pairCount) {
-      var pair = __this.m_pairBuffer[i];
-      if (
-        pair.proxyA != primaryPair.proxyA ||
-        pair.proxyB != primaryPair.proxyB
-      ) {
-        break;
-      }
+
+  public DestroyProxy(proxy: any) {
+    this.UnBufferMove(proxy);
+    --this.m_proxyCount;
+    this.m_tree.DestroyProxy(proxy);
+  }
+
+  public MoveProxy(proxy: any, aabb: Aabb, displacement: any) {
+    const buffer = this.m_tree.MoveProxy(proxy, aabb, displacement);
+    if (buffer) {
+      this.BufferMove(proxy);
+    }
+  }
+
+  public TestOverlap(proxyA: any, proxyB: any) {
+    const aabbA = this.m_tree.GetFatAABB(proxyA);
+    const aabbB = this.m_tree.GetFatAABB(proxyB);
+    return aabbA.TestOverlap(aabbB);
+  }
+
+  public GetUserData(proxy: any) {
+    return this.m_tree.GetUserData(proxy);
+  }
+
+  public GetFatAABB(proxy: any) {
+    return this.m_tree.GetFatAABB(proxy);
+  }
+
+  public GetProxyCount() {
+    return this.m_proxyCount;
+  }
+
+  public UpdatePairs(cb: (...args: any[]) => boolean) {
+    this.m_pairCount = 0;
+
+    for (const queryProxy of this.m_moveBuffer) {
+      const fatAABB = this.m_tree.GetFatAABB(queryProxy);
+      this.m_tree.Query((proxy: any) => {
+        if (proxy === queryProxy) {
+          return true;
+        }
+
+        if (this.m_pairCount === this.m_pairBuffer.length) {
+          this.m_pairBuffer[this.m_pairCount] = new DynamicTreePair();
+        }
+
+        const pair = this.m_pairBuffer[this.m_pairCount];
+
+        pair.proxyA = proxy < queryProxy ? proxy : queryProxy;
+        pair.proxyB = proxy >= queryProxy ? proxy : queryProxy;
+
+        ++this.m_pairCount;
+        return true;
+      }, fatAABB);
+    }
+
+    this.m_moveBuffer.length = 0;
+
+    for (let i = 0; i < this.m_pairCount; ) {
+      const primaryPair = this.m_pairBuffer[i];
+
+      const userDataA = this.m_tree.GetUserData(primaryPair.proxyA);
+      const userDataB = this.m_tree.GetUserData(primaryPair.proxyB);
+
+      cb(userDataA, userDataB);
+
       ++i;
+      while (i < this.m_pairCount) {
+        const pair = this.m_pairBuffer[i];
+
+        if (
+          pair.proxyA !== primaryPair.proxyA ||
+          pair.proxyB !== primaryPair.proxyB
+        ) {
+          break;
+        }
+
+        ++i;
+      }
     }
   }
-};
-b2DynamicTreeBroadPhase.prototype.Query = function(callback, aabb) {
-  this.m_tree.Query(callback, aabb);
-};
-b2DynamicTreeBroadPhase.prototype.RayCast = function(callback, input) {
-  this.m_tree.RayCast(callback, input);
-};
-b2DynamicTreeBroadPhase.prototype.Validate = function() {};
-b2DynamicTreeBroadPhase.prototype.Rebalance = function(iterations) {
-  if (iterations === undefined) iterations = 0;
-  this.m_tree.Rebalance(iterations);
-};
-b2DynamicTreeBroadPhase.prototype.BufferMove = function(proxy) {
-  this.m_moveBuffer[this.m_moveBuffer.length] = proxy;
-};
-b2DynamicTreeBroadPhase.prototype.UnBufferMove = function(proxy) {
-  var i = parseInt(this.m_moveBuffer.indexOf(proxy));
-  this.m_moveBuffer.splice(i, 1);
-};
-b2DynamicTreeBroadPhase.prototype.ComparePairs = function(pair1, pair2) {
-  return 0;
-};
-b2DynamicTreeBroadPhase.__implements = {};
-b2DynamicTreeBroadPhase.__implements[IBroadPhase] = true;
+
+  public Query(cb: (...args: any[]) => boolean, aabb: Aabb) {
+    this.m_tree.Query(cb, aabb);
+  }
+
+  public RayCast(cb: (...args: any[]) => number, input: RayCastInput) {
+    this.m_tree.RayCast(cb, input);
+  }
+
+  public Validate() {} // tslint:disable-line no-empty
+
+  public Rebalance(iterations = 0) {
+    this.m_tree.Rebalance(iterations);
+  }
+
+  public BufferMove(proxy: any) {
+    this.m_moveBuffer[this.m_moveBuffer.length] = proxy;
+  }
+
+  public UnBufferMove(proxy: any) {
+    const i = parseInt(`${this.m_moveBuffer.indexOf(proxy)}`, 10);
+    this.m_moveBuffer.splice(i, 1);
+  }
+
+  public ComparePairs(pair1: DynamicTreePair, pair2: DynamicTreePair) {
+    return 0;
+  }
+}
+
+// b2DynamicTreeBroadPhase.__implements = {};
+// b2DynamicTreeBroadPhase.__implements[IBroadPhase] = true;

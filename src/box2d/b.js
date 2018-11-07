@@ -22,37 +22,33 @@ import ManifoldPoint from './collision/manifold-point';
 import Manifold from './collision/manifold';
 import SimplexCache from './collision/simplex-cache';
 import SimplexVertex from './collision/simplex-vertex';
-
-/**
- * @see: ./c.js
- */
 import * as Distance from './collision/distance';
 import DistanceInput from './collision/distance-input';
 import DistanceOutput from './collision/distance-output';
 import DistanceProxy from './collision/distance-proxy';
-// import DynamicTree from './collision/dynamic-tree';
-// import DynamicTreeBroadPhase from './collision/dynamic-tree-broad-phase';
-// import DynamicTreeNode from './collision/dynamic-tree-node';
-// import DynamicTreePair from './collision/dynamic-tree-pair';
+import DynamicTree from './collision/dynamic-tree';
+import DynamicTreeBroadPhase from './collision/dynamic-tree-broad-phase';
+import DynamicTreeNode from './collision/dynamic-tree-node';
+import DynamicTreePair from './collision/dynamic-tree-pair';
 import Point from './collision/point';
 import RayCastInput from './collision/ray-cast-input';
 import RayCastOutput from './collision/ray-cast-output';
-// import Segment from './collision/segment';
-// import SeparationFunction from './collision/separation-function';
 import Simplex from './collision/simplex';
-// import TimeOfImpact from './collision/time-of-impact';
-// import ToiInput from './collision/toi-input';
-// import WorldManifold from './collision/world-manifold';
-
-/**
- * @see: ./d.js
- */
 import CircleShape from './collision/shapes/circle-shape';
 import EdgeChainDef from './collision/shapes/edge-chain-def';
 import EdgeShape from './collision/shapes/edge-shape';
 import MassData from './collision/shapes/mass-data';
 import PolygonShape from './collision/shapes/polygon-shape';
 import Shape from './collision/shapes/shape';
+
+/**
+ * @see: ./c.js
+ */
+// import Segment from './collision/segment';
+// import SeparationFunction from './collision/separation-function';
+// import TimeOfImpact from './collision/time-of-impact';
+// import ToiInput from './collision/toi-input';
+// import WorldManifold from './collision/world-manifold';
 
 /**
  * @see: ./g.js
@@ -138,29 +134,10 @@ export default function b(Box2D) {
   Box2D.Collision.b2DistanceInput = DistanceInput;
   Box2D.Collision.b2DistanceOutput = DistanceOutput;
   Box2D.Collision.b2DistanceProxy = DistanceProxy;
-
-  function b2DynamicTree() {
-    b2DynamicTree.b2DynamicTree.apply(this, arguments);
-    if (this.constructor === b2DynamicTree)
-      this.b2DynamicTree.apply(this, arguments);
-  }
-  Box2D.Collision.b2DynamicTree = b2DynamicTree;
-
-  function b2DynamicTreeBroadPhase() {
-    b2DynamicTreeBroadPhase.b2DynamicTreeBroadPhase.apply(this, arguments);
-  }
-  Box2D.Collision.b2DynamicTreeBroadPhase = b2DynamicTreeBroadPhase;
-
-  function b2DynamicTreeNode() {
-    b2DynamicTreeNode.b2DynamicTreeNode.apply(this, arguments);
-  }
-  Box2D.Collision.b2DynamicTreeNode = b2DynamicTreeNode;
-
-  function b2DynamicTreePair() {
-    b2DynamicTreePair.b2DynamicTreePair.apply(this, arguments);
-  }
-  Box2D.Collision.b2DynamicTreePair = b2DynamicTreePair;
-
+  Box2D.Collision.b2DynamicTree = DynamicTree;
+  Box2D.Collision.b2DynamicTreeBroadPhase = DynamicTreeBroadPhase;
+  Box2D.Collision.b2DynamicTreeNode = DynamicTreeNode;
+  Box2D.Collision.b2DynamicTreePair = DynamicTreePair;
   Box2D.Collision.b2Manifold = Manifold;
   Box2D.Collision.b2ManifoldPoint = ManifoldPoint;
   Box2D.Collision.b2Point = Point;
