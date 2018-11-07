@@ -8,6 +8,7 @@ import Vec2 from './common/math/vec2';
 import Vec3 from './common/math/vec3';
 import * as Settings from './common/settings';
 import DebugDraw from './dynamics/debug-draw';
+import TimeStep from './dynamics/time-step';
 
 export default function b(Box2D) {
   Box2D.Collision.IBroadPhase = 'Box2D.Collision.IBroadPhase';
@@ -286,10 +287,7 @@ export default function b(Box2D) {
   }
   Box2D.Dynamics.b2Island = b2Island;
 
-  function b2TimeStep() {
-    b2TimeStep.b2TimeStep.apply(this, arguments);
-  }
-  Box2D.Dynamics.b2TimeStep = b2TimeStep;
+  Box2D.Dynamics.b2TimeStep = TimeStep;
 
   function b2World() {
     b2World.b2World.apply(this, arguments);

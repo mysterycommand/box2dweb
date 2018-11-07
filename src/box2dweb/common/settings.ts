@@ -1,4 +1,5 @@
 // tslint:disable variable-name
+
 export const VERSION = '2.1alpha';
 export const USHRT_MAX = 0x0000ffff;
 export const b2_pi = Math.PI;

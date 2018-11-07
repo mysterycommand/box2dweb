@@ -1,12 +1,7 @@
+import { Clamp } from './math';
+
 function parseUInt(v: number) {
   return Math.abs(parseInt(`${v}`, 10));
-}
-
-/**
- * @see: ./f.js#L314
- */
-function Clamp(a = 0, low = 0, high = 0) {
-  return a < low ? low : a > high ? high : a;
 }
 
 export default class Color {
