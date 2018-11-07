@@ -13,12 +13,16 @@ import TimeStep from './dynamics/time-step';
 import Aabb from './collision/aabb';
 import Bound from './collision/bound';
 import BoundValues from './collision/bound-values';
+import ClipVertex from './collision/clip-vertex';
+import ContactId from './collision/contact-id';
+import Features from './collision/features';
+import * as Collision from './collision';
+import ManifoldPoint from './collision/manifold-point';
+import Manifold from './collision/manifold';
 
 /**
  * @see: ./c.js
  */
-// import Collision from './collision/collision';
-// import ContactId from './collision/contact-id';
 // import ContactPoint from './collision/contact-point';
 // import Distance from './collision/distance';
 // import DistanceInput from './collision/distance-input';
@@ -28,8 +32,6 @@ import BoundValues from './collision/bound-values';
 // import DynamicTreeBroadPhase from './collision/dynamic-tree-broad-phase';
 // import DynamicTreeNode from './collision/dynamic-tree-node';
 // import DynamicTreePair from './collision/dynamic-tree-pair';
-// import Manifold from './collision/manifold';
-// import ManifoldPoint from './collision/manifold-point';
 // import Point from './collision/point';
 // import RayCastInput from './collision/ray-cast-input';
 // import RayCastOutput from './collision/ray-cast-output';
@@ -41,8 +43,6 @@ import BoundValues from './collision/bound-values';
 // import TimeOfImpact from './collision/time-of-impact';
 // import ToiInput from './collision/toi-input';
 // import WorldManifold from './collision/world-manifold';
-// import ClipVertex from './collision/clip-vertex';
-// import Features from './collision/features';
 
 /**
  * @see: ./d.js
@@ -131,18 +131,8 @@ export default function b(Box2D) {
   Box2D.Collision.b2AABB = Aabb;
   Box2D.Collision.b2Bound = Bound;
   Box2D.Collision.b2BoundValues = BoundValues;
-
-  function b2Collision() {
-    b2Collision.b2Collision.apply(this, arguments);
-  }
-  Box2D.Collision.b2Collision = b2Collision;
-
-  function b2ContactID() {
-    b2ContactID.b2ContactID.apply(this, arguments);
-    if (this.constructor === b2ContactID)
-      this.b2ContactID.apply(this, arguments);
-  }
-  Box2D.Collision.b2ContactID = b2ContactID;
+  Box2D.Collision.b2Collision = Collision;
+  Box2D.Collision.b2ContactID = ContactId;
 
   function b2ContactPoint() {
     b2ContactPoint.b2ContactPoint.apply(this, arguments);
@@ -191,18 +181,8 @@ export default function b(Box2D) {
   }
   Box2D.Collision.b2DynamicTreePair = b2DynamicTreePair;
 
-  function b2Manifold() {
-    b2Manifold.b2Manifold.apply(this, arguments);
-    if (this.constructor === b2Manifold) this.b2Manifold.apply(this, arguments);
-  }
-  Box2D.Collision.b2Manifold = b2Manifold;
-
-  function b2ManifoldPoint() {
-    b2ManifoldPoint.b2ManifoldPoint.apply(this, arguments);
-    if (this.constructor === b2ManifoldPoint)
-      this.b2ManifoldPoint.apply(this, arguments);
-  }
-  Box2D.Collision.b2ManifoldPoint = b2ManifoldPoint;
+  Box2D.Collision.b2Manifold = Manifold;
+  Box2D.Collision.b2ManifoldPoint = ManifoldPoint;
 
   function b2Point() {
     b2Point.b2Point.apply(this, arguments);
@@ -264,14 +244,7 @@ export default function b(Box2D) {
   }
   Box2D.Collision.b2WorldManifold = b2WorldManifold;
 
-  function ClipVertex() {
-    ClipVertex.ClipVertex.apply(this, arguments);
-  }
   Box2D.Collision.ClipVertex = ClipVertex;
-
-  function Features() {
-    Features.Features.apply(this, arguments);
-  }
   Box2D.Collision.Features = Features;
 
   function b2CircleShape() {

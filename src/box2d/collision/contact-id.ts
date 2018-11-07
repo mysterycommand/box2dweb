@@ -1,34 +1,38 @@
-b2ContactID.b2ContactID = function() {
-  this.features = new Features();
-};
-b2ContactID.prototype.b2ContactID = function() {
-  this.features._m_id = this;
-};
-b2ContactID.prototype.Set = function(id) {
-  this.key = id._key;
-};
-b2ContactID.prototype.Copy = function() {
-  var id = new b2ContactID();
-  id.key = this.key;
-  return id;
-};
-Object.defineProperty(b2ContactID.prototype, 'key', {
-  enumerable: false,
-  configurable: true,
-  get: function() {
+import Features from './features';
+
+export default class ContactId {
+  private _key = 0;
+
+  public get key() {
     return this._key;
-  },
-});
-Object.defineProperty(b2ContactID.prototype, 'key', {
-  enumerable: false,
-  configurable: true,
-  set: function(value) {
-    if (value === undefined) value = 0;
+  }
+
+  public set key(value: number) {
+    if (this._key === value) {
+      return;
+    }
+
     this._key = value;
-    this.features._referenceEdge = this._key & 0x000000ff;
-    this.features._incidentEdge = ((this._key & 0x0000ff00) >> 8) & 0x000000ff;
-    this.features._incidentVertex =
+
+    this.features.referenceEdge = this._key & 0x000000ff;
+    this.features.incidentEdge = ((this._key & 0x0000ff00) >> 8) & 0x000000ff;
+    this.features.incidentVertex =
       ((this._key & 0x00ff0000) >> 16) & 0x000000ff;
-    this.features._flip = ((this._key & 0xff000000) >> 24) & 0x000000ff;
-  },
-});
+
+    this.features.flip = ((this._key & 0xff000000) >> 24) & 0x000000ff;
+  }
+
+  constructor(public features = new Features()) {
+    this.features.m_id = this;
+  }
+
+  public Set(id: ContactId) {
+    this.key = id.key;
+  }
+
+  public Copy() {
+    const id = new ContactId();
+    id.key = this.key;
+    return id;
+  }
+}
