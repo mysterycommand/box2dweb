@@ -1,8 +1,10 @@
 export default function i(Box2D) {
+  const b2Color = Box2D.Common.b2Color;
+
   const b2Mat22 = Box2D.Common.Math.b2Mat22;
   const b2Math = Box2D.Common.Math.b2Math;
   const b2Vec2 = Box2D.Common.Math.b2Vec2;
-  const b2Color = Box2D.Common.b2Color;
+
   const b2BuoyancyController = Box2D.Dynamics.Controllers.b2BuoyancyController;
   const b2ConstantAccelController =
     Box2D.Dynamics.Controllers.b2ConstantAccelController;

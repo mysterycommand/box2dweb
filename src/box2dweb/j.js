@@ -1,14 +1,12 @@
 export default function j(Box2D) {
-  const b2Color = Box2D.Common.b2Color;
-  const b2internal = Box2D.Common.b2internal;
   const b2Settings = Box2D.Common.b2Settings;
+
   const b2Mat22 = Box2D.Common.Math.b2Mat22;
   const b2Mat33 = Box2D.Common.Math.b2Mat33;
   const b2Math = Box2D.Common.Math.b2Math;
-  const b2Sweep = Box2D.Common.Math.b2Sweep;
-  const b2Transform = Box2D.Common.Math.b2Transform;
   const b2Vec2 = Box2D.Common.Math.b2Vec2;
   const b2Vec3 = Box2D.Common.Math.b2Vec3;
+
   const b2DistanceJoint = Box2D.Dynamics.Joints.b2DistanceJoint;
   const b2DistanceJointDef = Box2D.Dynamics.Joints.b2DistanceJointDef;
   const b2FrictionJoint = Box2D.Dynamics.Joints.b2FrictionJoint;
@@ -31,20 +29,6 @@ export default function j(Box2D) {
   const b2RevoluteJointDef = Box2D.Dynamics.Joints.b2RevoluteJointDef;
   const b2WeldJoint = Box2D.Dynamics.Joints.b2WeldJoint;
   const b2WeldJointDef = Box2D.Dynamics.Joints.b2WeldJointDef;
-  const b2Body = Box2D.Dynamics.b2Body;
-  const b2BodyDef = Box2D.Dynamics.b2BodyDef;
-  const b2ContactFilter = Box2D.Dynamics.b2ContactFilter;
-  const b2ContactImpulse = Box2D.Dynamics.b2ContactImpulse;
-  const b2ContactListener = Box2D.Dynamics.b2ContactListener;
-  const b2ContactManager = Box2D.Dynamics.b2ContactManager;
-  const b2DebugDraw = Box2D.Dynamics.b2DebugDraw;
-  const b2DestructionListener = Box2D.Dynamics.b2DestructionListener;
-  const b2FilterData = Box2D.Dynamics.b2FilterData;
-  const b2Fixture = Box2D.Dynamics.b2Fixture;
-  const b2FixtureDef = Box2D.Dynamics.b2FixtureDef;
-  const b2Island = Box2D.Dynamics.b2Island;
-  const b2TimeStep = Box2D.Dynamics.b2TimeStep;
-  const b2World = Box2D.Dynamics.b2World;
 
   Box2D.inherit(b2DistanceJoint, Box2D.Dynamics.Joints.b2Joint);
   b2DistanceJoint.prototype.__super = Box2D.Dynamics.Joints.b2Joint.prototype;

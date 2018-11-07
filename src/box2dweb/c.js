@@ -2,14 +2,6 @@ export default function c(Box2D) {
   const Vector = Array;
   const Vector_a2j_Number = Box2D.NVector;
 
-  const b2CircleShape = Box2D.Collision.Shapes.b2CircleShape;
-  const b2PolygonShape = Box2D.Collision.Shapes.b2PolygonShape;
-  const b2Shape = Box2D.Collision.Shapes.b2Shape;
-  const b2Settings = Box2D.Common.b2Settings;
-  const b2Math = Box2D.Common.Math.b2Math;
-  const b2Sweep = Box2D.Common.Math.b2Sweep;
-  const b2Transform = Box2D.Common.Math.b2Transform;
-  const b2Vec2 = Box2D.Common.Math.b2Vec2;
   const b2AABB = Box2D.Collision.b2AABB;
   const b2Bound = Box2D.Collision.b2Bound;
   const b2BoundValues = Box2D.Collision.b2BoundValues;
@@ -37,9 +29,21 @@ export default function c(Box2D) {
   const b2TimeOfImpact = Box2D.Collision.b2TimeOfImpact;
   const b2TOIInput = Box2D.Collision.b2TOIInput;
   const b2WorldManifold = Box2D.Collision.b2WorldManifold;
+
+  const b2CircleShape = Box2D.Collision.Shapes.b2CircleShape;
+  const b2PolygonShape = Box2D.Collision.Shapes.b2PolygonShape;
+  const b2Shape = Box2D.Collision.Shapes.b2Shape;
+
   const ClipVertex = Box2D.Collision.ClipVertex;
   const Features = Box2D.Collision.Features;
   const IBroadPhase = Box2D.Collision.IBroadPhase;
+
+  const b2Settings = Box2D.Common.b2Settings;
+
+  const b2Math = Box2D.Common.Math.b2Math;
+  const b2Sweep = Box2D.Common.Math.b2Sweep;
+  const b2Transform = Box2D.Common.Math.b2Transform;
+  const b2Vec2 = Box2D.Common.Math.b2Vec2;
 
   b2AABB.b2AABB = function() {
     this.lowerBound = new b2Vec2();
