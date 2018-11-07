@@ -48,8 +48,8 @@ import Simplex from './collision/simplex';
  * @see: ./d.js
  */
 import CircleShape from './collision/shapes/circle-shape';
-// import EdgeChainDef from './collision/shapes/edge-chain-def';
-// import EdgeShape from './collision/shapes/edge-shape';
+import EdgeChainDef from './collision/shapes/edge-chain-def';
+import EdgeShape from './collision/shapes/edge-shape';
 import MassData from './collision/shapes/mass-data';
 import PolygonShape from './collision/shapes/polygon-shape';
 import Shape from './collision/shapes/shape';
@@ -201,21 +201,8 @@ export default function b(Box2D) {
   Box2D.Collision.ClipVertex = ClipVertex;
   Box2D.Collision.Features = Features;
   Box2D.Collision.Shapes.b2CircleShape = CircleShape;
-
-  function b2EdgeChainDef() {
-    b2EdgeChainDef.b2EdgeChainDef.apply(this, arguments);
-    if (this.constructor === b2EdgeChainDef)
-      this.b2EdgeChainDef.apply(this, arguments);
-  }
-  Box2D.Collision.Shapes.b2EdgeChainDef = b2EdgeChainDef;
-
-  function b2EdgeShape() {
-    b2EdgeShape.b2EdgeShape.apply(this, arguments);
-    if (this.constructor === b2EdgeShape)
-      this.b2EdgeShape.apply(this, arguments);
-  }
-  Box2D.Collision.Shapes.b2EdgeShape = b2EdgeShape;
-
+  Box2D.Collision.Shapes.b2EdgeChainDef = EdgeChainDef;
+  Box2D.Collision.Shapes.b2EdgeShape = EdgeShape;
   Box2D.Collision.Shapes.b2MassData = MassData;
   Box2D.Collision.Shapes.b2PolygonShape = PolygonShape;
   Box2D.Collision.Shapes.b2Shape = Shape;

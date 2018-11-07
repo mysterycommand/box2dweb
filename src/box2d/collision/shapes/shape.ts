@@ -10,6 +10,7 @@ import DistanceProxy from '../distance-proxy';
 // import RayCastInput from '../ray-cast-input';
 import SimplexCache from '../simplex-cache';
 import { Distance } from '../distance';
+import Vec2 from '../../common/math/vec2';
 // import Aabb from '../aabb';
 
 export default class Shape {
@@ -65,9 +66,9 @@ export default class Shape {
     return this.m_type;
   }
 
-  // public TestPoint(xf: Transform, p: Vec2) {
-  //   return false;
-  // }
+  public TestPoint(xf: Transform, p: Vec2) {
+    return false;
+  }
 
   // public RayCast(
   //   output: RayCastOutput,

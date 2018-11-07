@@ -1,6 +1,7 @@
-b2EdgeChainDef.b2EdgeChainDef = function() {};
-b2EdgeChainDef.prototype.b2EdgeChainDef = function() {
-  this.vertexCount = 0;
-  this.isALoop = true;
-  this.vertices = [];
-};
+import Vec2 from '../../common/math/vec2';
+
+export default class EdgeChainDef {
+  public vertices: Vec2[] = [];
+  public vertexCount = 0;
+  public isALoop = true;
+}

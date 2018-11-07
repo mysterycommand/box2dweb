@@ -59,10 +59,7 @@ export default class Vec2 {
     this.y = A.col1.y * tX + A.col2.y * this.y;
   }
 
-  public MulTM(A: {
-    col1: { x: number; y: number };
-    col2: { x: number; y: number };
-  }) {
+  public MulTM(A: { col1: Vec2; col2: Vec2 }) {
     const tX = Dot(this, A.col1);
     this.y = Dot(this, A.col2);
     this.x = tX;
@@ -113,10 +110,10 @@ export default class Vec2 {
     const length = this.Length();
 
     if (length < Number.MIN_VALUE) {
-      return 0.0;
+      return 0;
     }
 
-    const invLength = 1.0 / length;
+    const invLength = 1 / length;
 
     this.x *= invLength;
     this.y *= invLength;

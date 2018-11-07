@@ -11,9 +11,7 @@ export default function c(Box2D) {
   const b2DynamicTreeNode = Box2D.Collision.b2DynamicTreeNode;
   const b2DynamicTreePair = Box2D.Collision.b2DynamicTreePair;
   const b2Manifold = Box2D.Collision.b2Manifold;
-  const b2Point = Box2D.Collision.b2Point;
   const b2RayCastInput = Box2D.Collision.b2RayCastInput;
-  const b2RayCastOutput = Box2D.Collision.b2RayCastOutput;
   const b2Segment = Box2D.Collision.b2Segment;
   const b2SeparationFunction = Box2D.Collision.b2SeparationFunction;
   const b2SimplexCache = Box2D.Collision.b2SimplexCache;
