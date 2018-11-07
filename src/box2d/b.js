@@ -99,28 +99,28 @@ import Shape from './collision/shapes/shape';
 /**
  * @see: ./j.js
  */
-// import DistanceJoint from './dynamics/controllers/distance-joint';
-// import DistanceJointDef from './dynamics/controllers/distance-joint-def';
-// import FrictionJoint from './dynamics/controllers/friction-joint';
-// import FrictionJointDef from './dynamics/controllers/friction-joint-def';
-// import GearJoint from './dynamics/controllers/gear-joint';
-// import GearJointDef from './dynamics/controllers/gear-joint-def';
-// import Jacobian from './dynamics/controllers/jacobian';
-// import Joint from './dynamics/controllers/joint';
-// import JointDef from './dynamics/controllers/joint-def';
-// import JointEdge from './dynamics/controllers/joint-edge';
-// import LineJoint from './dynamics/controllers/line-joint';
-// import LineJointDef from './dynamics/controllers/line-joint-def';
-// import MouseJoint from './dynamics/controllers/mouse-joint';
-// import MouseJointDef from './dynamics/controllers/mouse-joint-def';
-// import PrismaticJoint from './dynamics/controllers/prismatic-joint';
-// import PrismaticJointDef from './dynamics/controllers/prismatic-joint-def';
-// import PulleyJoint from './dynamics/controllers/pulley-joint';
-// import PulleyJointDef from './dynamics/controllers/pulley-joint-def';
-// import RevoluteJoint from './dynamics/controllers/revolute-joint';
-// import RevoluteJointDef from './dynamics/controllers/revolute-joint-def';
-// import WeldJoint from './dynamics/controllers/weld-joint';
-// import WeldJointDef from './dynamics/controllers/weld-joint-def';
+// import DistanceJoint from './dynamics/joints/distance-joint';
+// import DistanceJointDef from './dynamics/joints/distance-joint-def';
+// import FrictionJoint from './dynamics/joints/friction-joint';
+// import FrictionJointDef from './dynamics/joints/friction-joint-def';
+// import GearJoint from './dynamics/joints/gear-joint';
+// import GearJointDef from './dynamics/joints/gear-joint-def';
+// import Jacobian from './dynamics/joints/jacobian';
+// import Joint from './dynamics/joints/joint';
+// import JointDef from './dynamics/joints/joint-def';
+// import JointEdge from './dynamics/joints/joint-edge';
+// import LineJoint from './dynamics/joints/line-joint';
+// import LineJointDef from './dynamics/joints/line-joint-def';
+// import MouseJoint from './dynamics/joints/mouse-joint';
+// import MouseJointDef from './dynamics/joints/mouse-joint-def';
+// import PrismaticJoint from './dynamics/joints/prismatic-joint';
+// import PrismaticJointDef from './dynamics/joints/prismatic-joint-def';
+// import PulleyJoint from './dynamics/joints/pulley-joint';
+// import PulleyJointDef from './dynamics/joints/pulley-joint-def';
+// import RevoluteJoint from './dynamics/joints/revolute-joint';
+// import RevoluteJointDef from './dynamics/joints/revolute-joint-def';
+// import WeldJoint from './dynamics/joints/weld-joint';
+// import WeldJointDef from './dynamics/joints/weld-joint-def';
 
 export default function b(Box2D) {
   Box2D.Collision.IBroadPhase = 'Box2D.Collision.IBroadPhase';
