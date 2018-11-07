@@ -45,6 +45,39 @@ export default function c(Box2D) {
   const b2Transform = Box2D.Common.Math.b2Transform;
   const b2Vec2 = Box2D.Common.Math.b2Vec2;
 
+  // b2AABB
+  // b2Bound
+  // b2BoundValues
+  // b2Collision
+  // b2ContactID
+  // b2ContactPoint
+  // b2Distance
+  // b2DistanceInput
+  // b2DistanceOutput
+  // b2DistanceProxy
+  // b2DynamicTree
+  // b2DynamicTreeBroadPhase
+  // b2DynamicTreeNode
+  // b2DynamicTreePair
+  // b2Manifold
+  // b2ManifoldPoint
+  // b2Point
+  // b2RayCastInput
+  // b2RayCastOutput
+  // b2Segment
+  // b2SeparationFunction
+  // b2Simplex
+  // b2SimplexCache
+  // b2SimplexVertex
+  // b2TimeOfImpact
+  // b2TOIInput
+  // b2WorldManifold
+  // ClipVertex
+  // Features
+
+  /**
+   * b2AABB
+   */
   b2AABB.b2AABB = function() {
     this.lowerBound = new b2Vec2();
     this.upperBound = new b2Vec2();
@@ -169,6 +202,9 @@ export default function c(Box2D) {
     this.upperBound.y = Math.max(aabb1.upperBound.y, aabb2.upperBound.y);
   };
 
+  /**
+   * b2Bound
+   */
   b2Bound.b2Bound = function() {};
 
   b2Bound.prototype.IsLower = function() {
@@ -191,6 +227,9 @@ export default function c(Box2D) {
     b.stabbingCount = tempStabbingCount;
   };
 
+  /**
+   * b2BoundValues
+   */
   b2BoundValues.b2BoundValues = function() {};
 
   b2BoundValues.prototype.b2BoundValues = function() {
@@ -202,6 +241,9 @@ export default function c(Box2D) {
     this.upperValues[1] = 0.0;
   };
 
+  /**
+   * b2Collision
+   */
   b2Collision.b2Collision = function() {};
   b2Collision.ClipSegmentToLine = function(vOut, vIn, normal, offset) {
     if (offset === undefined) offset = 0;
@@ -687,6 +729,10 @@ export default function c(Box2D) {
     Box2D.Collision.b2Collision.b2CollidePolyTempVec = new b2Vec2();
     Box2D.Collision.b2Collision.b2_nullFeature = 0x000000ff;
   });
+
+  /**
+   * b2ContactID
+   */
   b2ContactID.b2ContactID = function() {
     this.features = new Features();
   };
@@ -722,12 +768,20 @@ export default function c(Box2D) {
       this.features._flip = ((this._key & 0xff000000) >> 24) & 0x000000ff;
     },
   });
+
+  /**
+   * b2ContactPoint
+   */
   b2ContactPoint.b2ContactPoint = function() {
     this.position = new b2Vec2();
     this.velocity = new b2Vec2();
     this.normal = new b2Vec2();
     this.id = new b2ContactID();
   };
+
+  /**
+   * b2Distance
+   */
   b2Distance.b2Distance = function() {};
   b2Distance.Distance = function(output, cache, input) {
     ++b2Distance.b2_gjkCalls;
@@ -831,11 +885,23 @@ export default function c(Box2D) {
     Box2D.Collision.b2Distance.s_saveA = new Vector_a2j_Number(3);
     Box2D.Collision.b2Distance.s_saveB = new Vector_a2j_Number(3);
   });
+
+  /**
+   * b2DistanceInput
+   */
   b2DistanceInput.b2DistanceInput = function() {};
+
+  /**
+   * b2DistanceOutput
+   */
   b2DistanceOutput.b2DistanceOutput = function() {
     this.pointA = new b2Vec2();
     this.pointB = new b2Vec2();
   };
+
+  /**
+   * b2DistanceProxy
+   */
   b2DistanceProxy.b2DistanceProxy = function() {};
   b2DistanceProxy.prototype.Set = function(shape) {
     switch (shape.GetType()) {
@@ -892,6 +958,10 @@ export default function c(Box2D) {
     b2Settings.b2Assert(0 <= index && index < this.m_count);
     return this.m_vertices[index];
   };
+
+  /**
+   * b2DynamicTree
+   */
   b2DynamicTree.b2DynamicTree = function() {};
   b2DynamicTree.prototype.b2DynamicTree = function() {
     this.m_root = null;
@@ -1146,6 +1216,10 @@ export default function c(Box2D) {
       this.FreeNode(node2);
     }
   };
+
+  /**
+   * b2DynamicTreeBroadPhase
+   */
   b2DynamicTreeBroadPhase.b2DynamicTreeBroadPhase = function() {
     this.m_tree = new b2DynamicTree();
     this.m_moveBuffer = new Vector();
@@ -1251,13 +1325,25 @@ export default function c(Box2D) {
   };
   b2DynamicTreeBroadPhase.__implements = {};
   b2DynamicTreeBroadPhase.__implements[IBroadPhase] = true;
+
+  /**
+   * b2DynamicTreeNode
+   */
   b2DynamicTreeNode.b2DynamicTreeNode = function() {
     this.aabb = new b2AABB();
   };
   b2DynamicTreeNode.prototype.IsLeaf = function() {
     return this.child1 == null;
   };
+
+  /**
+   * b2DynamicTreePair
+   */
   b2DynamicTreePair.b2DynamicTreePair = function() {};
+
+  /**
+   * b2Manifold
+   */
   b2Manifold.b2Manifold = function() {
     this.m_pointCount = 0;
   };
@@ -1303,6 +1389,10 @@ export default function c(Box2D) {
     Box2D.Collision.b2Manifold.e_faceA = 0x0002;
     Box2D.Collision.b2Manifold.e_faceB = 0x0004;
   });
+
+  /**
+   * b2ManifoldPoint
+   */
   b2ManifoldPoint.b2ManifoldPoint = function() {
     this.m_localPoint = new b2Vec2();
     this.m_id = new b2ContactID();
@@ -1322,6 +1412,10 @@ export default function c(Box2D) {
     this.m_tangentImpulse = m.m_tangentImpulse;
     this.m_id.Set(m.m_id);
   };
+
+  /**
+   * b2Point
+   */
   b2Point.b2Point = function() {
     this.p = new b2Vec2();
   };
@@ -1333,6 +1427,10 @@ export default function c(Box2D) {
   b2Point.prototype.GetFirstVertex = function(xf) {
     return this.p;
   };
+
+  /**
+   * b2RayCastInput
+   */
   b2RayCastInput.b2RayCastInput = function() {
     this.p1 = new b2Vec2();
     this.p2 = new b2Vec2();
@@ -1345,9 +1443,17 @@ export default function c(Box2D) {
     if (p2) this.p2.SetV(p2);
     this.maxFraction = maxFraction;
   };
+
+  /**
+   * b2RayCastOutput
+   */
   b2RayCastOutput.b2RayCastOutput = function() {
     this.normal = new b2Vec2();
   };
+
+  /**
+   * b2Segment
+   */
   b2Segment.b2Segment = function() {
     this.p1 = new b2Vec2();
     this.p2 = new b2Vec2();
@@ -1427,6 +1533,10 @@ export default function c(Box2D) {
     this.p1.x = this.p2.x + dX * lambda;
     this.p1.y = this.p2.y + dY * lambda;
   };
+
+  /**
+   * b2SeparationFunction
+   */
   b2SeparationFunction.b2SeparationFunction = function() {
     this.m_localPoint = new b2Vec2();
     this.m_axis = new b2Vec2();
@@ -1688,6 +1798,10 @@ export default function c(Box2D) {
     Box2D.Collision.b2SeparationFunction.e_faceA = 0x02;
     Box2D.Collision.b2SeparationFunction.e_faceB = 0x04;
   });
+
+  /**
+   * b2Simplex
+   */
   b2Simplex.b2Simplex = function() {
     this.m_v1 = new b2SimplexVertex();
     this.m_v2 = new b2SimplexVertex();
@@ -1929,10 +2043,18 @@ export default function c(Box2D) {
     this.m_v3.a = d123_3 * inv_d123;
     this.m_count = 3;
   };
+
+  /**
+   * b2SimplexCache
+   */
   b2SimplexCache.b2SimplexCache = function() {
     this.indexA = new Vector_a2j_Number(3);
     this.indexB = new Vector_a2j_Number(3);
   };
+
+  /**
+   * b2SimplexVertex
+   */
   b2SimplexVertex.b2SimplexVertex = function() {};
   b2SimplexVertex.prototype.Set = function(other) {
     this.wA.SetV(other.wA);
@@ -1942,6 +2064,10 @@ export default function c(Box2D) {
     this.indexA = other.indexA;
     this.indexB = other.indexB;
   };
+
+  /**
+   * b2TimeOfImpact
+   */
   b2TimeOfImpact.b2TimeOfImpact = function() {};
   b2TimeOfImpact.TimeOfImpact = function(input) {
     ++b2TimeOfImpact.b2_toiCalls;
@@ -2084,12 +2210,20 @@ export default function c(Box2D) {
     Box2D.Collision.b2TimeOfImpact.s_fcn = new b2SeparationFunction();
     Box2D.Collision.b2TimeOfImpact.s_distanceOutput = new b2DistanceOutput();
   });
+
+  /**
+   * b2TOIInput
+   */
   b2TOIInput.b2TOIInput = function() {
     this.proxyA = new b2DistanceProxy();
     this.proxyB = new b2DistanceProxy();
     this.sweepA = new b2Sweep();
     this.sweepB = new b2Sweep();
   };
+
+  /**
+   * b2WorldManifold
+   */
   b2WorldManifold.b2WorldManifold = function() {
     this.m_normal = new b2Vec2();
   };
@@ -2236,6 +2370,10 @@ export default function c(Box2D) {
         break;
     }
   };
+
+  /**
+   * ClipVertex
+   */
   ClipVertex.ClipVertex = function() {
     this.v = new b2Vec2();
     this.id = new b2ContactID();
@@ -2244,6 +2382,10 @@ export default function c(Box2D) {
     this.v.SetV(other.v);
     this.id.Set(other.id);
   };
+
+  /**
+   * Features
+   */
   Features.Features = function() {};
   Object.defineProperty(Features.prototype, 'referenceEdge', {
     enumerable: false,

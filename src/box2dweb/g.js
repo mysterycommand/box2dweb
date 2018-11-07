@@ -44,6 +44,22 @@ export default function g(Box2D) {
   const b2Joint = Box2D.Dynamics.Joints.b2Joint;
   const b2PulleyJoint = Box2D.Dynamics.Joints.b2PulleyJoint;
 
+  // b2Body
+  // b2BodyDef
+  // b2ContactFilter
+  // b2ContactImpulse
+  // b2ContactListener
+  // b2ContactManager
+  // b2DestructionListener
+  // b2FilterData
+  // b2Fixture
+  // b2FixtureDef
+  // b2Island
+  // b2World
+
+  /**
+   * b2Body
+   */
   b2Body.b2Body = function() {
     this.m_xf = new b2Transform();
     this.m_sweep = new b2Sweep();
@@ -717,6 +733,10 @@ export default function g(Box2D) {
     Box2D.Dynamics.b2Body.b2_kinematicBody = 1;
     Box2D.Dynamics.b2Body.b2_dynamicBody = 2;
   });
+
+  /**
+   * b2BodyDef
+   */
   b2BodyDef.b2BodyDef = function() {
     this.position = new b2Vec2();
     this.linearVelocity = new b2Vec2();
@@ -737,6 +757,10 @@ export default function g(Box2D) {
     this.active = true;
     this.inertiaScale = 1.0;
   };
+
+  /**
+   * b2ContactFilter
+   */
   b2ContactFilter.b2ContactFilter = function() {};
   b2ContactFilter.prototype.ShouldCollide = function(fixtureA, fixtureB) {
     var filter1 = fixtureA.GetFilterData();
@@ -759,6 +783,10 @@ export default function g(Box2D) {
   Box2D.postDefs.push(function() {
     Box2D.Dynamics.b2ContactFilter.b2_defaultFilter = new b2ContactFilter();
   });
+
+  /**
+   * b2ContactImpulse
+   */
   b2ContactImpulse.b2ContactImpulse = function() {
     this.normalImpulses = new Vector_a2j_Number(
       b2Settings.b2_maxManifoldPoints,
@@ -767,6 +795,10 @@ export default function g(Box2D) {
       b2Settings.b2_maxManifoldPoints,
     );
   };
+
+  /**
+   * b2ContactListener
+   */
   b2ContactListener.b2ContactListener = function() {};
   b2ContactListener.prototype.BeginContact = function(contact) {};
   b2ContactListener.prototype.EndContact = function(contact) {};
@@ -775,6 +807,10 @@ export default function g(Box2D) {
   Box2D.postDefs.push(function() {
     Box2D.Dynamics.b2ContactListener.b2_defaultListener = new b2ContactListener();
   });
+
+  /**
+   * b2ContactManager
+   */
   b2ContactManager.b2ContactManager = function() {};
   b2ContactManager.prototype.b2ContactManager = function() {
     this.m_world = null;
@@ -922,9 +958,17 @@ export default function g(Box2D) {
   Box2D.postDefs.push(function() {
     Box2D.Dynamics.b2ContactManager.s_evalCP = new b2ContactPoint();
   });
+
+  /**
+   * b2DestructionListener
+   */
   b2DestructionListener.b2DestructionListener = function() {};
   b2DestructionListener.prototype.SayGoodbyeJoint = function(joint) {};
   b2DestructionListener.prototype.SayGoodbyeFixture = function(fixture) {};
+
+  /**
+   * b2FilterData
+   */
   b2FilterData.b2FilterData = function() {
     this.categoryBits = 0x0001;
     this.maskBits = 0xffff;
@@ -937,6 +981,10 @@ export default function g(Box2D) {
     copy.groupIndex = this.groupIndex;
     return copy;
   };
+
+  /**
+   * b2Fixture
+   */
   b2Fixture.b2Fixture = function() {
     this.m_filter = new b2FilterData();
   };
@@ -1080,6 +1128,10 @@ export default function g(Box2D) {
     );
     broadPhase.MoveProxy(this.m_proxy, this.m_aabb, displacement);
   };
+
+  /**
+   * b2FixtureDef
+   */
   b2FixtureDef.b2FixtureDef = function() {
     this.filter = new b2FilterData();
   };
@@ -1095,6 +1147,9 @@ export default function g(Box2D) {
     this.isSensor = false;
   };
 
+  /**
+   * b2Island
+   */
   b2Island.b2Island = function() {};
   b2Island.prototype.b2Island = function() {
     this.m_bodies = new Vector();
@@ -1350,6 +1405,9 @@ export default function g(Box2D) {
     Box2D.Dynamics.b2Island.s_impulse = new b2ContactImpulse();
   });
 
+  /**
+   * b2World
+   */
   b2World.b2World = function() {
     this.s_stack = new Vector();
     this.m_contactManager = new b2ContactManager();

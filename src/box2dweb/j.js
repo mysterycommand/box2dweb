@@ -30,6 +30,32 @@ export default function j(Box2D) {
   const b2WeldJoint = Box2D.Dynamics.Joints.b2WeldJoint;
   const b2WeldJointDef = Box2D.Dynamics.Joints.b2WeldJointDef;
 
+  // b2DistanceJoint
+  // b2DistanceJointDef
+  // b2FrictionJoint
+  // b2FrictionJointDef
+  // b2GearJoint
+  // b2GearJointDef
+  // b2Jacobian
+  // b2Joint
+  // b2JointDef
+  // b2JointEdge
+  // b2LineJoint
+  // b2LineJointDef
+  // b2MouseJoint
+  // b2MouseJointDef
+  // b2PrismaticJoint
+  // b2PrismaticJointDef
+  // b2PulleyJoint
+  // b2PulleyJointDef
+  // b2RevoluteJoint
+  // b2RevoluteJointDef
+  // b2WeldJoint
+  // b2WeldJointDef
+
+  /**
+   * b2DistanceJoint
+   */
   Box2D.inherit(b2DistanceJoint, Box2D.Dynamics.Joints.b2Joint);
   b2DistanceJoint.prototype.__super = Box2D.Dynamics.Joints.b2Joint.prototype;
   b2DistanceJoint.b2DistanceJoint = function() {
@@ -226,6 +252,10 @@ export default function j(Box2D) {
     bB.SynchronizeTransform();
     return b2Math.Abs(C) < b2Settings.b2_linearSlop;
   };
+
+  /**
+   * b2DistanceJointDef
+   */
   Box2D.inherit(b2DistanceJointDef, Box2D.Dynamics.Joints.b2JointDef);
   b2DistanceJointDef.prototype.__super =
     Box2D.Dynamics.Joints.b2JointDef.prototype;
@@ -252,6 +282,10 @@ export default function j(Box2D) {
     this.frequencyHz = 0.0;
     this.dampingRatio = 0.0;
   };
+
+  /**
+   * b2FrictionJoint
+   */
   Box2D.inherit(b2FrictionJoint, Box2D.Dynamics.Joints.b2Joint);
   b2FrictionJoint.prototype.__super = Box2D.Dynamics.Joints.b2Joint.prototype;
   b2FrictionJoint.b2FrictionJoint = function() {
@@ -429,6 +463,10 @@ export default function j(Box2D) {
     if (baumgarte === undefined) baumgarte = 0;
     return true;
   };
+
+  /**
+   * b2FrictionJointDef
+   */
   Box2D.inherit(b2FrictionJointDef, Box2D.Dynamics.Joints.b2JointDef);
   b2FrictionJointDef.prototype.__super =
     Box2D.Dynamics.Joints.b2JointDef.prototype;
@@ -449,6 +487,10 @@ export default function j(Box2D) {
     this.localAnchorA.SetV(this.bodyA.GetLocalPoint(anchor));
     this.localAnchorB.SetV(this.bodyB.GetLocalPoint(anchor));
   };
+
+  /**
+   * b2GearJoint
+   */
   Box2D.inherit(b2GearJoint, Box2D.Dynamics.Joints.b2Joint);
   b2GearJoint.prototype.__super = Box2D.Dynamics.Joints.b2Joint.prototype;
   b2GearJoint.b2GearJoint = function() {
@@ -652,6 +694,10 @@ export default function j(Box2D) {
     bB.SynchronizeTransform();
     return linearError < b2Settings.b2_linearSlop;
   };
+
+  /**
+   * b2GearJointDef
+   */
   Box2D.inherit(b2GearJointDef, Box2D.Dynamics.Joints.b2JointDef);
   b2GearJointDef.prototype.__super = Box2D.Dynamics.Joints.b2JointDef.prototype;
   b2GearJointDef.b2GearJointDef = function() {
@@ -664,6 +710,10 @@ export default function j(Box2D) {
     this.joint2 = null;
     this.ratio = 1.0;
   };
+
+  /**
+   * b2Jacobian
+   */
   b2Jacobian.b2Jacobian = function() {
     this.linearA = new b2Vec2();
     this.linearB = new b2Vec2();
@@ -693,6 +743,10 @@ export default function j(Box2D) {
       this.angularB * a2
     );
   };
+
+  /**
+   * b2Joint
+   */
   b2Joint.b2Joint = function() {
     this.m_edgeA = new b2JointEdge();
     this.m_edgeB = new b2JointEdge();
@@ -832,6 +886,10 @@ export default function j(Box2D) {
     Box2D.Dynamics.Joints.b2Joint.e_atUpperLimit = 2;
     Box2D.Dynamics.Joints.b2Joint.e_equalLimits = 3;
   });
+
+  /**
+   * b2JointDef
+   */
   b2JointDef.b2JointDef = function() {};
   b2JointDef.prototype.b2JointDef = function() {
     this.type = b2Joint.e_unknownJoint;
@@ -840,7 +898,15 @@ export default function j(Box2D) {
     this.bodyB = null;
     this.collideConnected = false;
   };
+
+  /**
+   * b2JointEdge
+   */
   b2JointEdge.b2JointEdge = function() {};
+
+  /**
+   * b2LineJoint
+   */
   Box2D.inherit(b2LineJoint, Box2D.Dynamics.Joints.b2Joint);
   b2LineJoint.prototype.__super = Box2D.Dynamics.Joints.b2Joint.prototype;
   b2LineJoint.b2LineJoint = function() {
@@ -1327,6 +1393,10 @@ export default function j(Box2D) {
       angularError <= b2Settings.b2_angularSlop
     );
   };
+
+  /**
+   * b2LineJointDef
+   */
   Box2D.inherit(b2LineJointDef, Box2D.Dynamics.Joints.b2JointDef);
   b2LineJointDef.prototype.__super = Box2D.Dynamics.Joints.b2JointDef.prototype;
   b2LineJointDef.b2LineJointDef = function() {
@@ -1353,6 +1423,10 @@ export default function j(Box2D) {
     this.localAnchorB = this.bodyB.GetLocalPoint(anchor);
     this.localAxisA = this.bodyA.GetLocalVector(axis);
   };
+
+  /**
+   * b2MouseJoint
+   */
   Box2D.inherit(b2MouseJoint, Box2D.Dynamics.Joints.b2Joint);
   b2MouseJoint.prototype.__super = Box2D.Dynamics.Joints.b2Joint.prototype;
   b2MouseJoint.b2MouseJoint = function() {
@@ -1502,6 +1576,10 @@ export default function j(Box2D) {
     if (baumgarte === undefined) baumgarte = 0;
     return true;
   };
+
+  /**
+   * b2MouseJointDef
+   */
   Box2D.inherit(b2MouseJointDef, Box2D.Dynamics.Joints.b2JointDef);
   b2MouseJointDef.prototype.__super =
     Box2D.Dynamics.Joints.b2JointDef.prototype;
@@ -1516,6 +1594,10 @@ export default function j(Box2D) {
     this.frequencyHz = 5.0;
     this.dampingRatio = 0.7;
   };
+
+  /**
+   * b2PrismaticJoint
+   */
   Box2D.inherit(b2PrismaticJoint, Box2D.Dynamics.Joints.b2Joint);
   b2PrismaticJoint.prototype.__super = Box2D.Dynamics.Joints.b2Joint.prototype;
   b2PrismaticJoint.b2PrismaticJoint = function() {
@@ -2010,6 +2092,10 @@ export default function j(Box2D) {
       angularError <= b2Settings.b2_angularSlop
     );
   };
+
+  /**
+   * b2PrismaticJointDef
+   */
   Box2D.inherit(b2PrismaticJointDef, Box2D.Dynamics.Joints.b2JointDef);
   b2PrismaticJointDef.prototype.__super =
     Box2D.Dynamics.Joints.b2JointDef.prototype;
@@ -2039,6 +2125,10 @@ export default function j(Box2D) {
     this.localAxisA = this.bodyA.GetLocalVector(axis);
     this.referenceAngle = this.bodyB.GetAngle() - this.bodyA.GetAngle();
   };
+
+  /**
+   * b2PulleyJoint
+   */
   Box2D.inherit(b2PulleyJoint, Box2D.Dynamics.Joints.b2Joint);
   b2PulleyJoint.prototype.__super = Box2D.Dynamics.Joints.b2Joint.prototype;
   b2PulleyJoint.b2PulleyJoint = function() {
@@ -2439,6 +2529,10 @@ export default function j(Box2D) {
   Box2D.postDefs.push(function() {
     Box2D.Dynamics.Joints.b2PulleyJoint.b2_minPulleyLength = 2.0;
   });
+
+  /**
+   * b2PulleyJointDef
+   */
   Box2D.inherit(b2PulleyJointDef, Box2D.Dynamics.Joints.b2JointDef);
   b2PulleyJointDef.prototype.__super =
     Box2D.Dynamics.Joints.b2JointDef.prototype;
@@ -2490,6 +2584,10 @@ export default function j(Box2D) {
     this.maxLengthA = C - this.ratio * b2PulleyJoint.b2_minPulleyLength;
     this.maxLengthB = (C - b2PulleyJoint.b2_minPulleyLength) / this.ratio;
   };
+
+  /**
+   * b2RevoluteJoint
+   */
   Box2D.inherit(b2RevoluteJoint, Box2D.Dynamics.Joints.b2Joint);
   b2RevoluteJoint.prototype.__super = Box2D.Dynamics.Joints.b2Joint.prototype;
   b2RevoluteJoint.b2RevoluteJoint = function() {
@@ -2896,6 +2994,10 @@ export default function j(Box2D) {
   Box2D.postDefs.push(function() {
     Box2D.Dynamics.Joints.b2RevoluteJoint.tImpulse = new b2Vec2();
   });
+
+  /**
+   * b2RevoluteJointDef
+   */
   Box2D.inherit(b2RevoluteJointDef, Box2D.Dynamics.Joints.b2JointDef);
   b2RevoluteJointDef.prototype.__super =
     Box2D.Dynamics.Joints.b2JointDef.prototype;
@@ -2924,6 +3026,10 @@ export default function j(Box2D) {
     this.localAnchorB = this.bodyB.GetLocalPoint(anchor);
     this.referenceAngle = this.bodyB.GetAngle() - this.bodyA.GetAngle();
   };
+
+  /**
+   * b2WeldJoint
+   */
   Box2D.inherit(b2WeldJoint, Box2D.Dynamics.Joints.b2Joint);
   b2WeldJoint.prototype.__super = Box2D.Dynamics.Joints.b2Joint.prototype;
   b2WeldJoint.b2WeldJoint = function() {
@@ -3099,6 +3205,10 @@ export default function j(Box2D) {
       angularError <= b2Settings.b2_angularSlop
     );
   };
+
+  /**
+   * b2WeldJointDef
+   */
   Box2D.inherit(b2WeldJointDef, Box2D.Dynamics.Joints.b2JointDef);
   b2WeldJointDef.prototype.__super = Box2D.Dynamics.Joints.b2JointDef.prototype;
   b2WeldJointDef.b2WeldJointDef = function() {

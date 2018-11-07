@@ -10,6 +10,121 @@ import * as Settings from './common/settings';
 import DebugDraw from './dynamics/debug-draw';
 import TimeStep from './dynamics/time-step';
 
+/**
+ * @see: ./c.js
+ */
+// import Aabb from './collision/aabb';
+// import Bound from './collision/bound';
+// import BoundValues from './collision/bound-values';
+// import Collision from './collision/collision';
+// import ContactId from './collision/contact-id';
+// import ContactPoint from './collision/contact-point';
+// import Distance from './collision/distance';
+// import DistanceInput from './collision/distance-input';
+// import DistanceOutput from './collision/distance-output';
+// import DistanceProxy from './collision/distance-proxy';
+// import DynamicTree from './collision/dynamic-tree';
+// import DynamicTreeBroadPhase from './collision/dynamic-tree-broad-phase';
+// import DynamicTreeNode from './collision/dynamic-tree-node';
+// import DynamicTreePair from './collision/dynamic-tree-pair';
+// import Manifold from './collision/manifold';
+// import ManifoldPoint from './collision/manifold-point';
+// import Point from './collision/point';
+// import RayCastInput from './collision/ray-cast-input';
+// import RayCastOutput from './collision/ray-cast-output';
+// import Segment from './collision/segment';
+// import SeparationFunction from './collision/separation-function';
+// import Simplex from './collision/simplex';
+// import SimplexCache from './collision/simplex-cache';
+// import SimplexVertex from './collision/simplex-vertex';
+// import TimeOfImpact from './collision/time-of-impact';
+// import ToiInput from './collision/toi-input';
+// import WorldManifold from './collision/world-manifold';
+// import ClipVertex from './collision/clip-vertex';
+// import Features from './collision/features';
+
+/**
+ * @see: ./d.js
+ */
+// import CircleShape from './collision/shapes/circle-shape';
+// import EdgeChainDef from './collision/shapes/edge-chain-def';
+// import EdgeShape from './collision/shapes/edge-shape';
+// import MassData from './collision/shapes/mass-data';
+// import PolygonShape from './collision/shapes/polygon-shape';
+// import Shape from './collision/shapes/shape';
+
+/**
+ * @see: ./g.js
+ */
+// import Body from './dynamics/body';
+// import BodyDef from './dynamics/body-def';
+// import ContactFilter from './dynamics/contact-filter';
+// import ContactImpulse from './dynamics/contact-impulse';
+// import ContactListener from './dynamics/contact-listener';
+// import ContactManager from './dynamics/contact-manager';
+// import DestructionListener from './dynamics/destruction-listener';
+// import FilterData from './dynamics/filter-data';
+// import Fixture from './dynamics/fixture';
+// import FixtureDef from './dynamics/fixture-def';
+// import Island from './dynamics/island';
+// import World from './dynamics/world';
+
+/**
+ * @see: ./h.js
+ */
+// import CircleContact from './dynamics/contacts/circle-contact';
+// import Contact from './dynamics/contacts/contact';
+// import ContactConstraint from './dynamics/contacts/contact-constraint';
+// import ContactConstraintPoint from './dynamics/contacts/contact-constraint-point';
+// import ContactEdge from './dynamics/contacts/contact-edge';
+// import ContactFactory from './dynamics/contacts/contact-factory';
+// import ContactRegister from './dynamics/contacts/contact-register';
+// import ContactResult from './dynamics/contacts/contact-result';
+// import ContactSolver from './dynamics/contacts/contact-solver';
+// import EdgeAndCircleContact from './dynamics/contacts/edge-and-circle-contact';
+// import NullContact from './dynamics/contacts/null-contact';
+// import PolyAndCircleContact from './dynamics/contacts/poly-and-circle-contact';
+// import PolyAndEdgeContact from './dynamics/contacts/poly-and-edge-contact';
+// import PolygonContact from './dynamics/contacts/polygon-contact';
+// import PositionSolverManifold from './dynamics/contacts/position-solver-manifold';
+
+/**
+ * @see: ./i.js
+ */
+// import BuoyancyController from './dynamics/controllers/buoyancy-controller';
+// import ConstantAccelController from './dynamics/controllers/constant-accel-controller';
+// import ConstantForceController from './dynamics/controllers/constant-force-controller';
+// import Controller from './dynamics/controllers/controller';
+// import ControllerEdge from './dynamics/controllers/controller-edge';
+// import GravityController from './dynamics/controllers/gravity-controller';
+// import TensorDampingController from './dynamics/controllers/tensor-damping-controller';
+
+/**
+ * @see: ./j.js
+ */
+// import DistanceJoint from './dynamics/controllers/distance-joint';
+// import DistanceJointDef from './dynamics/controllers/distance-joint-def';
+// import FrictionJoint from './dynamics/controllers/friction-joint';
+// import FrictionJointDef from './dynamics/controllers/friction-joint-def';
+// import GearJoint from './dynamics/controllers/gear-joint';
+// import GearJointDef from './dynamics/controllers/gear-joint-def';
+// import Jacobian from './dynamics/controllers/jacobian';
+// import Joint from './dynamics/controllers/joint';
+// import JointDef from './dynamics/controllers/joint-def';
+// import JointEdge from './dynamics/controllers/joint-edge';
+// import LineJoint from './dynamics/controllers/line-joint';
+// import LineJointDef from './dynamics/controllers/line-joint-def';
+// import MouseJoint from './dynamics/controllers/mouse-joint';
+// import MouseJointDef from './dynamics/controllers/mouse-joint-def';
+// import PrismaticJoint from './dynamics/controllers/prismatic-joint';
+// import PrismaticJointDef from './dynamics/controllers/prismatic-joint-def';
+// import PulleyJoint from './dynamics/controllers/pulley-joint';
+// import PulleyJointDef from './dynamics/controllers/pulley-joint-def';
+// import RevoluteJoint from './dynamics/controllers/revolute-joint';
+// import RevoluteJointDef from './dynamics/controllers/revolute-joint-def';
+// import WeldJoint from './dynamics/controllers/weld-joint';
+// import WeldJointDef from './dynamics/controllers/weld-joint-def';
+
 export default function b(Box2D) {
   Box2D.Collision.IBroadPhase = 'Box2D.Collision.IBroadPhase';
 

@@ -22,12 +22,23 @@ export default function d(Box2D) {
   const b2Transform = Box2D.Common.Math.b2Transform;
   const b2Vec2 = Box2D.Common.Math.b2Vec2;
 
+  // b2CircleShape
+  // b2EdgeChainDef
+  // b2EdgeShape
+  // b2MassData
+  // b2PolygonShape
+  // b2Shape
+
+  /**
+   * b2CircleShape
+   */
   Box2D.inherit(b2CircleShape, Box2D.Collision.Shapes.b2Shape);
   b2CircleShape.prototype.__super = Box2D.Collision.Shapes.b2Shape.prototype;
   b2CircleShape.b2CircleShape = function() {
     Box2D.Collision.Shapes.b2Shape.b2Shape.apply(this, arguments);
     this.m_p = new b2Vec2();
   };
+
   b2CircleShape.prototype.Copy = function() {
     var s = new b2CircleShape();
     s.Set(this);
@@ -147,12 +158,20 @@ export default function d(Box2D) {
     this.m_type = b2Shape.e_circleShape;
     this.m_radius = radius;
   };
+
+  /**
+   * b2EdgeChainDef
+   */
   b2EdgeChainDef.b2EdgeChainDef = function() {};
   b2EdgeChainDef.prototype.b2EdgeChainDef = function() {
     this.vertexCount = 0;
     this.isALoop = true;
     this.vertices = [];
   };
+
+  /**
+   * b2EdgeShape
+   */
   Box2D.inherit(b2EdgeShape, Box2D.Collision.Shapes.b2Shape);
   b2EdgeShape.prototype.__super = Box2D.Collision.Shapes.b2Shape.prototype;
   b2EdgeShape.b2EdgeShape = function() {
@@ -382,11 +401,19 @@ export default function d(Box2D) {
     this.m_cornerDir2 = cornerDir;
     this.m_cornerConvex2 = convex;
   };
+
+  /**
+   * b2MassData
+   */
   b2MassData.b2MassData = function() {
     this.mass = 0.0;
     this.center = new b2Vec2(0, 0);
     this.I = 0.0;
   };
+
+  /**
+   * b2PolygonShape
+   */
   Box2D.inherit(b2PolygonShape, Box2D.Collision.Shapes.b2Shape);
   b2PolygonShape.prototype.__super = Box2D.Collision.Shapes.b2Shape.prototype;
   b2PolygonShape.b2PolygonShape = function() {
@@ -892,6 +919,10 @@ export default function d(Box2D) {
   Box2D.postDefs.push(function() {
     Box2D.Collision.Shapes.b2PolygonShape.s_mat = new b2Mat22();
   });
+
+  /**
+   * b2Shape
+   */
   b2Shape.b2Shape = function() {};
   b2Shape.prototype.Copy = function() {
     return null;

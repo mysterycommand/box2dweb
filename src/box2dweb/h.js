@@ -41,6 +41,22 @@ export default function h(Box2D) {
   const b2PositionSolverManifold =
     Box2D.Dynamics.Contacts.b2PositionSolverManifold;
 
+  // b2CircleContact
+  // b2Contact
+  // b2ContactConstraint
+  // b2ContactConstraintPoint
+  // b2ContactEdge
+  // b2ContactFactory
+  // b2ContactRegister
+  // b2ContactResult
+  // b2ContactSolver
+  // b2EdgeAndCircleContact
+  // b2NullContact
+  // b2PolyAndCircleContact
+  // b2PolyAndEdgeContact
+  // b2PolygonContact
+  // b2PositionSolverManifold
+
   /**
    * b2CircleContact
    */
