@@ -1,4 +1,5 @@
 import Color from './common/color';
+import Vec2 from './common/math/vec2';
 import * as Settings from './common/settings';
 import DebugDraw from './dynamics/debug-draw';
 
@@ -240,11 +241,7 @@ export default function b(Box2D) {
   }
   Box2D.Common.Math.b2Transform = b2Transform;
 
-  function b2Vec2() {
-    b2Vec2.b2Vec2.apply(this, arguments);
-    if (this.constructor === b2Vec2) this.b2Vec2.apply(this, arguments);
-  }
-  Box2D.Common.Math.b2Vec2 = b2Vec2;
+  Box2D.Common.Math.b2Vec2 = Vec2;
 
   function b2Vec3() {
     b2Vec3.b2Vec3.apply(this, arguments);
