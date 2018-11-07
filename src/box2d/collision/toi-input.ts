@@ -1,6 +1,12 @@
-b2TOIInput.b2TOIInput = function() {
-  this.proxyA = new b2DistanceProxy();
-  this.proxyB = new b2DistanceProxy();
-  this.sweepA = new b2Sweep();
-  this.sweepB = new b2Sweep();
-};
+import DistanceProxy from './distance-proxy';
+import Sweep from '../common/math/sweep';
+
+export default class ToiInput {
+  public proxyA = new DistanceProxy();
+  public proxyB = new DistanceProxy();
+
+  public sweepA = new Sweep();
+  public sweepB = new Sweep();
+
+  public tolerance = 1;
+}

@@ -1,5 +1,6 @@
 import Transform from '../common/math/transform';
 import DistanceProxy from './distance-proxy';
+import Sweep from '../common/math/sweep';
 
 export default class DistanceInput {
   public proxyA = new DistanceProxy();
@@ -7,6 +8,9 @@ export default class DistanceInput {
 
   public transformA = new Transform();
   public transformB = new Transform();
+
+  public sweepA = new Sweep();
+  public sweepB = new Sweep();
 
   public useRadii = false;
 }

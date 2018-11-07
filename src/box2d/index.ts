@@ -17,7 +17,6 @@
 */
 
 import b from './b';
-import c from './c';
 import g from './g';
 import h from './h';
 import i from './i';
@@ -98,7 +97,6 @@ export const Box2D = {
 b(Box2D);
 
 // definitions
-c(Box2D);
 g(Box2D);
 h(Box2D);
 i(Box2D);

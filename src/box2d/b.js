@@ -9,7 +9,6 @@ import Vec3 from './common/math/vec3';
 import * as Settings from './common/settings';
 import DebugDraw from './dynamics/debug-draw';
 import TimeStep from './dynamics/time-step';
-
 import Aabb from './collision/aabb';
 import Bound from './collision/bound';
 import BoundValues from './collision/bound-values';
@@ -40,15 +39,11 @@ import EdgeShape from './collision/shapes/edge-shape';
 import MassData from './collision/shapes/mass-data';
 import PolygonShape from './collision/shapes/polygon-shape';
 import Shape from './collision/shapes/shape';
-
-/**
- * @see: ./c.js
- */
-// import Segment from './collision/segment';
-// import SeparationFunction from './collision/separation-function';
-// import TimeOfImpact from './collision/time-of-impact';
-// import ToiInput from './collision/toi-input';
-// import WorldManifold from './collision/world-manifold';
+import Segment from './collision/segment';
+import SeparationFunction from './collision/separation-function';
+import * as TimeOfImpact from './collision/time-of-impact';
+import ToiInput from './collision/toi-input';
+import WorldManifold from './collision/world-manifold';
 
 /**
  * @see: ./g.js
@@ -143,38 +138,14 @@ export default function b(Box2D) {
   Box2D.Collision.b2Point = Point;
   Box2D.Collision.b2RayCastInput = RayCastInput;
   Box2D.Collision.b2RayCastOutput = RayCastOutput;
-
-  function b2Segment() {
-    b2Segment.b2Segment.apply(this, arguments);
-  }
-  Box2D.Collision.b2Segment = b2Segment;
-
-  function b2SeparationFunction() {
-    b2SeparationFunction.b2SeparationFunction.apply(this, arguments);
-  }
-  Box2D.Collision.b2SeparationFunction = b2SeparationFunction;
-
+  Box2D.Collision.b2Segment = Segment;
+  Box2D.Collision.b2SeparationFunction = SeparationFunction;
   Box2D.Collision.b2Simplex = Simplex;
   Box2D.Collision.b2SimplexCache = SimplexCache;
   Box2D.Collision.b2SimplexVertex = SimplexVertex;
-
-  function b2TimeOfImpact() {
-    b2TimeOfImpact.b2TimeOfImpact.apply(this, arguments);
-  }
-  Box2D.Collision.b2TimeOfImpact = b2TimeOfImpact;
-
-  function b2TOIInput() {
-    b2TOIInput.b2TOIInput.apply(this, arguments);
-  }
-  Box2D.Collision.b2TOIInput = b2TOIInput;
-
-  function b2WorldManifold() {
-    b2WorldManifold.b2WorldManifold.apply(this, arguments);
-    if (this.constructor === b2WorldManifold)
-      this.b2WorldManifold.apply(this, arguments);
-  }
-  Box2D.Collision.b2WorldManifold = b2WorldManifold;
-
+  Box2D.Collision.b2TimeOfImpact = TimeOfImpact;
+  Box2D.Collision.b2TOIInput = ToiInput;
+  Box2D.Collision.b2WorldManifold = WorldManifold;
   Box2D.Collision.ClipVertex = ClipVertex;
   Box2D.Collision.Features = Features;
   Box2D.Collision.Shapes.b2CircleShape = CircleShape;
