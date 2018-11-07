@@ -10,12 +10,13 @@ import * as Settings from './common/settings';
 import DebugDraw from './dynamics/debug-draw';
 import TimeStep from './dynamics/time-step';
 
+import Aabb from './collision/aabb';
+import Bound from './collision/bound';
+import BoundValues from './collision/bound-values';
+
 /**
  * @see: ./c.js
  */
-// import Aabb from './collision/aabb';
-// import Bound from './collision/bound';
-// import BoundValues from './collision/bound-values';
 // import Collision from './collision/collision';
 // import ContactId from './collision/contact-id';
 // import ContactPoint from './collision/contact-point';
@@ -127,23 +128,9 @@ import TimeStep from './dynamics/time-step';
 
 export default function b(Box2D) {
   Box2D.Collision.IBroadPhase = 'Box2D.Collision.IBroadPhase';
-
-  function b2AABB() {
-    b2AABB.b2AABB.apply(this, arguments);
-  }
-  Box2D.Collision.b2AABB = b2AABB;
-
-  function b2Bound() {
-    b2Bound.b2Bound.apply(this, arguments);
-  }
-  Box2D.Collision.b2Bound = b2Bound;
-
-  function b2BoundValues() {
-    b2BoundValues.b2BoundValues.apply(this, arguments);
-    if (this.constructor === b2BoundValues)
-      this.b2BoundValues.apply(this, arguments);
-  }
-  Box2D.Collision.b2BoundValues = b2BoundValues;
+  Box2D.Collision.b2AABB = Aabb;
+  Box2D.Collision.b2Bound = Bound;
+  Box2D.Collision.b2BoundValues = BoundValues;
 
   function b2Collision() {
     b2Collision.b2Collision.apply(this, arguments);
