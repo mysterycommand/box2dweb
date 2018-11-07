@@ -5,7 +5,7 @@ export default class Transform {
   public position = new Vec2();
   public R = new Mat22();
 
-  public b2Transform(pos?: Vec2, r?: Mat22) {
+  constructor(pos?: Vec2, r?: Mat22) {
     if (pos) {
       this.position.SetV(pos);
     }

@@ -1,3 +1,5 @@
+// tslint:disable variable-name
+
 import Vec2 from './vec2';
 import Mat22 from './mat22';
 import Transform from './transform';
