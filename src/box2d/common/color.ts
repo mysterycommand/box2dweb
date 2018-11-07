@@ -1,8 +1,4 @@
-import { Clamp } from './math';
-
-function parseUInt(v: number) {
-  return Math.abs(parseInt(`${v}`, 10));
-}
+import { Clamp, parseUInt } from './math';
 
 export default class Color {
   private _r = 0;
