@@ -26,10 +26,10 @@ import SimplexVertex from './collision/simplex-vertex';
 /**
  * @see: ./c.js
  */
-// import Distance from './collision/distance';
-// import DistanceInput from './collision/distance-input';
-// import DistanceOutput from './collision/distance-output';
-// import DistanceProxy from './collision/distance-proxy';
+import * as Distance from './collision/distance';
+import DistanceInput from './collision/distance-input';
+import DistanceOutput from './collision/distance-output';
+import DistanceProxy from './collision/distance-proxy';
 // import DynamicTree from './collision/dynamic-tree';
 // import DynamicTreeBroadPhase from './collision/dynamic-tree-broad-phase';
 // import DynamicTreeNode from './collision/dynamic-tree-node';
@@ -39,7 +39,7 @@ import SimplexVertex from './collision/simplex-vertex';
 // import RayCastOutput from './collision/ray-cast-output';
 // import Segment from './collision/segment';
 // import SeparationFunction from './collision/separation-function';
-// import Simplex from './collision/simplex';
+import Simplex from './collision/simplex';
 // import TimeOfImpact from './collision/time-of-impact';
 // import ToiInput from './collision/toi-input';
 // import WorldManifold from './collision/world-manifold';
@@ -47,12 +47,12 @@ import SimplexVertex from './collision/simplex-vertex';
 /**
  * @see: ./d.js
  */
-// import CircleShape from './collision/shapes/circle-shape';
+import CircleShape from './collision/shapes/circle-shape';
 // import EdgeChainDef from './collision/shapes/edge-chain-def';
 // import EdgeShape from './collision/shapes/edge-shape';
-// import MassData from './collision/shapes/mass-data';
-// import PolygonShape from './collision/shapes/polygon-shape';
-// import Shape from './collision/shapes/shape';
+import MassData from './collision/shapes/mass-data';
+import PolygonShape from './collision/shapes/polygon-shape';
+import Shape from './collision/shapes/shape';
 
 /**
  * @see: ./g.js
@@ -134,26 +134,10 @@ export default function b(Box2D) {
   Box2D.Collision.b2Collision = Collision;
   Box2D.Collision.b2ContactID = ContactId;
   Box2D.Collision.b2ContactPoint = ContactPoint;
-
-  function b2Distance() {
-    b2Distance.b2Distance.apply(this, arguments);
-  }
-  Box2D.Collision.b2Distance = b2Distance;
-
-  function b2DistanceInput() {
-    b2DistanceInput.b2DistanceInput.apply(this, arguments);
-  }
-  Box2D.Collision.b2DistanceInput = b2DistanceInput;
-
-  function b2DistanceOutput() {
-    b2DistanceOutput.b2DistanceOutput.apply(this, arguments);
-  }
-  Box2D.Collision.b2DistanceOutput = b2DistanceOutput;
-
-  function b2DistanceProxy() {
-    b2DistanceProxy.b2DistanceProxy.apply(this, arguments);
-  }
-  Box2D.Collision.b2DistanceProxy = b2DistanceProxy;
+  Box2D.Collision.b2Distance = Distance;
+  Box2D.Collision.b2DistanceInput = DistanceInput;
+  Box2D.Collision.b2DistanceOutput = DistanceOutput;
+  Box2D.Collision.b2DistanceProxy = DistanceProxy;
 
   function b2DynamicTree() {
     b2DynamicTree.b2DynamicTree.apply(this, arguments);
@@ -207,12 +191,7 @@ export default function b(Box2D) {
   }
   Box2D.Collision.b2SeparationFunction = b2SeparationFunction;
 
-  function b2Simplex() {
-    b2Simplex.b2Simplex.apply(this, arguments);
-    if (this.constructor === b2Simplex) this.b2Simplex.apply(this, arguments);
-  }
-  Box2D.Collision.b2Simplex = b2Simplex;
-
+  Box2D.Collision.b2Simplex = Simplex;
   Box2D.Collision.b2SimplexCache = SimplexCache;
   Box2D.Collision.b2SimplexVertex = SimplexVertex;
 
@@ -235,13 +214,7 @@ export default function b(Box2D) {
 
   Box2D.Collision.ClipVertex = ClipVertex;
   Box2D.Collision.Features = Features;
-
-  function b2CircleShape() {
-    b2CircleShape.b2CircleShape.apply(this, arguments);
-    if (this.constructor === b2CircleShape)
-      this.b2CircleShape.apply(this, arguments);
-  }
-  Box2D.Collision.Shapes.b2CircleShape = b2CircleShape;
+  Box2D.Collision.Shapes.b2CircleShape = CircleShape;
 
   function b2EdgeChainDef() {
     b2EdgeChainDef.b2EdgeChainDef.apply(this, arguments);
@@ -257,24 +230,9 @@ export default function b(Box2D) {
   }
   Box2D.Collision.Shapes.b2EdgeShape = b2EdgeShape;
 
-  function b2MassData() {
-    b2MassData.b2MassData.apply(this, arguments);
-  }
-  Box2D.Collision.Shapes.b2MassData = b2MassData;
-
-  function b2PolygonShape() {
-    b2PolygonShape.b2PolygonShape.apply(this, arguments);
-    if (this.constructor === b2PolygonShape)
-      this.b2PolygonShape.apply(this, arguments);
-  }
-  Box2D.Collision.Shapes.b2PolygonShape = b2PolygonShape;
-
-  function b2Shape() {
-    b2Shape.b2Shape.apply(this, arguments);
-    if (this.constructor === b2Shape) this.b2Shape.apply(this, arguments);
-  }
-  Box2D.Collision.Shapes.b2Shape = b2Shape;
-
+  Box2D.Collision.Shapes.b2MassData = MassData;
+  Box2D.Collision.Shapes.b2PolygonShape = PolygonShape;
+  Box2D.Collision.Shapes.b2Shape = Shape;
   Box2D.Common.b2internal = 'Box2D.Common.b2internal';
   Box2D.Common.b2Color = Color;
   Box2D.Common.b2Settings = Settings;

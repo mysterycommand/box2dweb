@@ -1,53 +1,91 @@
-b2Shape.b2Shape = function() {};
-b2Shape.prototype.Copy = function() {
-  return null;
-};
-b2Shape.prototype.Set = function(other) {
-  this.m_radius = other.m_radius;
-};
-b2Shape.prototype.GetType = function() {
-  return this.m_type;
-};
-b2Shape.prototype.TestPoint = function(xf, p) {
-  return false;
-};
-b2Shape.prototype.RayCast = function(output, input, transform) {
-  return false;
-};
-b2Shape.prototype.ComputeAABB = function(aabb, xf) {};
-b2Shape.prototype.ComputeMass = function(massData, density) {
-  if (density === undefined) density = 0;
-};
-b2Shape.prototype.ComputeSubmergedArea = function(normal, offset, xf, c) {
-  if (offset === undefined) offset = 0;
-  return 0;
-};
-b2Shape.TestOverlap = function(shape1, transform1, shape2, transform2) {
-  var input = new b2DistanceInput();
-  input.proxyA = new b2DistanceProxy();
-  input.proxyA.Set(shape1);
-  input.proxyB = new b2DistanceProxy();
-  input.proxyB.Set(shape2);
-  input.transformA = transform1;
-  input.transformB = transform2;
-  input.useRadii = true;
-  var simplexCache = new b2SimplexCache();
-  simplexCache.count = 0;
-  var output = new b2DistanceOutput();
-  b2Distance.Distance(output, simplexCache, input);
-  return output.distance < 10.0 * Number.MIN_VALUE;
-};
-b2Shape.prototype.b2Shape = function() {
-  this.m_type = b2Shape.e_unknownShape;
-  this.m_radius = b2Settings.b2_linearSlop;
-};
-Box2D.postDefs.push(function() {
-  Box2D.Collision.Shapes.b2Shape.e_unknownShape = parseInt(-1);
-  Box2D.Collision.Shapes.b2Shape.e_circleShape = 0;
-  Box2D.Collision.Shapes.b2Shape.e_polygonShape = 1;
-  Box2D.Collision.Shapes.b2Shape.e_edgeShape = 2;
-  Box2D.Collision.Shapes.b2Shape.e_shapeTypeCount = 3;
-  Box2D.Collision.Shapes.b2Shape.e_hitCollide = 1;
-  Box2D.Collision.Shapes.b2Shape.e_missCollide = 0;
-  Box2D.Collision.Shapes.b2Shape.e_startsInsideCollide = parseInt(-1);
-});
+// tslint:disable variable-name
+
+import { b2_linearSlop } from '../../common/settings';
+// import Vec2 from '../../common/math/vec2';
+import Transform from '../../common/math/transform';
+import DistanceInput from '../distance-input';
+import DistanceOutput from '../distance-output';
+import DistanceProxy from '../distance-proxy';
+// import RayCastOutput from '../ray-cast-output';
+// import RayCastInput from '../ray-cast-input';
+import SimplexCache from '../simplex-cache';
+import { Distance } from '../distance';
+// import Aabb from '../aabb';
+
+export default class Shape {
+  public static e_unknownShape = parseInt('-1', 10);
+  public static e_circleShape = 0;
+  public static e_polygonShape = 1;
+  public static e_edgeShape = 2;
+  public static e_shapeTypeCount = 3;
+  public static e_hitCollide = 1;
+  public static e_missCollide = 0;
+  public static e_startsInsideCollide = parseInt('-1', 10);
+
+  public static TestOverlap(
+    shape1: Shape,
+    transform1: Transform,
+    shape2: Shape,
+    transform2: Transform,
+  ) {
+    const input = new DistanceInput();
+
+    input.proxyA = new DistanceProxy();
+    input.proxyA.Set(shape1);
+
+    input.proxyB = new DistanceProxy();
+    input.proxyB.Set(shape2);
+
+    input.transformA = transform1;
+    input.transformB = transform2;
+
+    input.useRadii = true;
+
+    const simplexCache = new SimplexCache();
+    simplexCache.count = 0;
+
+    const output = new DistanceOutput();
+    Distance(output, simplexCache, input);
+
+    return output.distance < 10.0 * Number.MIN_VALUE;
+  }
+
+  public m_type = Shape.e_unknownShape;
+  public m_radius = b2_linearSlop;
+
+  // public Copy(): Shape {
+  //   return null;
+  // }
+
+  public Set(other: Shape) {
+    this.m_radius = other.m_radius;
+  }
+
+  public GetType() {
+    return this.m_type;
+  }
+
+  // public TestPoint(xf: Transform, p: Vec2) {
+  //   return false;
+  // }
+
+  // public RayCast(
+  //   output: RayCastOutput,
+  //   input: RayCastInput,
+  //   transform: Transform,
+  // ) {
+  //   return false;
+  // }
+
+  // tslint:disable-next-line no-empty
+  // public ComputeAABB(aabb: Aabb, xf: Transform) {}
+
+  // public ComputeMass(
+  //   massData: { mass: number; center: Vec2; I: number },
+  //   density = 0,
+  // ) {} // tslint:disable-line no-empty
+
+  // public ComputeSubmergedArea(normal: Vec2, offset = 0, xf: Transform, c: any) {
+  //   return 0;
+  // }
+}
