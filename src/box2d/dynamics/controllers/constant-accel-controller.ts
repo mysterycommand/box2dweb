@@ -1,25 +1,29 @@
-Box2D.inherit(
-    b2ConstantAccelController,
-    Box2D.Dynamics.Controllers.b2Controller,
-  );
+import Controller from './controller';
+import Vec2 from '../../common/math/vec2';
+import TimeStep from '../time-step';
 
-  b2ConstantAccelController.prototype.__super =
-    Box2D.Dynamics.Controllers.b2Controller.prototype;
+export default class ConstantAccelController extends Controller {
+  public A = new Vec2();
 
-  b2ConstantAccelController.b2ConstantAccelController = function() {
-    Box2D.Dynamics.Controllers.b2Controller.b2Controller.apply(this, arguments);
-    this.A = new b2Vec2(0, 0);
-  };
+  public Step(step: TimeStep) {
+    if (!this.m_bodyList) {
+      return;
+    }
 
-  b2ConstantAccelController.prototype.Step = function(step) {
-    var smallA = new b2Vec2(this.A.x * step.dt, this.A.y * step.dt);
-    for (var i = this.m_bodyList; i; i = i.nextBody) {
-      var body = i.body;
-      if (!body.IsAwake()) continue;
+    const smallA = new Vec2(this.A.x * step.dt, this.A.y * step.dt);
+    for (let i = this.m_bodyList; i; i = i.nextBody) {
+      const body = i.body;
+
+      if (!body.IsAwake()) {
+        continue;
+      }
+
       body.SetLinearVelocity(
-        new b2Vec2(
+        new Vec2(
           body.GetLinearVelocity().x + smallA.x,
           body.GetLinearVelocity().y + smallA.y,
         ),
       );
     }
+  }
+}

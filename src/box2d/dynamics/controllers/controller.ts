@@ -1,15 +1,18 @@
 // tslint:disable variable-name
+
 import DebugDraw from '../debug-draw';
 import ControllerEdge from './controller-edge';
+import TimeStep from '../time-step';
+import World from '../world';
 
 export default class Controller {
-  public m_bodyList?: ControllerEdge = undefined;
+  public m_bodyList?: ControllerEdge;
   public m_bodyCount = 0;
   public m_next: any;
   public m_prev: any;
-  public m_world: any;
+  public m_world?: World;
 
-  public Step(step: { dt: number }) {} // tslint:disable-line no-empty
+  public Step(step: TimeStep) {} // tslint:disable-line no-empty
   public Draw(debugDraw: DebugDraw) {} // tslint:disable-line no-empty
 
   public AddBody(body: any) {

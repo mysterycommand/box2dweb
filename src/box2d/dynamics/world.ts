@@ -119,8 +119,8 @@ export default class World {
   }
 
   public CreateBody(def: BodyDef) {
-    if (this.IsLocked() === true) {
-      return null;
+    if (this.IsLocked()) {
+      throw new Error('Cannot create bodies on a locked world.');
     }
 
     const b = new Body(def, this);
@@ -137,7 +137,7 @@ export default class World {
   }
 
   public DestroyBody(b: Body) {
-    if (this.IsLocked() === true) {
+    if (this.IsLocked()) {
       return;
     }
 

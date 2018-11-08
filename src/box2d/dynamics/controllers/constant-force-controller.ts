@@ -1,20 +1,23 @@
-Box2D.inherit(
-  b2ConstantForceController,
-  Box2D.Dynamics.Controllers.b2Controller,
-);
+import Controller from './controller';
+import Vec2 from '../../common/math/vec2';
+import TimeStep from '../time-step';
 
-b2ConstantForceController.prototype.__super =
-  Box2D.Dynamics.Controllers.b2Controller.prototype;
+export default class ConstantForceController extends Controller {
+  public F = new Vec2();
 
-b2ConstantForceController.b2ConstantForceController = function() {
-  Box2D.Dynamics.Controllers.b2Controller.b2Controller.apply(this, arguments);
-  this.F = new b2Vec2(0, 0);
-};
+  public Step(step: TimeStep) {
+    if (!this.m_bodyList) {
+      return;
+    }
 
-b2ConstantForceController.prototype.Step = function(step) {
-  for (var i = this.m_bodyList; i; i = i.nextBody) {
-    var body = i.body;
-    if (!body.IsAwake()) continue;
-    body.ApplyForce(this.F, body.GetWorldCenter());
+    for (let i = this.m_bodyList; i; i = i.nextBody) {
+      const body = i.body;
+
+      if (!body.IsAwake()) {
+        continue;
+      }
+
+      body.ApplyForce(this.F, body.GetWorldCenter());
+    }
   }
-};
+}

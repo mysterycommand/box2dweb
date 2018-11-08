@@ -1,3 +1,7 @@
-b2DestructionListener.b2DestructionListener = function() {};
-b2DestructionListener.prototype.SayGoodbyeJoint = function(joint) {};
-b2DestructionListener.prototype.SayGoodbyeFixture = function(fixture) {};
+import Fixture from './fixture';
+import Joint from './joints/joint';
+
+export default class DestructionListener {
+  public SayGoodbyeJoint(joint: Joint) {} // tslint:disable-line no-empty
+  public SayGoodbyeFixture(fixture: Fixture) {} // tslint:disable-line no-empty
+}

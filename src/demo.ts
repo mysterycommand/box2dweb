@@ -1,27 +1,18 @@
-import { Box2D } from './box2d';
+import World from './box2d/dynamics/world';
+import Vec2 from './box2d/common/math/vec2';
+import FixtureDef from './box2d/dynamics/fixture-def';
+import BodyDef from './box2d/dynamics/body-def';
+import Body from './box2d/dynamics/body';
+import PolygonShape from './box2d/collision/shapes/polygon-shape';
+import CircleShape from './box2d/collision/shapes/circle-shape';
+import DebugDraw from './box2d/dynamics/debug-draw';
+import MouseJointDef from './box2d/dynamics/joints/mouse-joint-def';
+import Aabb from './box2d/collision/aabb';
 
 const scale = 1 / 29.075;
 
-const {
-  Common: {
-    Math: { b2Vec2: Vec2 },
-  },
-  Collision: {
-    b2AABB: Aabb,
-    Shapes: { b2PolygonShape: PolygonShape, b2CircleShape: CircleShape },
-  },
-  Dynamics: {
-    b2BodyDef: BodyDef,
-    b2Body: Body,
-    b2FixtureDef: FixtureDef,
-    b2World: World,
-    b2DebugDraw: DebugDraw,
-    Joints: { b2MouseJointDef: MouseJointDef },
-  },
-} = Box2D;
-
 const c = document.getElementById('canvas') as HTMLCanvasElement;
-const ctx = c.getContext('2d');
+const ctx = c.getContext('2d') as CanvasRenderingContext2D;
 
 function init() {
   const world = new World(
@@ -186,11 +177,12 @@ function init() {
 
       if (body) {
         const md = new MouseJointDef();
-        md.bodyA = world.GetGroundBody();
+        md.bodyA = world.GetGroundBody() as Body;
         md.bodyB = body;
         md.target.Set(mouseX, mouseY);
         md.collideConnected = true;
         md.maxForce = 300.0 * body.GetMass();
+
         mouseJoint = world.CreateJoint(md);
         body.SetAwake(true);
       }
