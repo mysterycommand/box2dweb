@@ -1,396 +1,558 @@
-Box2D.inherit(b2PulleyJoint, Box2D.Dynamics.Joints.b2Joint);
-b2PulleyJoint.prototype.__super = Box2D.Dynamics.Joints.b2Joint.prototype;
-b2PulleyJoint.b2PulleyJoint = function() {
-  Box2D.Dynamics.Joints.b2Joint.b2Joint.apply(this, arguments);
-  this.m_groundAnchor1 = new b2Vec2();
-  this.m_groundAnchor2 = new b2Vec2();
-  this.m_localAnchor1 = new b2Vec2();
-  this.m_localAnchor2 = new b2Vec2();
-  this.m_u1 = new b2Vec2();
-  this.m_u2 = new b2Vec2();
-};
-b2PulleyJoint.prototype.GetAnchorA = function() {
-  return this.m_bodyA.GetWorldPoint(this.m_localAnchor1);
-};
-b2PulleyJoint.prototype.GetAnchorB = function() {
-  return this.m_bodyB.GetWorldPoint(this.m_localAnchor2);
-};
-b2PulleyJoint.prototype.GetReactionForce = function(inv_dt) {
-  if (inv_dt === undefined) inv_dt = 0;
-  return new b2Vec2(
-    inv_dt * this.m_impulse * this.m_u2.x,
-    inv_dt * this.m_impulse * this.m_u2.y,
-  );
-};
-b2PulleyJoint.prototype.GetReactionTorque = function(inv_dt) {
-  if (inv_dt === undefined) inv_dt = 0;
-  return 0.0;
-};
-b2PulleyJoint.prototype.GetGroundAnchorA = function() {
-  var a = this.m_ground.m_xf.position.Copy();
-  a.Add(this.m_groundAnchor1);
-  return a;
-};
-b2PulleyJoint.prototype.GetGroundAnchorB = function() {
-  var a = this.m_ground.m_xf.position.Copy();
-  a.Add(this.m_groundAnchor2);
-  return a;
-};
-b2PulleyJoint.prototype.GetLength1 = function() {
-  var p = this.m_bodyA.GetWorldPoint(this.m_localAnchor1);
-  var sX = this.m_ground.m_xf.position.x + this.m_groundAnchor1.x;
-  var sY = this.m_ground.m_xf.position.y + this.m_groundAnchor1.y;
-  var dX = p.x - sX;
-  var dY = p.y - sY;
-  return Math.sqrt(dX * dX + dY * dY);
-};
-b2PulleyJoint.prototype.GetLength2 = function() {
-  var p = this.m_bodyB.GetWorldPoint(this.m_localAnchor2);
-  var sX = this.m_ground.m_xf.position.x + this.m_groundAnchor2.x;
-  var sY = this.m_ground.m_xf.position.y + this.m_groundAnchor2.y;
-  var dX = p.x - sX;
-  var dY = p.y - sY;
-  return Math.sqrt(dX * dX + dY * dY);
-};
-b2PulleyJoint.prototype.GetRatio = function() {
-  return this.m_ratio;
-};
-b2PulleyJoint.prototype.b2PulleyJoint = function(def) {
-  this.__super.b2Joint.call(this, def);
-  var tMat;
-  var tX = 0;
-  var tY = 0;
-  this.m_ground = this.m_bodyA.m_world.m_groundBody;
-  this.m_groundAnchor1.x = def.groundAnchorA.x - this.m_ground.m_xf.position.x;
-  this.m_groundAnchor1.y = def.groundAnchorA.y - this.m_ground.m_xf.position.y;
-  this.m_groundAnchor2.x = def.groundAnchorB.x - this.m_ground.m_xf.position.x;
-  this.m_groundAnchor2.y = def.groundAnchorB.y - this.m_ground.m_xf.position.y;
-  this.m_localAnchor1.SetV(def.localAnchorA);
-  this.m_localAnchor2.SetV(def.localAnchorB);
-  this.m_ratio = def.ratio;
-  this.m_constant = def.lengthA + this.m_ratio * def.lengthB;
-  this.m_maxLength1 = b2Math.Min(
-    def.maxLengthA,
-    this.m_constant - this.m_ratio * b2PulleyJoint.b2_minPulleyLength,
-  );
-  this.m_maxLength2 = b2Math.Min(
-    def.maxLengthB,
-    (this.m_constant - b2PulleyJoint.b2_minPulleyLength) / this.m_ratio,
-  );
-  this.m_impulse = 0.0;
-  this.m_limitImpulse1 = 0.0;
-  this.m_limitImpulse2 = 0.0;
-};
-b2PulleyJoint.prototype.InitVelocityConstraints = function(step) {
-  var bA = this.m_bodyA;
-  var bB = this.m_bodyB;
-  var tMat;
-  tMat = bA.m_xf.R;
-  var r1X = this.m_localAnchor1.x - bA.m_sweep.localCenter.x;
-  var r1Y = this.m_localAnchor1.y - bA.m_sweep.localCenter.y;
-  var tX = tMat.col1.x * r1X + tMat.col2.x * r1Y;
-  r1Y = tMat.col1.y * r1X + tMat.col2.y * r1Y;
-  r1X = tX;
-  tMat = bB.m_xf.R;
-  var r2X = this.m_localAnchor2.x - bB.m_sweep.localCenter.x;
-  var r2Y = this.m_localAnchor2.y - bB.m_sweep.localCenter.y;
-  tX = tMat.col1.x * r2X + tMat.col2.x * r2Y;
-  r2Y = tMat.col1.y * r2X + tMat.col2.y * r2Y;
-  r2X = tX;
-  var p1X = bA.m_sweep.c.x + r1X;
-  var p1Y = bA.m_sweep.c.y + r1Y;
-  var p2X = bB.m_sweep.c.x + r2X;
-  var p2Y = bB.m_sweep.c.y + r2Y;
-  var s1X = this.m_ground.m_xf.position.x + this.m_groundAnchor1.x;
-  var s1Y = this.m_ground.m_xf.position.y + this.m_groundAnchor1.y;
-  var s2X = this.m_ground.m_xf.position.x + this.m_groundAnchor2.x;
-  var s2Y = this.m_ground.m_xf.position.y + this.m_groundAnchor2.y;
-  this.m_u1.Set(p1X - s1X, p1Y - s1Y);
-  this.m_u2.Set(p2X - s2X, p2Y - s2Y);
-  var length1 = this.m_u1.Length();
-  var length2 = this.m_u2.Length();
-  if (length1 > b2Settings.b2_linearSlop) {
-    this.m_u1.Multiply(1.0 / length1);
-  } else {
-    this.m_u1.SetZero();
+// tslint:disable variable-name
+
+import Joint from './joint';
+import PulleyJointDef from './pulley-joint-def';
+import Vec2 from '../../common/math/vec2';
+import Body from '../body';
+import { Min, Max, Clamp } from '../../common/math';
+import TimeStep from '../time-step';
+import { b2_linearSlop, b2_maxLinearCorrection } from '../../common/settings';
+
+export default class PulleyJoint extends Joint {
+  public static b2_minPulleyLength = 2;
+
+  public m_groundAnchorA = new Vec2();
+  public m_groundAnchorB = new Vec2();
+
+  public m_localAnchorA = new Vec2();
+  public m_localAnchorB = new Vec2();
+
+  public m_u1 = new Vec2();
+  public m_u2 = new Vec2();
+
+  public m_ground?: Body;
+
+  public m_impulse = 0;
+  public m_pulleyMass = 0;
+
+  public m_limitStateA = Joint.e_inactiveLimit;
+  public m_limitImpulseA = 0;
+  public m_limitMassA = 0;
+
+  public m_limitStateB = Joint.e_inactiveLimit;
+  public m_limitImpulseB = 0;
+  public m_limitMassB = 0;
+
+  public m_ratio = 0;
+  public m_constant = 0;
+  public m_maxLengthA = 0;
+  public m_maxLengthB = 0;
+
+  public m_state = Joint.e_inactiveLimit;
+
+  constructor(def: PulleyJointDef) {
+    super(def);
+
+    if (
+      !(
+        this.m_bodyA &&
+        this.m_bodyA.m_world &&
+        this.m_bodyA.m_world.m_groundBody
+      )
+    ) {
+      return;
+    }
+
+    this.m_ground = this.m_bodyA.m_world.m_groundBody;
+
+    this.m_groundAnchorA.x =
+      def.groundAnchorA.x - this.m_ground.m_xf.position.x;
+    this.m_groundAnchorA.y =
+      def.groundAnchorA.y - this.m_ground.m_xf.position.y;
+
+    this.m_groundAnchorB.x =
+      def.groundAnchorB.x - this.m_ground.m_xf.position.x;
+    this.m_groundAnchorB.y =
+      def.groundAnchorB.y - this.m_ground.m_xf.position.y;
+
+    this.m_localAnchorA.SetV(def.localAnchorA);
+    this.m_localAnchorB.SetV(def.localAnchorB);
+
+    this.m_ratio = def.ratio;
+    this.m_constant = def.lengthA + this.m_ratio * def.lengthB;
+
+    this.m_maxLengthA = Min(
+      def.maxLengthA,
+      this.m_constant - this.m_ratio * PulleyJoint.b2_minPulleyLength,
+    );
+
+    this.m_maxLengthB = Min(
+      def.maxLengthB,
+      (this.m_constant - PulleyJoint.b2_minPulleyLength) / this.m_ratio,
+    );
   }
-  if (length2 > b2Settings.b2_linearSlop) {
-    this.m_u2.Multiply(1.0 / length2);
-  } else {
-    this.m_u2.SetZero();
+
+  public GetAnchorA() {
+    if (!this.m_bodyA) {
+      return this.m_localAnchorA.Copy();
+    }
+
+    return this.m_bodyA.GetWorldPoint(this.m_localAnchorA);
   }
-  var C = this.m_constant - length1 - this.m_ratio * length2;
-  if (C > 0.0) {
-    this.m_state = b2Joint.e_inactiveLimit;
-    this.m_impulse = 0.0;
-  } else {
-    this.m_state = b2Joint.e_atUpperLimit;
+
+  public GetAnchorB() {
+    if (!this.m_bodyB) {
+      return this.m_localAnchorB.Copy();
+    }
+
+    return this.m_bodyB.GetWorldPoint(this.m_localAnchorB);
   }
-  if (length1 < this.m_maxLength1) {
-    this.m_limitState1 = b2Joint.e_inactiveLimit;
-    this.m_limitImpulse1 = 0.0;
-  } else {
-    this.m_limitState1 = b2Joint.e_atUpperLimit;
+
+  public GetReactionForce(inv_dt = 0) {
+    return new Vec2(
+      inv_dt * this.m_impulse * this.m_u2.x,
+      inv_dt * this.m_impulse * this.m_u2.y,
+    );
   }
-  if (length2 < this.m_maxLength2) {
-    this.m_limitState2 = b2Joint.e_inactiveLimit;
-    this.m_limitImpulse2 = 0.0;
-  } else {
-    this.m_limitState2 = b2Joint.e_atUpperLimit;
+
+  public GetReactionTorque(inv_dt = 0) {
+    return 0;
   }
-  var cr1u1 = r1X * this.m_u1.y - r1Y * this.m_u1.x;
-  var cr2u2 = r2X * this.m_u2.y - r2Y * this.m_u2.x;
-  this.m_limitMass1 = bA.m_invMass + bA.m_invI * cr1u1 * cr1u1;
-  this.m_limitMass2 = bB.m_invMass + bB.m_invI * cr2u2 * cr2u2;
-  this.m_pulleyMass =
-    this.m_limitMass1 + this.m_ratio * this.m_ratio * this.m_limitMass2;
-  this.m_limitMass1 = 1.0 / this.m_limitMass1;
-  this.m_limitMass2 = 1.0 / this.m_limitMass2;
-  this.m_pulleyMass = 1.0 / this.m_pulleyMass;
-  if (step.warmStarting) {
-    this.m_impulse *= step.dtRatio;
-    this.m_limitImpulse1 *= step.dtRatio;
-    this.m_limitImpulse2 *= step.dtRatio;
-    var P1X = (-this.m_impulse - this.m_limitImpulse1) * this.m_u1.x;
-    var P1Y = (-this.m_impulse - this.m_limitImpulse1) * this.m_u1.y;
-    var P2X =
-      (-this.m_ratio * this.m_impulse - this.m_limitImpulse2) * this.m_u2.x;
-    var P2Y =
-      (-this.m_ratio * this.m_impulse - this.m_limitImpulse2) * this.m_u2.y;
-    bA.m_linearVelocity.x += bA.m_invMass * P1X;
-    bA.m_linearVelocity.y += bA.m_invMass * P1Y;
-    bA.m_angularVelocity += bA.m_invI * (r1X * P1Y - r1Y * P1X);
-    bB.m_linearVelocity.x += bB.m_invMass * P2X;
-    bB.m_linearVelocity.y += bB.m_invMass * P2Y;
-    bB.m_angularVelocity += bB.m_invI * (r2X * P2Y - r2Y * P2X);
-  } else {
-    this.m_impulse = 0.0;
-    this.m_limitImpulse1 = 0.0;
-    this.m_limitImpulse2 = 0.0;
+
+  public GetGroundAnchorA() {
+    if (!this.m_ground) {
+      return this.m_groundAnchorA.Copy();
+    }
+
+    const a = this.m_ground.m_xf.position.Copy();
+    a.Add(this.m_groundAnchorA);
+    return a;
   }
-};
-b2PulleyJoint.prototype.SolveVelocityConstraints = function(step) {
-  var bA = this.m_bodyA;
-  var bB = this.m_bodyB;
-  var tMat;
-  tMat = bA.m_xf.R;
-  var r1X = this.m_localAnchor1.x - bA.m_sweep.localCenter.x;
-  var r1Y = this.m_localAnchor1.y - bA.m_sweep.localCenter.y;
-  var tX = tMat.col1.x * r1X + tMat.col2.x * r1Y;
-  r1Y = tMat.col1.y * r1X + tMat.col2.y * r1Y;
-  r1X = tX;
-  tMat = bB.m_xf.R;
-  var r2X = this.m_localAnchor2.x - bB.m_sweep.localCenter.x;
-  var r2Y = this.m_localAnchor2.y - bB.m_sweep.localCenter.y;
-  tX = tMat.col1.x * r2X + tMat.col2.x * r2Y;
-  r2Y = tMat.col1.y * r2X + tMat.col2.y * r2Y;
-  r2X = tX;
-  var v1X = 0;
-  var v1Y = 0;
-  var v2X = 0;
-  var v2Y = 0;
-  var P1X = 0;
-  var P1Y = 0;
-  var P2X = 0;
-  var P2Y = 0;
-  var Cdot = 0;
-  var impulse = 0;
-  var oldImpulse = 0;
-  if (this.m_state == b2Joint.e_atUpperLimit) {
-    v1X = bA.m_linearVelocity.x + -bA.m_angularVelocity * r1Y;
-    v1Y = bA.m_linearVelocity.y + bA.m_angularVelocity * r1X;
-    v2X = bB.m_linearVelocity.x + -bB.m_angularVelocity * r2Y;
-    v2Y = bB.m_linearVelocity.y + bB.m_angularVelocity * r2X;
-    Cdot =
-      -(this.m_u1.x * v1X + this.m_u1.y * v1Y) -
-      this.m_ratio * (this.m_u2.x * v2X + this.m_u2.y * v2Y);
-    impulse = this.m_pulleyMass * -Cdot;
-    oldImpulse = this.m_impulse;
-    this.m_impulse = b2Math.Max(0.0, this.m_impulse + impulse);
-    impulse = this.m_impulse - oldImpulse;
-    P1X = -impulse * this.m_u1.x;
-    P1Y = -impulse * this.m_u1.y;
-    P2X = -this.m_ratio * impulse * this.m_u2.x;
-    P2Y = -this.m_ratio * impulse * this.m_u2.y;
-    bA.m_linearVelocity.x += bA.m_invMass * P1X;
-    bA.m_linearVelocity.y += bA.m_invMass * P1Y;
-    bA.m_angularVelocity += bA.m_invI * (r1X * P1Y - r1Y * P1X);
-    bB.m_linearVelocity.x += bB.m_invMass * P2X;
-    bB.m_linearVelocity.y += bB.m_invMass * P2Y;
-    bB.m_angularVelocity += bB.m_invI * (r2X * P2Y - r2Y * P2X);
+
+  public GetGroundAnchorB() {
+    if (!this.m_ground) {
+      return this.m_groundAnchorB.Copy();
+    }
+
+    const a = this.m_ground.m_xf.position.Copy();
+    a.Add(this.m_groundAnchorB);
+    return a;
   }
-  if (this.m_limitState1 == b2Joint.e_atUpperLimit) {
-    v1X = bA.m_linearVelocity.x + -bA.m_angularVelocity * r1Y;
-    v1Y = bA.m_linearVelocity.y + bA.m_angularVelocity * r1X;
-    Cdot = -(this.m_u1.x * v1X + this.m_u1.y * v1Y);
-    impulse = -this.m_limitMass1 * Cdot;
-    oldImpulse = this.m_limitImpulse1;
-    this.m_limitImpulse1 = b2Math.Max(0.0, this.m_limitImpulse1 + impulse);
-    impulse = this.m_limitImpulse1 - oldImpulse;
-    P1X = -impulse * this.m_u1.x;
-    P1Y = -impulse * this.m_u1.y;
-    bA.m_linearVelocity.x += bA.m_invMass * P1X;
-    bA.m_linearVelocity.y += bA.m_invMass * P1Y;
-    bA.m_angularVelocity += bA.m_invI * (r1X * P1Y - r1Y * P1X);
+
+  public GetLength1() {
+    if (!(this.m_ground && this.m_bodyA)) {
+      return this.m_groundAnchorA.Copy();
+    }
+
+    const p = this.m_bodyA.GetWorldPoint(this.m_localAnchorA);
+
+    const sX = this.m_ground.m_xf.position.x + this.m_groundAnchorA.x;
+    const sY = this.m_ground.m_xf.position.y + this.m_groundAnchorA.y;
+
+    const dX = p.x - sX;
+    const dY = p.y - sY;
+
+    return Math.hypot(dX, dY);
   }
-  if (this.m_limitState2 == b2Joint.e_atUpperLimit) {
-    v2X = bB.m_linearVelocity.x + -bB.m_angularVelocity * r2Y;
-    v2Y = bB.m_linearVelocity.y + bB.m_angularVelocity * r2X;
-    Cdot = -(this.m_u2.x * v2X + this.m_u2.y * v2Y);
-    impulse = -this.m_limitMass2 * Cdot;
-    oldImpulse = this.m_limitImpulse2;
-    this.m_limitImpulse2 = b2Math.Max(0.0, this.m_limitImpulse2 + impulse);
-    impulse = this.m_limitImpulse2 - oldImpulse;
-    P2X = -impulse * this.m_u2.x;
-    P2Y = -impulse * this.m_u2.y;
-    bB.m_linearVelocity.x += bB.m_invMass * P2X;
-    bB.m_linearVelocity.y += bB.m_invMass * P2Y;
-    bB.m_angularVelocity += bB.m_invI * (r2X * P2Y - r2Y * P2X);
+
+  public GetLength2() {
+    if (!(this.m_ground && this.m_bodyB)) {
+      return this.m_groundAnchorA.Copy();
+    }
+
+    const p = this.m_bodyB.GetWorldPoint(this.m_localAnchorB);
+
+    const sX = this.m_ground.m_xf.position.x + this.m_groundAnchorB.x;
+    const sY = this.m_ground.m_xf.position.y + this.m_groundAnchorB.y;
+
+    const dX = p.x - sX;
+    const dY = p.y - sY;
+
+    return Math.hypot(dX, dY);
   }
-};
-b2PulleyJoint.prototype.SolvePositionConstraints = function(baumgarte) {
-  if (baumgarte === undefined) baumgarte = 0;
-  var bA = this.m_bodyA;
-  var bB = this.m_bodyB;
-  var tMat;
-  var s1X = this.m_ground.m_xf.position.x + this.m_groundAnchor1.x;
-  var s1Y = this.m_ground.m_xf.position.y + this.m_groundAnchor1.y;
-  var s2X = this.m_ground.m_xf.position.x + this.m_groundAnchor2.x;
-  var s2Y = this.m_ground.m_xf.position.y + this.m_groundAnchor2.y;
-  var r1X = 0;
-  var r1Y = 0;
-  var r2X = 0;
-  var r2Y = 0;
-  var p1X = 0;
-  var p1Y = 0;
-  var p2X = 0;
-  var p2Y = 0;
-  var length1 = 0;
-  var length2 = 0;
-  var C = 0;
-  var impulse = 0;
-  var oldImpulse = 0;
-  var oldLimitPositionImpulse = 0;
-  var tX = 0;
-  var linearError = 0.0;
-  if (this.m_state == b2Joint.e_atUpperLimit) {
-    tMat = bA.m_xf.R;
-    r1X = this.m_localAnchor1.x - bA.m_sweep.localCenter.x;
-    r1Y = this.m_localAnchor1.y - bA.m_sweep.localCenter.y;
-    tX = tMat.col1.x * r1X + tMat.col2.x * r1Y;
+
+  public GetRatio() {
+    return this.m_ratio;
+  }
+
+  public InitVelocityConstraints(step: TimeStep) {
+    const g = this.m_ground as Body;
+    const bA = this.m_bodyA as Body;
+    const bB = this.m_bodyB as Body;
+
+    let tMat = bA.m_xf.R;
+    let r1X = this.m_localAnchorA.x - bA.m_sweep.localCenter.x;
+    let r1Y = this.m_localAnchorA.y - bA.m_sweep.localCenter.y;
+    let tX = tMat.col1.x * r1X + tMat.col2.x * r1Y;
+
     r1Y = tMat.col1.y * r1X + tMat.col2.y * r1Y;
     r1X = tX;
     tMat = bB.m_xf.R;
-    r2X = this.m_localAnchor2.x - bB.m_sweep.localCenter.x;
-    r2Y = this.m_localAnchor2.y - bB.m_sweep.localCenter.y;
+
+    let r2X = this.m_localAnchorB.x - bB.m_sweep.localCenter.x;
+    let r2Y = this.m_localAnchorB.y - bB.m_sweep.localCenter.y;
+
     tX = tMat.col1.x * r2X + tMat.col2.x * r2Y;
     r2Y = tMat.col1.y * r2X + tMat.col2.y * r2Y;
     r2X = tX;
-    p1X = bA.m_sweep.c.x + r1X;
-    p1Y = bA.m_sweep.c.y + r1Y;
-    p2X = bB.m_sweep.c.x + r2X;
-    p2Y = bB.m_sweep.c.y + r2Y;
+
+    const p1X = bA.m_sweep.c.x + r1X;
+    const p1Y = bA.m_sweep.c.y + r1Y;
+
+    const p2X = bB.m_sweep.c.x + r2X;
+    const p2Y = bB.m_sweep.c.y + r2Y;
+
+    const s1X = g.m_xf.position.x + this.m_groundAnchorA.x;
+    const s1Y = g.m_xf.position.y + this.m_groundAnchorA.y;
+
+    const s2X = g.m_xf.position.x + this.m_groundAnchorB.x;
+    const s2Y = g.m_xf.position.y + this.m_groundAnchorB.y;
+
     this.m_u1.Set(p1X - s1X, p1Y - s1Y);
     this.m_u2.Set(p2X - s2X, p2Y - s2Y);
-    length1 = this.m_u1.Length();
-    length2 = this.m_u2.Length();
-    if (length1 > b2Settings.b2_linearSlop) {
+
+    const length1 = this.m_u1.Length();
+    const length2 = this.m_u2.Length();
+
+    if (length1 > b2_linearSlop) {
       this.m_u1.Multiply(1.0 / length1);
     } else {
       this.m_u1.SetZero();
     }
-    if (length2 > b2Settings.b2_linearSlop) {
+
+    if (length2 > b2_linearSlop) {
       this.m_u2.Multiply(1.0 / length2);
     } else {
       this.m_u2.SetZero();
     }
-    C = this.m_constant - length1 - this.m_ratio * length2;
-    linearError = b2Math.Max(linearError, -C);
-    C = b2Math.Clamp(
-      C + b2Settings.b2_linearSlop,
-      -b2Settings.b2_maxLinearCorrection,
-      0.0,
-    );
-    impulse = -this.m_pulleyMass * C;
-    p1X = -impulse * this.m_u1.x;
-    p1Y = -impulse * this.m_u1.y;
-    p2X = -this.m_ratio * impulse * this.m_u2.x;
-    p2Y = -this.m_ratio * impulse * this.m_u2.y;
-    bA.m_sweep.c.x += bA.m_invMass * p1X;
-    bA.m_sweep.c.y += bA.m_invMass * p1Y;
-    bA.m_sweep.a += bA.m_invI * (r1X * p1Y - r1Y * p1X);
-    bB.m_sweep.c.x += bB.m_invMass * p2X;
-    bB.m_sweep.c.y += bB.m_invMass * p2Y;
-    bB.m_sweep.a += bB.m_invI * (r2X * p2Y - r2Y * p2X);
-    bA.SynchronizeTransform();
-    bB.SynchronizeTransform();
+
+    const C = this.m_constant - length1 - this.m_ratio * length2;
+    if (C > 0.0) {
+      this.m_state = Joint.e_inactiveLimit;
+      this.m_impulse = 0.0;
+    } else {
+      this.m_state = Joint.e_atUpperLimit;
+    }
+
+    if (length1 < this.m_maxLengthA) {
+      this.m_limitStateA = Joint.e_inactiveLimit;
+      this.m_limitImpulseA = 0;
+    } else {
+      this.m_limitStateA = Joint.e_atUpperLimit;
+    }
+
+    if (length2 < this.m_maxLengthB) {
+      this.m_limitStateB = Joint.e_inactiveLimit;
+      this.m_limitImpulseB = 0.0;
+    } else {
+      this.m_limitStateB = Joint.e_atUpperLimit;
+    }
+
+    const cr1u1 = r1X * this.m_u1.y - r1Y * this.m_u1.x;
+    const cr2u2 = r2X * this.m_u2.y - r2Y * this.m_u2.x;
+
+    this.m_limitMassA = bA.m_invMass + bA.m_invI * cr1u1 * cr1u1;
+    this.m_limitMassB = bB.m_invMass + bB.m_invI * cr2u2 * cr2u2;
+    this.m_pulleyMass =
+      this.m_limitMassA + this.m_ratio * this.m_ratio * this.m_limitMassB;
+
+    this.m_limitMassA = 1.0 / this.m_limitMassA;
+    this.m_limitMassB = 1.0 / this.m_limitMassB;
+    this.m_pulleyMass = 1.0 / this.m_pulleyMass;
+
+    if (step.warmStarting) {
+      this.m_impulse *= step.dtRatio;
+      this.m_limitImpulseA *= step.dtRatio;
+      this.m_limitImpulseB *= step.dtRatio;
+
+      const P1X = (-this.m_impulse - this.m_limitImpulseA) * this.m_u1.x;
+      const P1Y = (-this.m_impulse - this.m_limitImpulseA) * this.m_u1.y;
+
+      const P2X =
+        (-this.m_ratio * this.m_impulse - this.m_limitImpulseB) * this.m_u2.x;
+      const P2Y =
+        (-this.m_ratio * this.m_impulse - this.m_limitImpulseB) * this.m_u2.y;
+
+      bA.m_linearVelocity.x += bA.m_invMass * P1X;
+      bA.m_linearVelocity.y += bA.m_invMass * P1Y;
+      bA.m_angularVelocity += bA.m_invI * (r1X * P1Y - r1Y * P1X);
+
+      bB.m_linearVelocity.x += bB.m_invMass * P2X;
+      bB.m_linearVelocity.y += bB.m_invMass * P2Y;
+      bB.m_angularVelocity += bB.m_invI * (r2X * P2Y - r2Y * P2X);
+    } else {
+      this.m_impulse = 0.0;
+      this.m_limitImpulseA = 0.0;
+      this.m_limitImpulseB = 0.0;
+    }
   }
-  if (this.m_limitState1 == b2Joint.e_atUpperLimit) {
-    tMat = bA.m_xf.R;
-    r1X = this.m_localAnchor1.x - bA.m_sweep.localCenter.x;
-    r1Y = this.m_localAnchor1.y - bA.m_sweep.localCenter.y;
-    tX = tMat.col1.x * r1X + tMat.col2.x * r1Y;
+
+  public SolveVelocityConstraints(step: TimeStep) {
+    const bA = this.m_bodyA as Body;
+    const bB = this.m_bodyB as Body;
+
+    let tMat = bA.m_xf.R;
+    let r1X = this.m_localAnchorA.x - bA.m_sweep.localCenter.x;
+    let r1Y = this.m_localAnchorA.y - bA.m_sweep.localCenter.y;
+    let tX = tMat.col1.x * r1X + tMat.col2.x * r1Y;
+
     r1Y = tMat.col1.y * r1X + tMat.col2.y * r1Y;
     r1X = tX;
-    p1X = bA.m_sweep.c.x + r1X;
-    p1Y = bA.m_sweep.c.y + r1Y;
-    this.m_u1.Set(p1X - s1X, p1Y - s1Y);
-    length1 = this.m_u1.Length();
-    if (length1 > b2Settings.b2_linearSlop) {
-      this.m_u1.x *= 1.0 / length1;
-      this.m_u1.y *= 1.0 / length1;
-    } else {
-      this.m_u1.SetZero();
-    }
-    C = this.m_maxLength1 - length1;
-    linearError = b2Math.Max(linearError, -C);
-    C = b2Math.Clamp(
-      C + b2Settings.b2_linearSlop,
-      -b2Settings.b2_maxLinearCorrection,
-      0.0,
-    );
-    impulse = -this.m_limitMass1 * C;
-    p1X = -impulse * this.m_u1.x;
-    p1Y = -impulse * this.m_u1.y;
-    bA.m_sweep.c.x += bA.m_invMass * p1X;
-    bA.m_sweep.c.y += bA.m_invMass * p1Y;
-    bA.m_sweep.a += bA.m_invI * (r1X * p1Y - r1Y * p1X);
-    bA.SynchronizeTransform();
-  }
-  if (this.m_limitState2 == b2Joint.e_atUpperLimit) {
     tMat = bB.m_xf.R;
-    r2X = this.m_localAnchor2.x - bB.m_sweep.localCenter.x;
-    r2Y = this.m_localAnchor2.y - bB.m_sweep.localCenter.y;
+
+    let r2X = this.m_localAnchorB.x - bB.m_sweep.localCenter.x;
+    let r2Y = this.m_localAnchorB.y - bB.m_sweep.localCenter.y;
+
     tX = tMat.col1.x * r2X + tMat.col2.x * r2Y;
     r2Y = tMat.col1.y * r2X + tMat.col2.y * r2Y;
     r2X = tX;
-    p2X = bB.m_sweep.c.x + r2X;
-    p2Y = bB.m_sweep.c.y + r2Y;
-    this.m_u2.Set(p2X - s2X, p2Y - s2Y);
-    length2 = this.m_u2.Length();
-    if (length2 > b2Settings.b2_linearSlop) {
-      this.m_u2.x *= 1.0 / length2;
-      this.m_u2.y *= 1.0 / length2;
-    } else {
-      this.m_u2.SetZero();
+
+    let v1X = 0;
+    let v1Y = 0;
+
+    let v2X = 0;
+    let v2Y = 0;
+
+    let P1X = 0;
+    let P1Y = 0;
+
+    let P2X = 0;
+    let P2Y = 0;
+
+    let Cdot = 0;
+    let impulse = 0;
+    let oldImpulse = 0;
+
+    if (this.m_state === Joint.e_atUpperLimit) {
+      v1X = bA.m_linearVelocity.x + -bA.m_angularVelocity * r1Y;
+      v1Y = bA.m_linearVelocity.y + bA.m_angularVelocity * r1X;
+
+      v2X = bB.m_linearVelocity.x + -bB.m_angularVelocity * r2Y;
+      v2Y = bB.m_linearVelocity.y + bB.m_angularVelocity * r2X;
+
+      Cdot =
+        -(this.m_u1.x * v1X + this.m_u1.y * v1Y) -
+        this.m_ratio * (this.m_u2.x * v2X + this.m_u2.y * v2Y);
+
+      impulse = this.m_pulleyMass * -Cdot;
+      oldImpulse = this.m_impulse;
+      this.m_impulse = Max(0.0, this.m_impulse + impulse);
+      impulse = this.m_impulse - oldImpulse;
+
+      P1X = -impulse * this.m_u1.x;
+      P1Y = -impulse * this.m_u1.y;
+
+      P2X = -this.m_ratio * impulse * this.m_u2.x;
+      P2Y = -this.m_ratio * impulse * this.m_u2.y;
+
+      bA.m_linearVelocity.x += bA.m_invMass * P1X;
+      bA.m_linearVelocity.y += bA.m_invMass * P1Y;
+      bA.m_angularVelocity += bA.m_invI * (r1X * P1Y - r1Y * P1X);
+
+      bB.m_linearVelocity.x += bB.m_invMass * P2X;
+      bB.m_linearVelocity.y += bB.m_invMass * P2Y;
+      bB.m_angularVelocity += bB.m_invI * (r2X * P2Y - r2Y * P2X);
     }
-    C = this.m_maxLength2 - length2;
-    linearError = b2Math.Max(linearError, -C);
-    C = b2Math.Clamp(
-      C + b2Settings.b2_linearSlop,
-      -b2Settings.b2_maxLinearCorrection,
-      0.0,
-    );
-    impulse = -this.m_limitMass2 * C;
-    p2X = -impulse * this.m_u2.x;
-    p2Y = -impulse * this.m_u2.y;
-    bB.m_sweep.c.x += bB.m_invMass * p2X;
-    bB.m_sweep.c.y += bB.m_invMass * p2Y;
-    bB.m_sweep.a += bB.m_invI * (r2X * p2Y - r2Y * p2X);
-    bB.SynchronizeTransform();
+    if (this.m_limitStateA === Joint.e_atUpperLimit) {
+      v1X = bA.m_linearVelocity.x + -bA.m_angularVelocity * r1Y;
+      v1Y = bA.m_linearVelocity.y + bA.m_angularVelocity * r1X;
+
+      Cdot = -(this.m_u1.x * v1X + this.m_u1.y * v1Y);
+
+      impulse = -this.m_limitMassA * Cdot;
+      oldImpulse = this.m_limitImpulseA;
+      this.m_limitImpulseA = Max(0.0, this.m_limitImpulseA + impulse);
+      impulse = this.m_limitImpulseA - oldImpulse;
+
+      P1X = -impulse * this.m_u1.x;
+      P1Y = -impulse * this.m_u1.y;
+
+      bA.m_linearVelocity.x += bA.m_invMass * P1X;
+      bA.m_linearVelocity.y += bA.m_invMass * P1Y;
+      bA.m_angularVelocity += bA.m_invI * (r1X * P1Y - r1Y * P1X);
+    }
+    if (this.m_limitStateB === Joint.e_atUpperLimit) {
+      v2X = bB.m_linearVelocity.x + -bB.m_angularVelocity * r2Y;
+      v2Y = bB.m_linearVelocity.y + bB.m_angularVelocity * r2X;
+
+      Cdot = -(this.m_u2.x * v2X + this.m_u2.y * v2Y);
+
+      impulse = -this.m_limitMassB * Cdot;
+      oldImpulse = this.m_limitImpulseB;
+      this.m_limitImpulseB = Max(0.0, this.m_limitImpulseB + impulse);
+      impulse = this.m_limitImpulseB - oldImpulse;
+
+      P2X = -impulse * this.m_u2.x;
+      P2Y = -impulse * this.m_u2.y;
+
+      bB.m_linearVelocity.x += bB.m_invMass * P2X;
+      bB.m_linearVelocity.y += bB.m_invMass * P2Y;
+      bB.m_angularVelocity += bB.m_invI * (r2X * P2Y - r2Y * P2X);
+    }
   }
-  return linearError < b2Settings.b2_linearSlop;
-};
-Box2D.postDefs.push(function() {
-  Box2D.Dynamics.Joints.b2PulleyJoint.b2_minPulleyLength = 2.0;
-});
+
+  public SolvePositionConstraints(baumgarte = 0) {
+    const g = this.m_ground as Body;
+    const bA = this.m_bodyA as Body;
+    const bB = this.m_bodyB as Body;
+
+    let tMat;
+
+    const s1X = g.m_xf.position.x + this.m_groundAnchorA.x;
+    const s1Y = g.m_xf.position.y + this.m_groundAnchorA.y;
+
+    const s2X = g.m_xf.position.x + this.m_groundAnchorB.x;
+    const s2Y = g.m_xf.position.y + this.m_groundAnchorB.y;
+
+    let r1X = 0;
+    let r1Y = 0;
+
+    let r2X = 0;
+    let r2Y = 0;
+
+    let p1X = 0;
+    let p1Y = 0;
+
+    let p2X = 0;
+    let p2Y = 0;
+
+    let length1 = 0;
+    let length2 = 0;
+
+    let C = 0;
+    let impulse = 0;
+
+    let tX = 0;
+    let linearError = 0.0;
+
+    if (this.m_state === Joint.e_atUpperLimit) {
+      tMat = bA.m_xf.R;
+      r1X = this.m_localAnchorA.x - bA.m_sweep.localCenter.x;
+      r1Y = this.m_localAnchorA.y - bA.m_sweep.localCenter.y;
+
+      tX = tMat.col1.x * r1X + tMat.col2.x * r1Y;
+      r1Y = tMat.col1.y * r1X + tMat.col2.y * r1Y;
+      r1X = tX;
+
+      tMat = bB.m_xf.R;
+      r2X = this.m_localAnchorB.x - bB.m_sweep.localCenter.x;
+      r2Y = this.m_localAnchorB.y - bB.m_sweep.localCenter.y;
+
+      tX = tMat.col1.x * r2X + tMat.col2.x * r2Y;
+      r2Y = tMat.col1.y * r2X + tMat.col2.y * r2Y;
+      r2X = tX;
+
+      p1X = bA.m_sweep.c.x + r1X;
+      p1Y = bA.m_sweep.c.y + r1Y;
+
+      p2X = bB.m_sweep.c.x + r2X;
+      p2Y = bB.m_sweep.c.y + r2Y;
+
+      this.m_u1.Set(p1X - s1X, p1Y - s1Y);
+      this.m_u2.Set(p2X - s2X, p2Y - s2Y);
+
+      length1 = this.m_u1.Length();
+      length2 = this.m_u2.Length();
+
+      if (length1 > b2_linearSlop) {
+        this.m_u1.Multiply(1.0 / length1);
+      } else {
+        this.m_u1.SetZero();
+      }
+
+      if (length2 > b2_linearSlop) {
+        this.m_u2.Multiply(1.0 / length2);
+      } else {
+        this.m_u2.SetZero();
+      }
+
+      C = this.m_constant - length1 - this.m_ratio * length2;
+      linearError = Max(linearError, -C);
+      C = Clamp(C + b2_linearSlop, -b2_maxLinearCorrection, 0.0);
+      impulse = -this.m_pulleyMass * C;
+
+      p1X = -impulse * this.m_u1.x;
+      p1Y = -impulse * this.m_u1.y;
+
+      p2X = -this.m_ratio * impulse * this.m_u2.x;
+      p2Y = -this.m_ratio * impulse * this.m_u2.y;
+
+      bA.m_sweep.c.x += bA.m_invMass * p1X;
+      bA.m_sweep.c.y += bA.m_invMass * p1Y;
+      bA.m_sweep.a += bA.m_invI * (r1X * p1Y - r1Y * p1X);
+
+      bB.m_sweep.c.x += bB.m_invMass * p2X;
+      bB.m_sweep.c.y += bB.m_invMass * p2Y;
+      bB.m_sweep.a += bB.m_invI * (r2X * p2Y - r2Y * p2X);
+
+      bA.SynchronizeTransform();
+      bB.SynchronizeTransform();
+    }
+
+    if (this.m_limitStateA === Joint.e_atUpperLimit) {
+      tMat = bA.m_xf.R;
+      r1X = this.m_localAnchorA.x - bA.m_sweep.localCenter.x;
+      r1Y = this.m_localAnchorA.y - bA.m_sweep.localCenter.y;
+
+      tX = tMat.col1.x * r1X + tMat.col2.x * r1Y;
+      r1Y = tMat.col1.y * r1X + tMat.col2.y * r1Y;
+      r1X = tX;
+
+      p1X = bA.m_sweep.c.x + r1X;
+      p1Y = bA.m_sweep.c.y + r1Y;
+
+      this.m_u1.Set(p1X - s1X, p1Y - s1Y);
+      length1 = this.m_u1.Length();
+
+      if (length1 > b2_linearSlop) {
+        this.m_u1.x *= 1.0 / length1;
+        this.m_u1.y *= 1.0 / length1;
+      } else {
+        this.m_u1.SetZero();
+      }
+
+      C = this.m_maxLengthA - length1;
+      linearError = Max(linearError, -C);
+      C = Clamp(C + b2_linearSlop, -b2_maxLinearCorrection, 0.0);
+      impulse = -this.m_limitMassA * C;
+
+      p1X = -impulse * this.m_u1.x;
+      p1Y = -impulse * this.m_u1.y;
+
+      bA.m_sweep.c.x += bA.m_invMass * p1X;
+      bA.m_sweep.c.y += bA.m_invMass * p1Y;
+      bA.m_sweep.a += bA.m_invI * (r1X * p1Y - r1Y * p1X);
+
+      bA.SynchronizeTransform();
+    }
+
+    if (this.m_limitStateB === Joint.e_atUpperLimit) {
+      tMat = bB.m_xf.R;
+      r2X = this.m_localAnchorB.x - bB.m_sweep.localCenter.x;
+      r2Y = this.m_localAnchorB.y - bB.m_sweep.localCenter.y;
+
+      tX = tMat.col1.x * r2X + tMat.col2.x * r2Y;
+      r2Y = tMat.col1.y * r2X + tMat.col2.y * r2Y;
+      r2X = tX;
+
+      p2X = bB.m_sweep.c.x + r2X;
+      p2Y = bB.m_sweep.c.y + r2Y;
+
+      this.m_u2.Set(p2X - s2X, p2Y - s2Y);
+      length2 = this.m_u2.Length();
+
+      if (length2 > b2_linearSlop) {
+        this.m_u2.x *= 1.0 / length2;
+        this.m_u2.y *= 1.0 / length2;
+      } else {
+        this.m_u2.SetZero();
+      }
+
+      C = this.m_maxLengthB - length2;
+      linearError = Max(linearError, -C);
+      C = Clamp(C + b2_linearSlop, -b2_maxLinearCorrection, 0.0);
+      impulse = -this.m_limitMassB * C;
+
+      p2X = -impulse * this.m_u2.x;
+      p2Y = -impulse * this.m_u2.y;
+
+      bB.m_sweep.c.x += bB.m_invMass * p2X;
+      bB.m_sweep.c.y += bB.m_invMass * p2Y;
+      bB.m_sweep.a += bB.m_invI * (r2X * p2Y - r2Y * p2X);
+
+      bB.SynchronizeTransform();
+    }
+
+    return linearError < b2_linearSlop;
+  }
+}

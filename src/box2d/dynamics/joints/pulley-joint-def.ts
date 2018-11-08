@@ -1,50 +1,56 @@
-Box2D.inherit(b2PulleyJointDef, Box2D.Dynamics.Joints.b2JointDef);
-b2PulleyJointDef.prototype.__super = Box2D.Dynamics.Joints.b2JointDef.prototype;
-b2PulleyJointDef.b2PulleyJointDef = function() {
-  Box2D.Dynamics.Joints.b2JointDef.b2JointDef.apply(this, arguments);
-  this.groundAnchorA = new b2Vec2();
-  this.groundAnchorB = new b2Vec2();
-  this.localAnchorA = new b2Vec2();
-  this.localAnchorB = new b2Vec2();
-};
-b2PulleyJointDef.prototype.b2PulleyJointDef = function() {
-  this.__super.b2JointDef.call(this);
-  this.type = b2Joint.e_pulleyJoint;
-  this.groundAnchorA.Set(-1.0, 1.0);
-  this.groundAnchorB.Set(1.0, 1.0);
-  this.localAnchorA.Set(-1.0, 0.0);
-  this.localAnchorB.Set(1.0, 0.0);
-  this.lengthA = 0.0;
-  this.maxLengthA = 0.0;
-  this.lengthB = 0.0;
-  this.maxLengthB = 0.0;
-  this.ratio = 1.0;
-  this.collideConnected = true;
-};
-b2PulleyJointDef.prototype.Initialize = function(
-  bA,
-  bB,
-  gaA,
-  gaB,
-  anchorA,
-  anchorB,
-  r,
-) {
-  if (r === undefined) r = 0;
-  this.bodyA = bA;
-  this.bodyB = bB;
-  this.groundAnchorA.SetV(gaA);
-  this.groundAnchorB.SetV(gaB);
-  this.localAnchorA = this.bodyA.GetLocalPoint(anchorA);
-  this.localAnchorB = this.bodyB.GetLocalPoint(anchorB);
-  var d1X = anchorA.x - gaA.x;
-  var d1Y = anchorA.y - gaA.y;
-  this.lengthA = Math.sqrt(d1X * d1X + d1Y * d1Y);
-  var d2X = anchorB.x - gaB.x;
-  var d2Y = anchorB.y - gaB.y;
-  this.lengthB = Math.sqrt(d2X * d2X + d2Y * d2Y);
-  this.ratio = r;
-  var C = this.lengthA + this.ratio * this.lengthB;
-  this.maxLengthA = C - this.ratio * b2PulleyJoint.b2_minPulleyLength;
-  this.maxLengthB = (C - b2PulleyJoint.b2_minPulleyLength) / this.ratio;
-};
+import Vec2 from '../../common/math/vec2';
+import Body from '../body';
+
+import JointDef from './joint-def';
+import Joint from './joint';
+import PulleyJoint from './pulley-joint';
+
+export default class PulleyJointDef extends JointDef {
+  public type = Joint.e_pulleyJoint;
+
+  public localAnchorA = new Vec2(-1, 0);
+  public localAnchorB = new Vec2(1, 0);
+
+  public groundAnchorA = new Vec2(-1, 1);
+  public groundAnchorB = new Vec2(1, 1);
+
+  public lengthA = 0;
+  public maxLengthA = 0;
+  public lengthB = 0;
+  public maxLengthB = 0;
+  public ratio = 1;
+  public collideConnected = true;
+
+  public Initialize(
+    bodyA: Body,
+    bodyB: Body,
+    groundAnchorA: Vec2,
+    groundAnchorB: Vec2,
+    anchorA: Vec2,
+    anchorB: Vec2,
+    ratio = 0,
+  ) {
+    this.bodyA = bodyA;
+    this.bodyB = bodyB;
+
+    this.groundAnchorA.SetV(groundAnchorA);
+    this.groundAnchorB.SetV(groundAnchorB);
+
+    this.localAnchorA.SetV(this.bodyA.GetLocalPoint(anchorA));
+    this.localAnchorB.SetV(this.bodyB.GetLocalPoint(anchorB));
+
+    const d1X = anchorA.x - groundAnchorA.x;
+    const d1Y = anchorA.y - groundAnchorA.y;
+    this.lengthA = Math.sqrt(d1X * d1X + d1Y * d1Y);
+
+    const d2X = anchorB.x - groundAnchorB.x;
+    const d2Y = anchorB.y - groundAnchorB.y;
+    this.lengthB = Math.sqrt(d2X * d2X + d2Y * d2Y);
+
+    this.ratio = ratio;
+
+    const C = this.lengthA + this.ratio * this.lengthB;
+    this.maxLengthA = C - this.ratio * PulleyJoint.b2_minPulleyLength;
+    this.maxLengthB = (C - PulleyJoint.b2_minPulleyLength) / this.ratio;
+  }
+}

@@ -76,6 +76,23 @@ import JointDef from './dynamics/joints/joint-def';
 import JointEdge from './dynamics/joints/joint-edge';
 import MouseJoint from './dynamics/joints/mouse-joint';
 import MouseJointDef from './dynamics/joints/mouse-joint-def';
+import DistanceJoint from './dynamics/joints/distance-joint';
+import DistanceJointDef from './dynamics/joints/distance-joint-def';
+import FrictionJoint from './dynamics/joints/friction-joint';
+import FrictionJointDef from './dynamics/joints/friction-joint-def';
+import GearJoint from './dynamics/joints/gear-joint';
+import GearJointDef from './dynamics/joints/gear-joint-def';
+import Jacobian from './dynamics/joints/jacobian';
+import LineJoint from './dynamics/joints/line-joint';
+import LineJointDef from './dynamics/joints/line-joint-def';
+import PrismaticJoint from './dynamics/joints/prismatic-joint';
+import PrismaticJointDef from './dynamics/joints/prismatic-joint-def';
+import PulleyJoint from './dynamics/joints/pulley-joint';
+import PulleyJointDef from './dynamics/joints/pulley-joint-def';
+import RevoluteJoint from './dynamics/joints/revolute-joint';
+import RevoluteJointDef from './dynamics/joints/revolute-joint-def';
+import WeldJoint from './dynamics/joints/weld-joint';
+import WeldJointDef from './dynamics/joints/weld-joint-def';
 
 /**
  * @see: ./g.js
@@ -91,27 +108,6 @@ import MouseJointDef from './dynamics/joints/mouse-joint-def';
 // import ControllerEdge from './dynamics/controllers/controller-edge';
 // import GravityController from './dynamics/controllers/gravity-controller';
 // import TensorDampingController from './dynamics/controllers/tensor-damping-controller';
-
-/**
- * @see: ./j.js
- */
-// import DistanceJoint from './dynamics/joints/distance-joint';
-// import DistanceJointDef from './dynamics/joints/distance-joint-def';
-// import FrictionJoint from './dynamics/joints/friction-joint';
-// import FrictionJointDef from './dynamics/joints/friction-joint-def';
-// import GearJoint from './dynamics/joints/gear-joint';
-// import GearJointDef from './dynamics/joints/gear-joint-def';
-// import Jacobian from './dynamics/joints/jacobian';
-// import LineJoint from './dynamics/joints/line-joint';
-// import LineJointDef from './dynamics/joints/line-joint-def';
-// import PrismaticJoint from './dynamics/joints/prismatic-joint';
-// import PrismaticJointDef from './dynamics/joints/prismatic-joint-def';
-// import PulleyJoint from './dynamics/joints/pulley-joint';
-// import PulleyJointDef from './dynamics/joints/pulley-joint-def';
-// import RevoluteJoint from './dynamics/joints/revolute-joint';
-// import RevoluteJointDef from './dynamics/joints/revolute-joint-def';
-// import WeldJoint from './dynamics/joints/weld-joint';
-// import WeldJointDef from './dynamics/joints/weld-joint-def';
 
 export default function b(Box2D) {
   Box2D.Collision.IBroadPhase = 'Box2D.Collision.IBroadPhase';
@@ -227,127 +223,26 @@ export default function b(Box2D) {
   }
   Box2D.Dynamics.Controllers.b2TensorDampingController = b2TensorDampingController;
 
-  function b2DistanceJoint() {
-    b2DistanceJoint.b2DistanceJoint.apply(this, arguments);
-    if (this.constructor === b2DistanceJoint)
-      this.b2DistanceJoint.apply(this, arguments);
-  }
-  Box2D.Dynamics.Joints.b2DistanceJoint = b2DistanceJoint;
-
-  function b2DistanceJointDef() {
-    b2DistanceJointDef.b2DistanceJointDef.apply(this, arguments);
-    if (this.constructor === b2DistanceJointDef)
-      this.b2DistanceJointDef.apply(this, arguments);
-  }
-  Box2D.Dynamics.Joints.b2DistanceJointDef = b2DistanceJointDef;
-
-  function b2FrictionJoint() {
-    b2FrictionJoint.b2FrictionJoint.apply(this, arguments);
-    if (this.constructor === b2FrictionJoint)
-      this.b2FrictionJoint.apply(this, arguments);
-  }
-  Box2D.Dynamics.Joints.b2FrictionJoint = b2FrictionJoint;
-
-  function b2FrictionJointDef() {
-    b2FrictionJointDef.b2FrictionJointDef.apply(this, arguments);
-    if (this.constructor === b2FrictionJointDef)
-      this.b2FrictionJointDef.apply(this, arguments);
-  }
-  Box2D.Dynamics.Joints.b2FrictionJointDef = b2FrictionJointDef;
-
-  function b2GearJoint() {
-    b2GearJoint.b2GearJoint.apply(this, arguments);
-    if (this.constructor === b2GearJoint)
-      this.b2GearJoint.apply(this, arguments);
-  }
-  Box2D.Dynamics.Joints.b2GearJoint = b2GearJoint;
-
-  function b2GearJointDef() {
-    b2GearJointDef.b2GearJointDef.apply(this, arguments);
-    if (this.constructor === b2GearJointDef)
-      this.b2GearJointDef.apply(this, arguments);
-  }
-  Box2D.Dynamics.Joints.b2GearJointDef = b2GearJointDef;
-
-  function b2Jacobian() {
-    b2Jacobian.b2Jacobian.apply(this, arguments);
-  }
-  Box2D.Dynamics.Joints.b2Jacobian = b2Jacobian;
-
+  Box2D.Dynamics.Joints.b2DistanceJoint = DistanceJoint;
+  Box2D.Dynamics.Joints.b2DistanceJointDef = DistanceJointDef;
+  Box2D.Dynamics.Joints.b2FrictionJoint = FrictionJoint;
+  Box2D.Dynamics.Joints.b2FrictionJointDef = FrictionJointDef;
+  Box2D.Dynamics.Joints.b2GearJoint = GearJoint;
+  Box2D.Dynamics.Joints.b2GearJointDef = GearJointDef;
+  Box2D.Dynamics.Joints.b2Jacobian = Jacobian;
   Box2D.Dynamics.Joints.b2Joint = Joint;
   Box2D.Dynamics.Joints.b2JointDef = JointDef;
   Box2D.Dynamics.Joints.b2JointEdge = JointEdge;
-
-  function b2LineJoint() {
-    b2LineJoint.b2LineJoint.apply(this, arguments);
-    if (this.constructor === b2LineJoint)
-      this.b2LineJoint.apply(this, arguments);
-  }
-  Box2D.Dynamics.Joints.b2LineJoint = b2LineJoint;
-
-  function b2LineJointDef() {
-    b2LineJointDef.b2LineJointDef.apply(this, arguments);
-    if (this.constructor === b2LineJointDef)
-      this.b2LineJointDef.apply(this, arguments);
-  }
-  Box2D.Dynamics.Joints.b2LineJointDef = b2LineJointDef;
-
+  Box2D.Dynamics.Joints.b2LineJoint = LineJoint;
+  Box2D.Dynamics.Joints.b2LineJointDef = LineJointDef;
   Box2D.Dynamics.Joints.b2MouseJoint = MouseJoint;
   Box2D.Dynamics.Joints.b2MouseJointDef = MouseJointDef;
-
-  function b2PrismaticJoint() {
-    b2PrismaticJoint.b2PrismaticJoint.apply(this, arguments);
-    if (this.constructor === b2PrismaticJoint)
-      this.b2PrismaticJoint.apply(this, arguments);
-  }
-  Box2D.Dynamics.Joints.b2PrismaticJoint = b2PrismaticJoint;
-
-  function b2PrismaticJointDef() {
-    b2PrismaticJointDef.b2PrismaticJointDef.apply(this, arguments);
-    if (this.constructor === b2PrismaticJointDef)
-      this.b2PrismaticJointDef.apply(this, arguments);
-  }
-  Box2D.Dynamics.Joints.b2PrismaticJointDef = b2PrismaticJointDef;
-
-  function b2PulleyJoint() {
-    b2PulleyJoint.b2PulleyJoint.apply(this, arguments);
-    if (this.constructor === b2PulleyJoint)
-      this.b2PulleyJoint.apply(this, arguments);
-  }
-  Box2D.Dynamics.Joints.b2PulleyJoint = b2PulleyJoint;
-
-  function b2PulleyJointDef() {
-    b2PulleyJointDef.b2PulleyJointDef.apply(this, arguments);
-    if (this.constructor === b2PulleyJointDef)
-      this.b2PulleyJointDef.apply(this, arguments);
-  }
-  Box2D.Dynamics.Joints.b2PulleyJointDef = b2PulleyJointDef;
-
-  function b2RevoluteJoint() {
-    b2RevoluteJoint.b2RevoluteJoint.apply(this, arguments);
-    if (this.constructor === b2RevoluteJoint)
-      this.b2RevoluteJoint.apply(this, arguments);
-  }
-  Box2D.Dynamics.Joints.b2RevoluteJoint = b2RevoluteJoint;
-
-  function b2RevoluteJointDef() {
-    b2RevoluteJointDef.b2RevoluteJointDef.apply(this, arguments);
-    if (this.constructor === b2RevoluteJointDef)
-      this.b2RevoluteJointDef.apply(this, arguments);
-  }
-  Box2D.Dynamics.Joints.b2RevoluteJointDef = b2RevoluteJointDef;
-
-  function b2WeldJoint() {
-    b2WeldJoint.b2WeldJoint.apply(this, arguments);
-    if (this.constructor === b2WeldJoint)
-      this.b2WeldJoint.apply(this, arguments);
-  }
-  Box2D.Dynamics.Joints.b2WeldJoint = b2WeldJoint;
-
-  function b2WeldJointDef() {
-    b2WeldJointDef.b2WeldJointDef.apply(this, arguments);
-    if (this.constructor === b2WeldJointDef)
-      this.b2WeldJointDef.apply(this, arguments);
-  }
-  Box2D.Dynamics.Joints.b2WeldJointDef = b2WeldJointDef;
+  Box2D.Dynamics.Joints.b2PrismaticJoint = PrismaticJoint;
+  Box2D.Dynamics.Joints.b2PrismaticJointDef = PrismaticJointDef;
+  Box2D.Dynamics.Joints.b2PulleyJoint = PulleyJoint;
+  Box2D.Dynamics.Joints.b2PulleyJointDef = PulleyJointDef;
+  Box2D.Dynamics.Joints.b2RevoluteJoint = RevoluteJoint;
+  Box2D.Dynamics.Joints.b2RevoluteJointDef = RevoluteJointDef;
+  Box2D.Dynamics.Joints.b2WeldJoint = WeldJoint;
+  Box2D.Dynamics.Joints.b2WeldJointDef = WeldJointDef;
 }
