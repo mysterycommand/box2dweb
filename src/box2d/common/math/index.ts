@@ -4,12 +4,9 @@ import Vec2 from './vec2';
 import Mat22 from './mat22';
 import Transform from './transform';
 
-export const b2Vec2_zero = new Vec2(0.0, 0.0);
+export const b2Vec2_zero = new Vec2(0, 0);
 
-export const b2Mat22_identity = Mat22.FromVV(
-  new Vec2(1.0, 0.0),
-  new Vec2(0.0, 1.0),
-);
+export const b2Mat22_identity = Mat22.FromVV(new Vec2(1, 0), new Vec2(0, 1));
 
 export const b2Transform_identity = new Transform(
   b2Vec2_zero,

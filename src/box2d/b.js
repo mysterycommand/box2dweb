@@ -74,6 +74,8 @@ import Controller from './dynamics/controllers/controller';
 import Joint from './dynamics/joints/joint';
 import JointDef from './dynamics/joints/joint-def';
 import JointEdge from './dynamics/joints/joint-edge';
+import MouseJoint from './dynamics/joints/mouse-joint';
+import MouseJointDef from './dynamics/joints/mouse-joint-def';
 
 /**
  * @see: ./g.js
@@ -102,8 +104,6 @@ import JointEdge from './dynamics/joints/joint-edge';
 // import Jacobian from './dynamics/joints/jacobian';
 // import LineJoint from './dynamics/joints/line-joint';
 // import LineJointDef from './dynamics/joints/line-joint-def';
-// import MouseJoint from './dynamics/joints/mouse-joint';
-// import MouseJointDef from './dynamics/joints/mouse-joint-def';
 // import PrismaticJoint from './dynamics/joints/prismatic-joint';
 // import PrismaticJointDef from './dynamics/joints/prismatic-joint-def';
 // import PulleyJoint from './dynamics/joints/pulley-joint';
@@ -292,19 +292,8 @@ export default function b(Box2D) {
   }
   Box2D.Dynamics.Joints.b2LineJointDef = b2LineJointDef;
 
-  function b2MouseJoint() {
-    b2MouseJoint.b2MouseJoint.apply(this, arguments);
-    if (this.constructor === b2MouseJoint)
-      this.b2MouseJoint.apply(this, arguments);
-  }
-  Box2D.Dynamics.Joints.b2MouseJoint = b2MouseJoint;
-
-  function b2MouseJointDef() {
-    b2MouseJointDef.b2MouseJointDef.apply(this, arguments);
-    if (this.constructor === b2MouseJointDef)
-      this.b2MouseJointDef.apply(this, arguments);
-  }
-  Box2D.Dynamics.Joints.b2MouseJointDef = b2MouseJointDef;
+  Box2D.Dynamics.Joints.b2MouseJoint = MouseJoint;
+  Box2D.Dynamics.Joints.b2MouseJointDef = MouseJointDef;
 
   function b2PrismaticJoint() {
     b2PrismaticJoint.b2PrismaticJoint.apply(this, arguments);

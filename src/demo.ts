@@ -183,6 +183,7 @@ function init() {
   function update() {
     if (isMouseDown && !mouseJoint) {
       const body = getBodyAtMouse();
+
       if (body) {
         const md = new MouseJointDef();
         md.bodyA = world.GetGroundBody();

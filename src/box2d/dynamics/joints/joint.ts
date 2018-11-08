@@ -23,78 +23,6 @@ export default class Joint {
   public static e_atUpperLimit = 2;
   public static e_equalLimits = 3;
 
-  public static Create(def: JointDef, allocator: any) {
-    switch (def.type) {
-      case Joint.e_distanceJoint:
-        {
-          // joint = new DistanceJoint(
-          //   def instanceof DistanceJointDef ? def : null,
-          // );
-        }
-        break;
-
-      case Joint.e_mouseJoint:
-        {
-          // joint = new MouseJoint(def instanceof MouseJointDef ? def : null);
-        }
-        break;
-
-      case Joint.e_prismaticJoint:
-        {
-          // joint = new PrismaticJoint(
-          //   def instanceof PrismaticJointDef ? def : null,
-          // );
-        }
-        break;
-
-      case Joint.e_revoluteJoint:
-        {
-          // joint = new RevoluteJoint(
-          //   def instanceof RevoluteJointDef ? def : null,
-          // );
-        }
-        break;
-
-      case Joint.e_pulleyJoint:
-        {
-          // joint = new PulleyJoint(
-          //   def instanceof PulleyJointDef ? def : null,
-          // );
-        }
-        break;
-
-      case Joint.e_gearJoint:
-        {
-          // joint = new GearJoint(def instanceof GearJointDef ? def : null);
-        }
-        break;
-
-      case Joint.e_lineJoint:
-        {
-          // joint = new LineJoint(def instanceof LineJointDef ? def : null);
-        }
-        break;
-
-      case Joint.e_weldJoint:
-        {
-          // joint = new WeldJoint(def instanceof WeldJointDef ? def : null);
-        }
-        break;
-
-      case Joint.e_frictionJoint:
-        {
-          // joint = new FrictionJoint(
-          //   def instanceof FrictionJointDef ? def : null,
-          // );
-        }
-        break;
-      default:
-        break;
-    }
-
-    return new Joint(new JointDef());
-  }
-
   public static Destroy(joint: Joint, allocator: any) {} // tslint:disable-line no-empty
 
   public m_edgeA = new JointEdge();
@@ -130,15 +58,15 @@ export default class Joint {
   }
 
   public GetAnchorA() {
-    return null;
+    return new Vec2();
   }
 
   public GetAnchorB() {
-    return null;
+    return new Vec2();
   }
 
   public GetReactionForce(inv_dt = 0) {
-    return null;
+    return new Vec2();
   }
 
   public GetReactionTorque(inv_dt = 0) {

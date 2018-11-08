@@ -17,6 +17,7 @@ import Contact from './contacts/contact';
 
 import JointDef from './joints/joint-def';
 import Joint from './joints/joint';
+import { Create } from './joints/joint-factory';
 // import PulleyJoint from './joints/pulley-joint';
 import Controller from './controllers/controller';
 import DistanceProxy from '../collision/distance-proxy';
@@ -34,15 +35,6 @@ import RayCastInput from '../collision/ray-cast-input';
 import CircleShape from '../collision/shapes/circle-shape';
 import PolygonShape from '../collision/shapes/polygon-shape';
 import EdgeShape from '../collision/shapes/edge-shape';
-
-// ContactManager
-// ContactSolver
-// Island
-// BodyDef
-// Body
-// AABB
-// RayCastOutput
-// RayCastInput
 
 export default class World {
   public static s_timestep2 = new TimeStep();
@@ -211,8 +203,12 @@ export default class World {
   }
 
   public CreateJoint(def: JointDef) {
-    const j = Joint.Create(def, null);
-    if (!(j.m_bodyA && j.m_bodyB && def.bodyA && def.bodyB)) {
+    if (!(def.bodyA && def.bodyB)) {
+      return;
+    }
+
+    const j = Create(def, null);
+    if (!(j.m_bodyA && j.m_bodyB)) {
       return;
     }
 
