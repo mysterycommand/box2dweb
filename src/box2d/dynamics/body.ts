@@ -72,6 +72,8 @@ export default class Body {
   public m_fixtureCount: any;
   public m_userData: any;
 
+  public m_islandIndex = 0;
+
   constructor(bd: BodyDef, public m_world?: World) {
     this.m_flags = 0;
 
@@ -249,8 +251,8 @@ export default class Body {
     }
 
     fixture.Destroy();
-    fixture.m_body = null;
-    fixture.m_next = null;
+    fixture.m_body = undefined;
+    fixture.m_next = undefined;
     --this.m_fixtureCount;
 
     this.ResetMassData();
@@ -417,6 +419,10 @@ export default class Body {
 
     const body1 = this;
     const body2 = this.m_world.CreateBody(this.GetDefinition());
+
+    if (!body2) {
+      return;
+    }
 
     let prev;
     for (let f = body1.m_fixtureList; f; ) {
@@ -771,6 +777,10 @@ export default class Body {
       return;
     }
 
+    if (!this.m_world || this.m_world.IsLocked()) {
+      return;
+    }
+
     const broadPhase = this.m_world.m_contactManager.m_broadPhase;
 
     if (flag) {
@@ -836,6 +846,10 @@ export default class Body {
   }
 
   public SynchronizeFixtures() {
+    if (!this.m_world || this.m_world.IsLocked()) {
+      return;
+    }
+
     const xf1 = Body.s_xf1;
     xf1.R.Set(this.m_sweep.a0);
 

@@ -7,6 +7,7 @@ export default class TimeStep {
   public positionIterations = 10;
   public velocityIterations = 10;
 
+  public dtRatio = 1;
   public warmStarting = true;
 
   public Set({

@@ -1,5 +1,7 @@
-b2ContactConstraintPoint.b2ContactConstraintPoint = function() {
-  this.localPoint = new b2Vec2();
-  this.rA = new b2Vec2();
-  this.rB = new b2Vec2();
-};
+import Vec2 from '../../common/math/vec2';
+
+export default class ContactConstraintPoint {
+  public localPoint = new Vec2();
+  public rA = new Vec2();
+  public rB = new Vec2();
+}

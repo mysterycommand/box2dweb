@@ -6,6 +6,7 @@ export default class Controller {
   public m_bodyList?: ControllerEdge = undefined;
   public m_bodyCount = 0;
   public m_next: any;
+  public m_prev: any;
   public m_world: any;
 
   public Step(step: { dt: number }) {} // tslint:disable-line no-empty

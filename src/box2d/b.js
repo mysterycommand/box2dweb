@@ -47,38 +47,38 @@ import WorldManifold from './collision/world-manifold';
 import Body from './dynamics/body';
 import BodyDef from './dynamics/body-def';
 import Fixture from './dynamics/fixture';
+import FilterData from './dynamics/filter-data';
+import FixtureDef from './dynamics/fixture-def';
+import ContactFilter from './dynamics/contact-filter';
+import ContactImpulse from './dynamics/contact-impulse';
+import ContactListener from './dynamics/contact-listener';
+import ContactManager from './dynamics/contact-manager';
+import World from './dynamics/world';
+import CircleContact from './dynamics/contacts/circle-contact';
+import ContactConstraintPoint from './dynamics/contacts/contact-constraint-point';
+import ContactConstraint from './dynamics/contacts/contact-constraint';
+import ContactEdge from './dynamics/contacts/contact-edge';
+import ContactFactory from './dynamics/contacts/contact-factory';
+import ContactRegister from './dynamics/contacts/contact-register';
+import ContactResult from './dynamics/contacts/contact-result';
+import ContactSolver from './dynamics/contacts/contact-solver';
+import Contact from './dynamics/contacts/contact';
+import EdgeAndCircleContact from './dynamics/contacts/edge-and-circle-contact';
+import NullContact from './dynamics/contacts/null-contact';
+import PolyAndCircleContact from './dynamics/contacts/poly-and-circle-contact';
+import PolyAndEdgeContact from './dynamics/contacts/poly-and-edge-contact';
+import PolygonContact from './dynamics/contacts/polygon-contact';
+import PositionSolverManifold from './dynamics/contacts/position-solver-manifold';
+import Island from './dynamics/island';
+import Controller from './dynamics/controllers/controller';
+import Joint from './dynamics/joints/joint';
+import JointDef from './dynamics/joints/joint-def';
+import JointEdge from './dynamics/joints/joint-edge';
 
 /**
  * @see: ./g.js
  */
-// import ContactFilter from './dynamics/contact-filter';
-// import ContactImpulse from './dynamics/contact-impulse';
-// import ContactListener from './dynamics/contact-listener';
-// import ContactManager from './dynamics/contact-manager';
 // import DestructionListener from './dynamics/destruction-listener';
-// import FilterData from './dynamics/filter-data';
-// import FixtureDef from './dynamics/fixture-def';
-// import Island from './dynamics/island';
-// import World from './dynamics/world';
-
-/**
- * @see: ./h.js
- */
-// import CircleContact from './dynamics/contacts/circle-contact';
-// import Contact from './dynamics/contacts/contact';
-// import ContactConstraint from './dynamics/contacts/contact-constraint';
-// import ContactConstraintPoint from './dynamics/contacts/contact-constraint-point';
-// import ContactEdge from './dynamics/contacts/contact-edge';
-// import ContactFactory from './dynamics/contacts/contact-factory';
-// import ContactRegister from './dynamics/contacts/contact-register';
-// import ContactResult from './dynamics/contacts/contact-result';
-// import ContactSolver from './dynamics/contacts/contact-solver';
-// import EdgeAndCircleContact from './dynamics/contacts/edge-and-circle-contact';
-// import NullContact from './dynamics/contacts/null-contact';
-// import PolyAndCircleContact from './dynamics/contacts/poly-and-circle-contact';
-// import PolyAndEdgeContact from './dynamics/contacts/poly-and-edge-contact';
-// import PolygonContact from './dynamics/contacts/polygon-contact';
-// import PositionSolverManifold from './dynamics/contacts/position-solver-manifold';
 
 /**
  * @see: ./i.js
@@ -86,7 +86,6 @@ import Fixture from './dynamics/fixture';
 // import BuoyancyController from './dynamics/controllers/buoyancy-controller';
 // import ConstantAccelController from './dynamics/controllers/constant-accel-controller';
 // import ConstantForceController from './dynamics/controllers/constant-force-controller';
-// import Controller from './dynamics/controllers/controller';
 // import ControllerEdge from './dynamics/controllers/controller-edge';
 // import GravityController from './dynamics/controllers/gravity-controller';
 // import TensorDampingController from './dynamics/controllers/tensor-damping-controller';
@@ -101,9 +100,6 @@ import Fixture from './dynamics/fixture';
 // import GearJoint from './dynamics/joints/gear-joint';
 // import GearJointDef from './dynamics/joints/gear-joint-def';
 // import Jacobian from './dynamics/joints/jacobian';
-// import Joint from './dynamics/joints/joint';
-// import JointDef from './dynamics/joints/joint-def';
-// import JointEdge from './dynamics/joints/joint-edge';
 // import LineJoint from './dynamics/joints/line-joint';
 // import LineJointDef from './dynamics/joints/line-joint-def';
 // import MouseJoint from './dynamics/joints/mouse-joint';
@@ -164,41 +160,12 @@ export default function b(Box2D) {
   Box2D.Common.Math.b2Transform = Transform;
   Box2D.Common.Math.b2Vec2 = Vec2;
   Box2D.Common.Math.b2Vec3 = Vec3;
-
-  // function b2Body() {
-  //   b2Body.b2Body.apply(this, arguments);
-  //   if (this.constructor === b2Body) this.b2Body.apply(this, arguments);
-  // }
   Box2D.Dynamics.b2Body = Body;
-
-  // function b2BodyDef() {
-  //   b2BodyDef.b2BodyDef.apply(this, arguments);
-  //   if (this.constructor === b2BodyDef) this.b2BodyDef.apply(this, arguments);
-  // }
   Box2D.Dynamics.b2BodyDef = BodyDef;
-
-  function b2ContactFilter() {
-    b2ContactFilter.b2ContactFilter.apply(this, arguments);
-  }
-  Box2D.Dynamics.b2ContactFilter = b2ContactFilter;
-
-  function b2ContactImpulse() {
-    b2ContactImpulse.b2ContactImpulse.apply(this, arguments);
-  }
-  Box2D.Dynamics.b2ContactImpulse = b2ContactImpulse;
-
-  function b2ContactListener() {
-    b2ContactListener.b2ContactListener.apply(this, arguments);
-  }
-  Box2D.Dynamics.b2ContactListener = b2ContactListener;
-
-  function b2ContactManager() {
-    b2ContactManager.b2ContactManager.apply(this, arguments);
-    if (this.constructor === b2ContactManager)
-      this.b2ContactManager.apply(this, arguments);
-  }
-  Box2D.Dynamics.b2ContactManager = b2ContactManager;
-
+  Box2D.Dynamics.b2ContactFilter = ContactFilter;
+  Box2D.Dynamics.b2ContactImpulse = ContactImpulse;
+  Box2D.Dynamics.b2ContactListener = ContactListener;
+  Box2D.Dynamics.b2ContactManager = ContactManager;
   Box2D.Dynamics.b2DebugDraw = DebugDraw;
 
   function b2DestructionListener() {
@@ -206,123 +173,27 @@ export default function b(Box2D) {
   }
   Box2D.Dynamics.b2DestructionListener = b2DestructionListener;
 
-  function b2FilterData() {
-    b2FilterData.b2FilterData.apply(this, arguments);
-  }
-  Box2D.Dynamics.b2FilterData = b2FilterData;
-
-  // function b2Fixture() {
-  //   b2Fixture.b2Fixture.apply(this, arguments);
-  //   if (this.constructor === b2Fixture) this.b2Fixture.apply(this, arguments);
-  // }
+  Box2D.Dynamics.b2FilterData = FilterData;
   Box2D.Dynamics.b2Fixture = Fixture;
-
-  function b2FixtureDef() {
-    b2FixtureDef.b2FixtureDef.apply(this, arguments);
-    if (this.constructor === b2FixtureDef)
-      this.b2FixtureDef.apply(this, arguments);
-  }
-  Box2D.Dynamics.b2FixtureDef = b2FixtureDef;
-
-  function b2Island() {
-    b2Island.b2Island.apply(this, arguments);
-    if (this.constructor === b2Island) this.b2Island.apply(this, arguments);
-  }
-  Box2D.Dynamics.b2Island = b2Island;
-
+  Box2D.Dynamics.b2FixtureDef = FixtureDef;
+  Box2D.Dynamics.b2Island = Island;
   Box2D.Dynamics.b2TimeStep = TimeStep;
-
-  function b2World() {
-    b2World.b2World.apply(this, arguments);
-    if (this.constructor === b2World) this.b2World.apply(this, arguments);
-  }
-  Box2D.Dynamics.b2World = b2World;
-
-  function b2CircleContact() {
-    b2CircleContact.b2CircleContact.apply(this, arguments);
-  }
-  Box2D.Dynamics.Contacts.b2CircleContact = b2CircleContact;
-
-  function b2Contact() {
-    b2Contact.b2Contact.apply(this, arguments);
-    if (this.constructor === b2Contact) this.b2Contact.apply(this, arguments);
-  }
-  Box2D.Dynamics.Contacts.b2Contact = b2Contact;
-
-  function b2ContactConstraint() {
-    b2ContactConstraint.b2ContactConstraint.apply(this, arguments);
-    if (this.constructor === b2ContactConstraint)
-      this.b2ContactConstraint.apply(this, arguments);
-  }
-  Box2D.Dynamics.Contacts.b2ContactConstraint = b2ContactConstraint;
-
-  function b2ContactConstraintPoint() {
-    b2ContactConstraintPoint.b2ContactConstraintPoint.apply(this, arguments);
-  }
-  Box2D.Dynamics.Contacts.b2ContactConstraintPoint = b2ContactConstraintPoint;
-
-  function b2ContactEdge() {
-    b2ContactEdge.b2ContactEdge.apply(this, arguments);
-  }
-  Box2D.Dynamics.Contacts.b2ContactEdge = b2ContactEdge;
-
-  function b2ContactFactory() {
-    b2ContactFactory.b2ContactFactory.apply(this, arguments);
-    if (this.constructor === b2ContactFactory)
-      this.b2ContactFactory.apply(this, arguments);
-  }
-  Box2D.Dynamics.Contacts.b2ContactFactory = b2ContactFactory;
-
-  function b2ContactRegister() {
-    b2ContactRegister.b2ContactRegister.apply(this, arguments);
-  }
-  Box2D.Dynamics.Contacts.b2ContactRegister = b2ContactRegister;
-
-  function b2ContactResult() {
-    b2ContactResult.b2ContactResult.apply(this, arguments);
-  }
-  Box2D.Dynamics.Contacts.b2ContactResult = b2ContactResult;
-
-  function b2ContactSolver() {
-    b2ContactSolver.b2ContactSolver.apply(this, arguments);
-    if (this.constructor === b2ContactSolver)
-      this.b2ContactSolver.apply(this, arguments);
-  }
-  Box2D.Dynamics.Contacts.b2ContactSolver = b2ContactSolver;
-
-  function b2EdgeAndCircleContact() {
-    b2EdgeAndCircleContact.b2EdgeAndCircleContact.apply(this, arguments);
-  }
-  Box2D.Dynamics.Contacts.b2EdgeAndCircleContact = b2EdgeAndCircleContact;
-
-  function b2NullContact() {
-    b2NullContact.b2NullContact.apply(this, arguments);
-    if (this.constructor === b2NullContact)
-      this.b2NullContact.apply(this, arguments);
-  }
-  Box2D.Dynamics.Contacts.b2NullContact = b2NullContact;
-
-  function b2PolyAndCircleContact() {
-    b2PolyAndCircleContact.b2PolyAndCircleContact.apply(this, arguments);
-  }
-  Box2D.Dynamics.Contacts.b2PolyAndCircleContact = b2PolyAndCircleContact;
-
-  function b2PolyAndEdgeContact() {
-    b2PolyAndEdgeContact.b2PolyAndEdgeContact.apply(this, arguments);
-  }
-  Box2D.Dynamics.Contacts.b2PolyAndEdgeContact = b2PolyAndEdgeContact;
-
-  function b2PolygonContact() {
-    b2PolygonContact.b2PolygonContact.apply(this, arguments);
-  }
-  Box2D.Dynamics.Contacts.b2PolygonContact = b2PolygonContact;
-
-  function b2PositionSolverManifold() {
-    b2PositionSolverManifold.b2PositionSolverManifold.apply(this, arguments);
-    if (this.constructor === b2PositionSolverManifold)
-      this.b2PositionSolverManifold.apply(this, arguments);
-  }
-  Box2D.Dynamics.Contacts.b2PositionSolverManifold = b2PositionSolverManifold;
+  Box2D.Dynamics.b2World = World;
+  Box2D.Dynamics.Contacts.b2CircleContact = CircleContact;
+  Box2D.Dynamics.Contacts.b2Contact = Contact;
+  Box2D.Dynamics.Contacts.b2ContactConstraint = ContactConstraint;
+  Box2D.Dynamics.Contacts.b2ContactConstraintPoint = ContactConstraintPoint;
+  Box2D.Dynamics.Contacts.b2ContactEdge = ContactEdge;
+  Box2D.Dynamics.Contacts.b2ContactFactory = ContactFactory;
+  Box2D.Dynamics.Contacts.b2ContactRegister = ContactRegister;
+  Box2D.Dynamics.Contacts.b2ContactResult = ContactResult;
+  Box2D.Dynamics.Contacts.b2ContactSolver = ContactSolver;
+  Box2D.Dynamics.Contacts.b2EdgeAndCircleContact = EdgeAndCircleContact;
+  Box2D.Dynamics.Contacts.b2NullContact = NullContact;
+  Box2D.Dynamics.Contacts.b2PolyAndCircleContact = PolyAndCircleContact;
+  Box2D.Dynamics.Contacts.b2PolyAndEdgeContact = PolyAndEdgeContact;
+  Box2D.Dynamics.Contacts.b2PolygonContact = PolygonContact;
+  Box2D.Dynamics.Contacts.b2PositionSolverManifold = PositionSolverManifold;
 
   function b2BuoyancyController() {
     b2BuoyancyController.b2BuoyancyController.apply(this, arguments);
@@ -339,10 +210,7 @@ export default function b(Box2D) {
   }
   Box2D.Dynamics.Controllers.b2ConstantForceController = b2ConstantForceController;
 
-  function b2Controller() {
-    b2Controller.b2Controller.apply(this, arguments);
-  }
-  Box2D.Dynamics.Controllers.b2Controller = b2Controller;
+  Box2D.Dynamics.Controllers.b2Controller = Controller;
 
   function b2ControllerEdge() {
     b2ControllerEdge.b2ControllerEdge.apply(this, arguments);
@@ -406,22 +274,9 @@ export default function b(Box2D) {
   }
   Box2D.Dynamics.Joints.b2Jacobian = b2Jacobian;
 
-  function b2Joint() {
-    b2Joint.b2Joint.apply(this, arguments);
-    if (this.constructor === b2Joint) this.b2Joint.apply(this, arguments);
-  }
-  Box2D.Dynamics.Joints.b2Joint = b2Joint;
-
-  function b2JointDef() {
-    b2JointDef.b2JointDef.apply(this, arguments);
-    if (this.constructor === b2JointDef) this.b2JointDef.apply(this, arguments);
-  }
-  Box2D.Dynamics.Joints.b2JointDef = b2JointDef;
-
-  function b2JointEdge() {
-    b2JointEdge.b2JointEdge.apply(this, arguments);
-  }
-  Box2D.Dynamics.Joints.b2JointEdge = b2JointEdge;
+  Box2D.Dynamics.Joints.b2Joint = Joint;
+  Box2D.Dynamics.Joints.b2JointDef = JointDef;
+  Box2D.Dynamics.Joints.b2JointEdge = JointEdge;
 
   function b2LineJoint() {
     b2LineJoint.b2LineJoint.apply(this, arguments);

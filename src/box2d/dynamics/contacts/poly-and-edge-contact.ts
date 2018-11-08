@@ -1,44 +1,53 @@
-Box2D.inherit(b2PolyAndEdgeContact, Box2D.Dynamics.Contacts.b2Contact);
+import Contact from './contact';
+import PolygonShape from '../../collision/shapes/polygon-shape';
+import EdgeShape from '../../collision/shapes/edge-shape';
+import Manifold from '../../collision/manifold';
+import Transform from '../../common/math/transform';
 
-b2PolyAndEdgeContact.prototype.__super =
-  Box2D.Dynamics.Contacts.b2Contact.prototype;
+export default class PolyAndEdgeContact extends Contact {
+  public static Create(allocator: any) {
+    return new PolyAndEdgeContact();
+  }
 
-b2PolyAndEdgeContact.b2PolyAndEdgeContact = function() {
-  Box2D.Dynamics.Contacts.b2Contact.b2Contact.apply(this, arguments);
-};
+  // tslint:disable-next-line no-empty
+  public static Destroy(contact: Contact, allocator: any) {}
 
-b2PolyAndEdgeContact.Create = function(allocator) {
-  return new b2PolyAndEdgeContact();
-};
+  public Evaluate() {
+    if (!(this.m_fixtureA && this.m_fixtureB)) {
+      return;
+    }
 
-b2PolyAndEdgeContact.Destroy = function(contact, allocator) {};
+    const bodyA = this.m_fixtureA.GetBody();
+    const bodyB = this.m_fixtureB.GetBody();
 
-b2PolyAndEdgeContact.prototype.Reset = function(fixtureA, fixtureB) {
-  this.__super.Reset.call(this, fixtureA, fixtureB);
-  b2Settings.b2Assert(fixtureA.GetType() == b2Shape.e_polygonShape);
-  b2Settings.b2Assert(fixtureB.GetType() == b2Shape.e_edgeShape);
-};
+    const shapeA = this.m_fixtureA.GetShape();
+    const shapeB = this.m_fixtureB.GetShape();
 
-b2PolyAndEdgeContact.prototype.Evaluate = function() {
-  var bA = this.m_fixtureA.GetBody();
-  var bB = this.m_fixtureB.GetBody();
-  this.b2CollidePolyAndEdge(
-    this.m_manifold,
-    this.m_fixtureA.GetShape() instanceof b2PolygonShape
-      ? this.m_fixtureA.GetShape()
-      : null,
-    bA.m_xf,
-    this.m_fixtureB.GetShape() instanceof b2EdgeShape
-      ? this.m_fixtureB.GetShape()
-      : null,
-    bB.m_xf,
-  );
-};
+    if (
+      !(
+        bodyA &&
+        bodyB &&
+        shapeA instanceof PolygonShape &&
+        shapeB instanceof EdgeShape
+      )
+    ) {
+      return;
+    }
 
-b2PolyAndEdgeContact.prototype.b2CollidePolyAndEdge = function(
-  manifold,
-  polygon,
-  xf1,
-  edge,
-  xf2,
-) {};
+    this.CollidePolyAndEdge(
+      this.m_manifold,
+      shapeA,
+      bodyA.m_xf,
+      shapeB,
+      bodyB.m_xf,
+    );
+  }
+
+  public CollidePolyAndEdge(
+    manifold: Manifold,
+    polygon: PolygonShape,
+    xf1: Transform,
+    edge: EdgeShape,
+    xf2: Transform,
+  ) {} // tslint:disable-line no-empty
+}

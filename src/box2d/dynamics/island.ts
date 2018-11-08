@@ -1,13 +1,17 @@
 // tslint:disable variable-name
 
-// import ContactImpulse from './contact-impulse';
+import ContactImpulse from './contact-impulse';
 import * as Settings from '../common/settings';
 import { Clamp, Dot, Min } from '../common/math';
 import TimeStep from './time-step';
 import Vec2 from '../common/math/vec2';
+import Body from './body';
+import ContactSolver from './contacts/contact-solver';
+import Contact from './contacts/contact';
+import Joint from './joints/joint';
 
 export default class Island {
-  // public static s_impulse = new ContactImpulse();
+  public static s_impulse = new ContactImpulse();
 
   public m_bodies = new Array();
   public m_contacts = new Array();
@@ -23,7 +27,7 @@ export default class Island {
 
   public m_allocator = undefined;
   public m_listener = undefined;
-  public m_contactSolver = undefined;
+  public m_contactSolver = new ContactSolver();
 
   public Initialize(
     bodyCapacity = 0,
@@ -73,7 +77,7 @@ export default class Island {
     for (i = 0; i < this.m_bodyCount; ++i) {
       b = this.m_bodies[i];
 
-      if (b.GetType() !== b2Body.b2_dynamicBody) {
+      if (b.GetType() !== Body.b2_dynamicBody) {
         continue;
       }
 
@@ -124,7 +128,7 @@ export default class Island {
     for (i = 0; i < this.m_bodyCount; ++i) {
       b = this.m_bodies[i];
 
-      if (b.GetType() === b2Body.b2_staticBody) {
+      if (b.GetType() === Body.b2_staticBody) {
         continue;
       }
 
@@ -190,17 +194,17 @@ export default class Island {
       for (i = 0; i < this.m_bodyCount; ++i) {
         b = this.m_bodies[i];
 
-        if (b.GetType() === b2Body.b2_staticBody) {
+        if (b.GetType() === Body.b2_staticBody) {
           continue;
         }
 
-        if ((b.m_flags & b2Body.e_allowSleepFlag) === 0) {
+        if ((b.m_flags & Body.e_allowSleepFlag) === 0) {
           b.m_sleepTime = 0.0;
           minSleepTime = 0.0;
         }
 
         if (
-          (b.m_flags & b2Body.e_allowSleepFlag) === 0 ||
+          (b.m_flags & Body.e_allowSleepFlag) === 0 ||
           b.m_angularVelocity * b.m_angularVelocity > angTolSqr ||
           Dot(b.m_linearVelocity, b.m_linearVelocity) > linTolSqr
         ) {
@@ -221,7 +225,7 @@ export default class Island {
     }
   }
 
-  public SolveTOI(subStep) {
+  public SolveTOI(subStep: TimeStep) {
     let i = 0;
     let j = 0;
 
@@ -232,7 +236,7 @@ export default class Island {
       this.m_allocator,
     );
 
-    var contactSolver = this.m_contactSolver;
+    const contactSolver = this.m_contactSolver;
     for (i = 0; i < this.m_jointCount; ++i) {
       this.m_joints[i].InitVelocityConstraints(subStep);
     }
@@ -247,7 +251,7 @@ export default class Island {
 
     for (i = 0; i < this.m_bodyCount; ++i) {
       const b = this.m_bodies[i];
-      if (b.GetType() === b2Body.b2_staticBody) {
+      if (b.GetType() === Body.b2_staticBody) {
         continue;
       }
 
@@ -301,7 +305,7 @@ export default class Island {
     this.Report(contactSolver.m_constraints);
   }
 
-  public Report(constraints) {
+  public Report(constraints: any[]) {
     if (!this.m_listener) {
       return;
     }
@@ -315,20 +319,20 @@ export default class Island {
         Island.s_impulse.tangentImpulses[j] = cc.points[j].tangentImpulse;
       }
 
-      this.m_listener.PostSolve(c, b2Island.s_impulse);
+      // this.m_listener.PostSolve(c, Island.s_impulse);
     }
   }
 
-  public AddBody(body) {
+  public AddBody(body: Body) {
     body.m_islandIndex = this.m_bodyCount;
     this.m_bodies[this.m_bodyCount++] = body;
   }
 
-  public AddContact(contact) {
+  public AddContact(contact: Contact) {
     this.m_contacts[this.m_contactCount++] = contact;
   }
 
-  public AddJoint(joint) {
+  public AddJoint(joint: Joint) {
     this.m_joints[this.m_jointCount++] = joint;
   }
 }

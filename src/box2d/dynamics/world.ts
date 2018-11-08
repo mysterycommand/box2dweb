@@ -7,6 +7,33 @@ import Transform from '../common/math/transform';
 import Vec2 from '../common/math/vec2';
 import DebugDraw from './debug-draw';
 import TimeStep from './time-step';
+import ContactManager from './contact-manager';
+import ContactSolver from './contacts/contact-solver';
+import Island from './island';
+import BodyDef from './body-def';
+import DynamicTreeBroadPhase from '../collision/dynamic-tree-broad-phase';
+import Body from './body';
+import Contact from './contacts/contact';
+
+import JointDef from './joints/joint-def';
+import Joint from './joints/joint';
+// import PulleyJoint from './joints/pulley-joint';
+import Controller from './controllers/controller';
+import DistanceProxy from '../collision/distance-proxy';
+import Aabb from '../collision/aabb';
+import Shape from '../collision/shapes/shape';
+import Fixture from './fixture';
+import {
+  b2_linearSlop,
+  b2_maxTOIContactsPerIsland,
+  b2_maxTOIJointsPerIsland,
+  b2Assert,
+} from '../common/settings';
+import RayCastOutput from '../collision/ray-cast-output';
+import RayCastInput from '../collision/ray-cast-input';
+import CircleShape from '../collision/shapes/circle-shape';
+import PolygonShape from '../collision/shapes/polygon-shape';
+import EdgeShape from '../collision/shapes/edge-shape';
 
 // ContactManager
 // ContactSolver
@@ -31,12 +58,12 @@ export default class World {
   public static m_warmStarting = true;
   public static m_continuousPhysics = true;
 
-  public m_destructionListener = undefined;
+  public m_destructionListener?: any;
   public m_debugDraw?: DebugDraw;
-  public m_bodyList = undefined;
-  public m_contactList = undefined;
-  public m_jointList = undefined;
-  public m_controllerList = undefined;
+  public m_bodyList?: Body;
+  public m_contactList?: Contact;
+  public m_jointList?: any;
+  public m_controllerList?: any;
 
   public m_bodyCount = 0;
   public m_contactCount = 0;
@@ -44,36 +71,32 @@ export default class World {
   public m_controllerCount = 0;
   public m_allowSleep = true;
   public m_gravity = new Vec2();
-  public m_inv_dt0 = 0.0;
+  public m_inv_dt0 = 0;
+  public m_flags = 0;
 
-  public m_contactManager = undefined;
-  public m_contactSolver = undefined;
-  public m_island = undefined;
-  public m_groundBody = undefined;
+  public m_contactManager = new ContactManager();
+  public m_contactSolver = new ContactSolver();
+  public m_island = new Island();
+  public m_groundBody = this.CreateBody(new BodyDef());
+
+  public s_stack: any[] = [];
 
   constructor(gravity: Vec2, doSleep: boolean) {
     this.m_gravity = gravity;
     this.m_allowSleep = doSleep;
 
-    this.m_contactManager = new ContactManager();
     this.m_contactManager.m_world = this;
-
-    this.m_contactSolver = new ContactSolver();
-    this.m_island = new Island();
-
-    const bd = new BodyDef();
-    this.m_groundBody = this.CreateBody(bd);
   }
 
-  public SetDestructionListener(listener) {
+  public SetDestructionListener(listener: any) {
     this.m_destructionListener = listener;
   }
 
-  public SetContactFilter(filter) {
+  public SetContactFilter(filter: any) {
     this.m_contactManager.m_contactFilter = filter;
   }
 
-  public SetContactListener(listener) {
+  public SetContactListener(listener: any) {
     this.m_contactManager.m_contactListener = listener;
   }
 
@@ -81,7 +104,7 @@ export default class World {
     this.m_debugDraw = debugDraw;
   }
 
-  public SetBroadPhase(broadPhase) {
+  public SetBroadPhase(broadPhase: DynamicTreeBroadPhase) {
     const oldBroadPhase = this.m_contactManager.m_broadPhase;
 
     this.m_contactManager.m_broadPhase = broadPhase;
@@ -103,12 +126,12 @@ export default class World {
     return this.m_contactManager.m_broadPhase.GetProxyCount();
   }
 
-  public CreateBody(def) {
+  public CreateBody(def: BodyDef) {
     if (this.IsLocked() === true) {
       return null;
     }
 
-    const b = new b2Body(def, this);
+    const b = new Body(def, this);
     b.m_prev = null;
     b.m_next = this.m_bodyList;
 
@@ -121,7 +144,7 @@ export default class World {
     return b;
   }
 
-  public DestroyBody(b) {
+  public DestroyBody(b: Body) {
     if (this.IsLocked() === true) {
       return;
     }
@@ -131,10 +154,11 @@ export default class World {
       const jn0 = jn;
       jn = jn.next;
 
-      if (this.m_destructionListener) {
-        this.m_destructionListener.SayGoodbyeJoint(jn0.joint);
+      if (!this.m_destructionListener) {
+        continue;
       }
 
+      this.m_destructionListener.SayGoodbyeJoint(jn0.joint);
       this.DestroyJoint(jn0.joint);
     }
 
@@ -159,10 +183,11 @@ export default class World {
       const f0 = f;
       f = f.m_next;
 
-      if (this.m_destructionListener) {
-        this.m_destructionListener.SayGoodbyeFixture(f0);
+      if (!this.m_destructionListener) {
+        continue;
       }
 
+      this.m_destructionListener.SayGoodbyeFixture(f0);
       f0.DestroyProxy(this.m_contactManager.m_broadPhase);
       f0.Destroy();
     }
@@ -185,10 +210,13 @@ export default class World {
     --this.m_bodyCount;
   }
 
-  public CreateJoint(def) {
-    const j = b2Joint.Create(def, null);
+  public CreateJoint(def: JointDef) {
+    const j = Joint.Create(def, null);
+    if (!(j.m_bodyA && j.m_bodyB && def.bodyA && def.bodyB)) {
+      return;
+    }
 
-    j.m_prev = null;
+    j.m_prev = undefined;
     j.m_next = this.m_jointList;
 
     if (this.m_jointList) {
@@ -200,7 +228,7 @@ export default class World {
 
     j.m_edgeA.joint = j;
     j.m_edgeA.other = j.m_bodyB;
-    j.m_edgeA.prev = null;
+    j.m_edgeA.prev = undefined;
     j.m_edgeA.next = j.m_bodyA.m_jointList;
 
     if (j.m_bodyA.m_jointList) {
@@ -210,7 +238,7 @@ export default class World {
     j.m_bodyA.m_jointList = j.m_edgeA;
     j.m_edgeB.joint = j;
     j.m_edgeB.other = j.m_bodyA;
-    j.m_edgeB.prev = null;
+    j.m_edgeB.prev = undefined;
     j.m_edgeB.next = j.m_bodyB.m_jointList;
 
     if (j.m_bodyB.m_jointList) {
@@ -234,7 +262,7 @@ export default class World {
     return j;
   }
 
-  public DestroyJoint(j) {
+  public DestroyJoint(j: Joint) {
     const collideConnected = j.m_collideConnected;
 
     if (j.m_prev) {
@@ -252,6 +280,10 @@ export default class World {
     const bodyA = j.m_bodyA;
     const bodyB = j.m_bodyB;
 
+    if (!(bodyA && bodyB)) {
+      return;
+    }
+
     bodyA.SetAwake(true);
     bodyB.SetAwake(true);
 
@@ -267,8 +299,8 @@ export default class World {
       bodyA.m_jointList = j.m_edgeA.next;
     }
 
-    j.m_edgeA.prev = null;
-    j.m_edgeA.next = null;
+    j.m_edgeA.prev = undefined;
+    j.m_edgeA.next = undefined;
 
     if (j.m_edgeB.prev) {
       j.m_edgeB.prev.next = j.m_edgeB.next;
@@ -282,10 +314,10 @@ export default class World {
       bodyB.m_jointList = j.m_edgeB.next;
     }
 
-    j.m_edgeB.prev = null;
-    j.m_edgeB.next = null;
+    j.m_edgeB.prev = undefined;
+    j.m_edgeB.next = undefined;
 
-    b2Joint.Destroy(j, null);
+    Joint.Destroy(j, null);
     --this.m_jointCount;
 
     if (collideConnected === false) {
@@ -299,7 +331,7 @@ export default class World {
     }
   }
 
-  public AddController(c) {
+  public AddController(c: Controller) {
     c.m_next = this.m_controllerList;
     c.m_prev = null;
 
@@ -310,7 +342,7 @@ export default class World {
     return c;
   }
 
-  public RemoveController(c) {
+  public RemoveController(c: Controller) {
     if (c.m_prev) {
       c.m_prev.m_next = c.m_next;
     }
@@ -326,7 +358,7 @@ export default class World {
     this.m_controllerCount--;
   }
 
-  public CreateController(controller) {
+  public CreateController(controller: Controller) {
     if (controller.m_world !== this) {
       throw new Error('Controller can only be a member of one world');
     }
@@ -345,7 +377,7 @@ export default class World {
     return controller;
   }
 
-  public DestroyController(controller) {
+  public DestroyController(controller: Controller) {
     controller.Clear();
 
     if (controller.m_next) {
@@ -363,12 +395,12 @@ export default class World {
     --this.m_controllerCount;
   }
 
-  public SetWarmStarting(flag) {
-    b2World.m_warmStarting = flag;
+  public SetWarmStarting(flag: boolean) {
+    World.m_warmStarting = flag;
   }
 
-  public SetContinuousPhysics(flag) {
-    b2World.m_continuousPhysics = flag;
+  public SetContinuousPhysics(flag: boolean) {
+    World.m_continuousPhysics = flag;
   }
 
   public GetBodyCount() {
@@ -383,7 +415,7 @@ export default class World {
     return this.m_contactCount;
   }
 
-  public SetGravity(gravity) {
+  public SetGravity(gravity: Vec2) {
     this.m_gravity = gravity;
   }
 
@@ -395,26 +427,15 @@ export default class World {
     return this.m_groundBody;
   }
 
-  public Step(dt, velocityIterations, positionIterations) {
-    if (dt === undefined) {
-      dt = 0;
-    }
-
-    if (velocityIterations === undefined) {
-      velocityIterations = 0;
-    }
-
-    if (positionIterations === undefined) {
-      positionIterations = 0;
-    }
-
-    if (this.m_flags & b2World.e_newFixture) {
+  public Step(dt = 0, velocityIterations = 0, positionIterations = 0) {
+    if (this.m_flags & World.e_newFixture) {
       this.m_contactManager.FindNewContacts();
-      this.m_flags &= ~b2World.e_newFixture;
+      this.m_flags &= ~World.e_newFixture;
     }
 
-    this.m_flags |= b2World.e_locked;
-    const step = b2World.s_timestep2;
+    this.m_flags |= World.e_locked;
+    const step = World.s_timestep2;
+
     step.dt = dt;
     step.velocityIterations = velocityIterations;
     step.positionIterations = positionIterations;
@@ -424,15 +445,16 @@ export default class World {
     } else {
       step.inv_dt = 0.0;
     }
+
     step.dtRatio = this.m_inv_dt0 * dt;
-    step.warmStarting = b2World.m_warmStarting;
+    step.warmStarting = World.m_warmStarting;
 
     this.m_contactManager.Collide();
     if (step.dt > 0.0) {
       this.Solve(step);
     }
 
-    if (b2World.m_continuousPhysics && step.dt > 0.0) {
+    if (World.m_continuousPhysics && step.dt > 0.0) {
       this.SolveTOI(step);
     }
 
@@ -440,7 +462,7 @@ export default class World {
       this.m_inv_dt0 = step.inv_dt;
     }
 
-    this.m_flags &= ~b2World.e_locked;
+    this.m_flags &= ~World.e_locked;
   }
 
   public ClearForces() {
@@ -451,7 +473,7 @@ export default class World {
   }
 
   public DrawDebugData() {
-    if (this.m_debugDraw == null) {
+    if (!this.m_debugDraw) {
       return;
     }
 
@@ -464,24 +486,26 @@ export default class World {
     let j;
     let bp;
     let xf;
-    const vs = [new Vec2(), new Vec2(), new Vec2(), new Vec2()];
+    let vs = [new Vec2(), new Vec2(), new Vec2(), new Vec2()];
     const color = new Color(0, 0, 0);
 
     if (flags & DebugDraw.e_shapeBit) {
       for (b = this.m_bodyList; b; b = b.m_next) {
         xf = b.m_xf;
+
         for (f = b.GetFixtureList(); f; f = f.m_next) {
           s = f.GetShape();
-          if (b.IsActive() == false) {
+
+          if (b.IsActive() === false) {
             color.Set(0.5, 0.5, 0.3);
             this.DrawShape(s, xf, color);
-          } else if (b.GetType() == b2Body.b2_staticBody) {
+          } else if (b.GetType() === Body.b2_staticBody) {
             color.Set(0.5, 0.9, 0.5);
             this.DrawShape(s, xf, color);
-          } else if (b.GetType() == b2Body.b2_kinematicBody) {
+          } else if (b.GetType() === Body.b2_kinematicBody) {
             color.Set(0.5, 0.5, 0.9);
             this.DrawShape(s, xf, color);
-          } else if (b.IsAwake() == false) {
+          } else if (b.IsAwake() === false) {
             color.Set(0.6, 0.6, 0.6);
             this.DrawShape(s, xf, color);
           } else {
@@ -499,22 +523,29 @@ export default class World {
     }
 
     if (flags & DebugDraw.e_controllerBit) {
-      for (const c = this.m_controllerList; c; c = c.m_next) {
+      for (let c = this.m_controllerList; c; c = c.m_next) {
         c.Draw(this.m_debugDraw);
       }
     }
 
     if (flags & DebugDraw.e_pairBit) {
       color.Set(0.3, 0.9, 0.9);
+
       for (
-        const contact = this.m_contactManager.m_contactList;
+        let contact = this.m_contactManager.m_contactList;
         contact;
         contact = contact.GetNext()
       ) {
         const fixtureA = contact.GetFixtureA();
         const fixtureB = contact.GetFixtureB();
+
+        if (!(fixtureA && fixtureB)) {
+          continue;
+        }
+
         const cA = fixtureA.GetAABB().GetCenter();
         const cB = fixtureB.GetAABB().GetCenter();
+
         this.m_debugDraw.DrawSegment(cA, cB, color);
       }
     }
@@ -522,16 +553,20 @@ export default class World {
     if (flags & DebugDraw.e_aabbBit) {
       bp = this.m_contactManager.m_broadPhase;
       vs = [new Vec2(), new Vec2(), new Vec2(), new Vec2()];
+
       for (b = this.m_bodyList; b; b = b.GetNext()) {
-        if (b.IsActive() == false) {
+        if (!b.IsActive()) {
           continue;
         }
+
         for (f = b.GetFixtureList(); f; f = f.GetNext()) {
           const aabb = bp.GetFatAABB(f.m_proxy);
+
           vs[0].Set(aabb.lowerBound.x, aabb.lowerBound.y);
           vs[1].Set(aabb.upperBound.x, aabb.lowerBound.y);
           vs[2].Set(aabb.upperBound.x, aabb.upperBound.y);
           vs[3].Set(aabb.lowerBound.x, aabb.upperBound.y);
+
           this.m_debugDraw.DrawPolygon(vs, 4, color);
         }
       }
@@ -539,40 +574,41 @@ export default class World {
 
     if (flags & DebugDraw.e_centerOfMassBit) {
       for (b = this.m_bodyList; b; b = b.m_next) {
-        xf = b2World.s_xf;
+        xf = World.s_xf;
         xf.R = b.m_xf.R;
         xf.position = b.GetWorldCenter();
+
         this.m_debugDraw.DrawTransform(xf);
       }
     }
   }
 
-  public QueryAABB(cb, aabb) {
+  public QueryAABB(cb: (proxy: DistanceProxy) => boolean, aabb: Aabb) {
     const broadPhase = this.m_contactManager.m_broadPhase;
     broadPhase.Query(proxy => cb(broadPhase.GetUserData(proxy)), aabb);
   }
 
-  public QueryShape(cb, shape, transform) {
-    if (transform === undefined) {
-      transform = null;
-    }
-
-    if (transform == null) {
+  public QueryShape(
+    cb: (fixture: Fixture) => boolean,
+    shape: Shape,
+    transform: Transform,
+  ) {
+    if (!transform) {
       transform = new Transform();
       transform.SetIdentity();
     }
 
     const broadPhase = this.m_contactManager.m_broadPhase;
-    const aabb = new b2AABB();
+    const aabb = new Aabb();
     shape.ComputeAABB(aabb, transform);
 
     broadPhase.Query(proxy => {
       const fixture =
-        broadPhase.GetUserData(proxy) instanceof b2Fixture
+        broadPhase.GetUserData(proxy) instanceof Fixture
           ? broadPhase.GetUserData(proxy)
           : null;
 
-      return b2Shape.TestOverlap(
+      return Shape.TestOverlap(
         shape,
         transform,
         fixture.GetShape(),
@@ -583,61 +619,63 @@ export default class World {
     }, aabb);
   }
 
-  public QueryPoint(cb, p) {
+  public QueryPoint(cb: (fixture: Fixture) => boolean, p: Vec2) {
     const broadPhase = this.m_contactManager.m_broadPhase;
 
-    const aabb = new b2AABB();
-    aabb.lowerBound.Set(
-      p.x - b2Settings.b2_linearSlop,
-      p.y - b2Settings.b2_linearSlop,
-    );
-
-    aabb.upperBound.Set(
-      p.x + b2Settings.b2_linearSlop,
-      p.y + b2Settings.b2_linearSlop,
-    );
+    const aabb = new Aabb();
+    aabb.lowerBound.Set(p.x - b2_linearSlop, p.y - b2_linearSlop);
+    aabb.upperBound.Set(p.x + b2_linearSlop, p.y + b2_linearSlop);
 
     broadPhase.Query(proxy => {
       const fixture =
-        broadPhase.GetUserData(proxy) instanceof b2Fixture
+        broadPhase.GetUserData(proxy) instanceof Fixture
           ? broadPhase.GetUserData(proxy)
           : null;
+
       return fixture.TestPoint(p) ? cb(fixture) : true;
     }, aabb);
   }
 
-  public RayCast(callback, point1, point2) {
+  public RayCast(
+    cb: (
+      fixture: Fixture,
+      point: Vec2,
+      normal: Vec2,
+      fraction: number,
+    ) => number,
+    point1: Vec2,
+    point2: Vec2,
+  ) {
     const broadPhase = this.m_contactManager.m_broadPhase;
-    const output = new b2RayCastOutput();
 
-    const input = new b2RayCastInput(point1, point2);
-    broadPhase.RayCast((input, proxy) => {
+    const output = new RayCastOutput();
+    const input = new RayCastInput(point1, point2);
+
+    broadPhase.RayCast((rcInput, proxy) => {
       const userData = broadPhase.GetUserData(proxy);
-      const fixture = userData instanceof b2Fixture ? userData : null;
-      const hit = fixture.RayCast(output, input);
 
+      if (!(userData instanceof Fixture)) {
+        return rcInput.maxFraction;
+      }
+
+      const hit = userData.RayCast(output, rcInput);
       if (hit) {
         const fraction = output.fraction;
         const point = new Vec2(
           (1.0 - fraction) * point1.x + fraction * point2.x,
           (1.0 - fraction) * point1.y + fraction * point2.y,
         );
-        return callback(fixture, point, output.normal, fraction);
-      }
 
-      return input.maxFraction;
+        return cb(userData, point, output.normal, fraction);
+      }
     }, input);
   }
 
-  public RayCastOne(point1, point2) {
+  public RayCastOne(point1: Vec2, point2: Vec2) {
     let result;
 
     this.RayCast(
-      (fixture, point, normal, fraction) => {
-        if (fraction === undefined) {
-          fraction = 0;
-        }
-
+      (fixture: Fixture, point: Vec2, normal: Vec2, fraction = 0) => {
         result = fixture;
         return fraction;
       },
@@ -648,15 +686,11 @@ export default class World {
     return result;
   }
 
-  public RayCastAll(point1, point2) {
+  public RayCastAll(point1: Vec2, point2: Vec2) {
     const result = new Array();
 
     this.RayCast(
-      (fixture, point, normal, fraction) => {
-        if (fraction === undefined) {
-          fraction = 0;
-        }
-
+      (fixture: Fixture, point: Vec2, normal: Vec2, fraction = 0) => {
         result[result.length] = fixture;
         return 1;
       },
@@ -680,10 +714,10 @@ export default class World {
   }
 
   public IsLocked() {
-    return (this.m_flags & b2World.e_locked) > 0;
+    return (this.m_flags & World.e_locked) > 0;
   }
 
-  public Solve(step) {
+  public Solve(step: TimeStep) {
     let b;
 
     for (
@@ -705,11 +739,11 @@ export default class World {
     );
 
     for (b = this.m_bodyList; b; b = b.m_next) {
-      b.m_flags &= ~b2Body.e_islandFlag;
+      b.m_flags &= ~Body.e_islandFlag;
     }
 
     for (let c = this.m_contactList; c; c = c.m_next) {
-      c.m_flags &= ~b2Contact.e_islandFlag;
+      c.m_flags &= ~Contact.e_islandFlag;
     }
 
     for (let j = this.m_jointList; j; j = j.m_next) {
@@ -718,15 +752,15 @@ export default class World {
 
     const stack = this.s_stack;
     for (let seed = this.m_bodyList; seed; seed = seed.m_next) {
-      if (seed.m_flags & b2Body.e_islandFlag) {
+      if (seed.m_flags & Body.e_islandFlag) {
         continue;
       }
 
-      if (seed.IsAwake() == false || seed.IsActive() == false) {
+      if (seed.IsAwake() === false || seed.IsActive() === false) {
         continue;
       }
 
-      if (seed.GetType() == b2Body.b2_staticBody) {
+      if (seed.GetType() === Body.b2_staticBody) {
         continue;
       }
 
@@ -734,7 +768,7 @@ export default class World {
 
       let stackCount = 0;
       stack[stackCount++] = seed;
-      seed.m_flags |= b2Body.e_islandFlag;
+      seed.m_flags |= Body.e_islandFlag;
 
       while (stackCount > 0) {
         b = stack[--stackCount];
@@ -744,13 +778,13 @@ export default class World {
           b.SetAwake(true);
         }
 
-        if (b.GetType() === b2Body.b2_staticBody) {
+        if (b.GetType() === Body.b2_staticBody) {
           continue;
         }
 
         let other;
         for (let ce = b.m_contactList; ce; ce = ce.next) {
-          if (ce.contact.m_flags & b2Contact.e_islandFlag) {
+          if (ce.contact.m_flags & Contact.e_islandFlag) {
             continue;
           }
 
@@ -763,18 +797,18 @@ export default class World {
           }
 
           island.AddContact(ce.contact);
-          ce.contact.m_flags |= b2Contact.e_islandFlag;
+          ce.contact.m_flags |= Contact.e_islandFlag;
           other = ce.other;
 
-          if (other.m_flags & b2Body.e_islandFlag) {
+          if (other.m_flags & Body.e_islandFlag) {
             continue;
           }
 
           stack[stackCount++] = other;
-          other.m_flags |= b2Body.e_islandFlag;
+          other.m_flags |= Body.e_islandFlag;
         }
 
-        for (const jn = b.m_jointList; jn; jn = jn.next) {
+        for (let jn = b.m_jointList; jn; jn = jn.next) {
           if (jn.joint.m_islandFlag === true) {
             continue;
           }
@@ -787,12 +821,12 @@ export default class World {
           island.AddJoint(jn.joint);
           jn.joint.m_islandFlag = true;
 
-          if (other.m_flags & b2Body.e_islandFlag) {
+          if (other.m_flags & Body.e_islandFlag) {
             continue;
           }
 
           stack[stackCount++] = other;
-          other.m_flags |= b2Body.e_islandFlag;
+          other.m_flags |= Body.e_islandFlag;
         }
       }
 
@@ -801,8 +835,8 @@ export default class World {
       for (let i = 0; i < island.m_bodyCount; ++i) {
         b = island.m_bodies[i];
 
-        if (b.GetType() === b2Body.b2_staticBody) {
-          b.m_flags &= ~b2Body.e_islandFlag;
+        if (b.GetType() === Body.b2_staticBody) {
+          b.m_flags &= ~Body.e_islandFlag;
         }
       }
     }
@@ -820,7 +854,7 @@ export default class World {
         continue;
       }
 
-      if (b.GetType() === b2Body.b2_staticBody) {
+      if (b.GetType() === Body.b2_staticBody) {
         continue;
       }
 
@@ -830,7 +864,7 @@ export default class World {
     this.m_contactManager.FindNewContacts();
   }
 
-  public SolveTOI(step) {
+  public SolveTOI(step: TimeStep) {
     let b;
     let fA;
     let fB;
@@ -842,22 +876,22 @@ export default class World {
     const island = this.m_island;
     island.Initialize(
       this.m_bodyCount,
-      b2Settings.b2_maxTOIContactsPerIsland,
-      b2Settings.b2_maxTOIJointsPerIsland,
+      b2_maxTOIContactsPerIsland,
+      b2_maxTOIJointsPerIsland,
       null,
       this.m_contactManager.m_contactListener,
       this.m_contactSolver,
     );
 
-    const queue = b2World.s_queue;
+    const queue = World.s_queue;
     for (b = this.m_bodyList; b; b = b.m_next) {
-      b.m_flags &= ~b2Body.e_islandFlag;
+      b.m_flags &= ~Body.e_islandFlag;
       b.m_sweep.t0 = 0.0;
     }
 
     let c;
     for (c = this.m_contactList; c; c = c.m_next) {
-      c.m_flags &= ~(b2Contact.e_toiFlag | b2Contact.e_islandFlag);
+      c.m_flags &= ~(Contact.e_toiFlag | Contact.e_islandFlag);
     }
 
     for (j = this.m_jointList; j; j = j.m_next) {
@@ -870,26 +904,26 @@ export default class World {
 
       for (c = this.m_contactList; c; c = c.m_next) {
         if (
-          c.IsSensor() == true ||
-          c.IsEnabled() == false ||
-          c.IsContinuous() == false
+          c.IsSensor() === true ||
+          c.IsEnabled() === false ||
+          c.IsContinuous() === false
         ) {
           continue;
         }
 
-        let toi = 1.0;
-        if (c.m_flags & b2Contact.e_toiFlag) {
+        let toi = 1;
+        if (c.m_flags & Contact.e_toiFlag) {
           toi = c.m_toi;
         } else {
-          fA = c.m_fixtureA;
-          fB = c.m_fixtureB;
-          bA = fA.m_body;
-          bB = fB.m_body;
+          fA = c.m_fixtureA as Fixture;
+          fB = c.m_fixtureB as Fixture;
+
+          bA = fA.m_body as Body;
+          bB = fB.m_body as Body;
 
           if (
-            (bA.GetType() !== b2Body.b2_dynamicBody ||
-              bA.IsAwake() === false) &&
-            (bB.GetType() !== b2Body.b2_dynamicBody || bB.IsAwake() === false)
+            (bA.GetType() !== Body.b2_dynamicBody || bA.IsAwake() === false) &&
+            (bB.GetType() !== Body.b2_dynamicBody || bB.IsAwake() === false)
           ) {
             continue;
           }
@@ -904,7 +938,7 @@ export default class World {
           }
 
           toi = c.ComputeTOI(bA.m_sweep, bB.m_sweep);
-          b2Settings.b2Assert(0.0 <= toi && toi <= 1.0);
+          b2Assert(0.0 <= toi && toi <= 1.0);
 
           if (toi > 0.0 && toi < 1.0) {
             toi = (1.0 - toi) * t0 + toi;
@@ -914,7 +948,7 @@ export default class World {
           }
 
           c.m_toi = toi;
-          c.m_flags |= b2Contact.e_toiFlag;
+          c.m_flags |= Contact.e_toiFlag;
         }
 
         if (Number.MIN_VALUE < toi && toi < minTOI) {
@@ -923,27 +957,28 @@ export default class World {
         }
       }
 
-      if (minContact == null || 1.0 - 100.0 * Number.MIN_VALUE < minTOI) {
+      if (minContact === null || 1.0 - 100.0 * Number.MIN_VALUE < minTOI) {
         break;
       }
 
-      fA = minContact.m_fixtureA;
-      fB = minContact.m_fixtureB;
-      bA = fA.m_body;
-      bB = fB.m_body;
+      fA = minContact.m_fixtureA as Fixture;
+      fB = minContact.m_fixtureB as Fixture;
 
-      b2World.s_backupA.Set(bA.m_sweep);
-      b2World.s_backupB.Set(bB.m_sweep);
+      bA = fA.m_body as Body;
+      bB = fB.m_body as Body;
+
+      World.s_backupA.Set(bA.m_sweep);
+      World.s_backupB.Set(bB.m_sweep);
 
       bA.Advance(minTOI);
       bB.Advance(minTOI);
 
       minContact.Update(this.m_contactManager.m_contactListener);
-      minContact.m_flags &= ~b2Contact.e_toiFlag;
+      minContact.m_flags &= ~Contact.e_toiFlag;
 
       if (minContact.IsSensor() === true || minContact.IsEnabled() === false) {
-        bA.m_sweep.Set(b2World.s_backupA);
-        bB.m_sweep.Set(b2World.s_backupB);
+        bA.m_sweep.Set(World.s_backupA);
+        bB.m_sweep.Set(World.s_backupB);
 
         bA.SynchronizeTransform();
         bB.SynchronizeTransform();
@@ -955,7 +990,7 @@ export default class World {
       }
 
       let seed = bA;
-      if (seed.GetType() !== b2Body.b2_dynamicBody) {
+      if (seed.GetType() !== Body.b2_dynamicBody) {
         seed = bB;
       }
 
@@ -965,7 +1000,7 @@ export default class World {
       let queueSize = 0;
 
       queue[queueStart + queueSize++] = seed;
-      seed.m_flags |= b2Body.e_islandFlag;
+      seed.m_flags |= Body.e_islandFlag;
 
       while (queueSize > 0) {
         b = queue[queueStart++];
@@ -976,7 +1011,7 @@ export default class World {
           b.SetAwake(true);
         }
 
-        if (b.GetType() !== b2Body.b2_dynamicBody) {
+        if (b.GetType() !== Body.b2_dynamicBody) {
           continue;
         }
 
@@ -985,7 +1020,7 @@ export default class World {
             break;
           }
 
-          if (cEdge.contact.m_flags & b2Contact.e_islandFlag) {
+          if (cEdge.contact.m_flags & Contact.e_islandFlag) {
             continue;
           }
 
@@ -998,21 +1033,21 @@ export default class World {
           }
 
           island.AddContact(cEdge.contact);
-          cEdge.contact.m_flags |= b2Contact.e_islandFlag;
+          cEdge.contact.m_flags |= Contact.e_islandFlag;
           const other = cEdge.other;
 
-          if (other.m_flags & b2Body.e_islandFlag) {
+          if (other.m_flags & Body.e_islandFlag) {
             continue;
           }
 
-          if (other.GetType() !== b2Body.b2_staticBody) {
+          if (other.GetType() !== Body.b2_staticBody) {
             other.Advance(minTOI);
             other.SetAwake(true);
           }
 
           queue[queueStart + queueSize] = other;
           ++queueSize;
-          other.m_flags |= b2Body.e_islandFlag;
+          other.m_flags |= Body.e_islandFlag;
         }
 
         for (let jEdge = b.m_jointList; jEdge; jEdge = jEdge.next) {
@@ -1032,22 +1067,22 @@ export default class World {
           island.AddJoint(jEdge.joint);
           jEdge.joint.m_islandFlag = true;
 
-          if (other.m_flags & b2Body.e_islandFlag) {
+          if (other.m_flags & Body.e_islandFlag) {
             continue;
           }
 
-          if (other.GetType() !== b2Body.b2_staticBody) {
+          if (other.GetType() !== Body.b2_staticBody) {
             other.Advance(minTOI);
             other.SetAwake(true);
           }
 
           queue[queueStart + queueSize] = other;
           ++queueSize;
-          other.m_flags |= b2Body.e_islandFlag;
+          other.m_flags |= Body.e_islandFlag;
         }
       }
 
-      const subStep = b2World.s_timestep;
+      const subStep = World.s_timestep;
       subStep.warmStarting = false;
       subStep.dt = (1.0 - minTOI) * step.dt;
       subStep.inv_dt = 1.0 / subStep.dt;
@@ -1059,25 +1094,25 @@ export default class World {
 
       for (let i = 0; i < island.m_bodyCount; ++i) {
         b = island.m_bodies[i];
-        b.m_flags &= ~b2Body.e_islandFlag;
+        b.m_flags &= ~Body.e_islandFlag;
 
         if (b.IsAwake() === false) {
           continue;
         }
 
-        if (b.GetType() !== b2Body.b2_dynamicBody) {
+        if (b.GetType() !== Body.b2_dynamicBody) {
           continue;
         }
 
         b.SynchronizeFixtures();
         for (cEdge = b.m_contactList; cEdge; cEdge = cEdge.next) {
-          cEdge.contact.m_flags &= ~b2Contact.e_toiFlag;
+          cEdge.contact.m_flags &= ~Contact.e_toiFlag;
         }
       }
 
       for (let i = 0; i < island.m_contactCount; ++i) {
         c = island.m_contacts[i];
-        c.m_flags &= ~(b2Contact.e_toiFlag | b2Contact.e_islandFlag);
+        c.m_flags &= ~(Contact.e_toiFlag | Contact.e_islandFlag);
       }
 
       for (let i = 0; i < island.m_jointCount; ++i) {
@@ -1089,37 +1124,53 @@ export default class World {
     }
   }
 
-  public DrawJoint(joint) {
+  public DrawJoint(joint: Joint) {
+    if (!this.m_debugDraw) {
+      return;
+    }
+
     const b1 = joint.GetBodyA();
     const b2 = joint.GetBodyB();
+
+    if (!(b1 && b2)) {
+      return;
+    }
+
     const xf1 = b1.m_xf;
     const xf2 = b2.m_xf;
+
     const x1 = xf1.position;
     const x2 = xf2.position;
+
     const p1 = joint.GetAnchorA();
     const p2 = joint.GetAnchorB();
-    const color = b2World.s_jointColor;
+
+    if (!(p1 && p2)) {
+      return;
+    }
+
+    const color = World.s_jointColor;
 
     switch (joint.m_type) {
-      case b2Joint.e_distanceJoint:
+      case Joint.e_distanceJoint:
         {
           this.m_debugDraw.DrawSegment(p1, p2, color);
         }
         break;
 
-      case b2Joint.e_pulleyJoint:
+      case Joint.e_pulleyJoint:
         {
-          const pulley = joint instanceof b2PulleyJoint ? joint : null;
-          const s1 = pulley.GetGroundAnchorA();
-          const s2 = pulley.GetGroundAnchorB();
-
-          this.m_debugDraw.DrawSegment(s1, p1, color);
-          this.m_debugDraw.DrawSegment(s2, p2, color);
-          this.m_debugDraw.DrawSegment(s1, s2, color);
+          // const pulley = joint instanceof PulleyJoint ? joint : null;
+          // const s1 = pulley.GetGroundAnchorA();
+          // const s2 = pulley.GetGroundAnchorB();
+          //
+          // this.m_debugDraw.DrawSegment(s1, p1, color);
+          // this.m_debugDraw.DrawSegment(s2, p2, color);
+          // this.m_debugDraw.DrawSegment(s1, s2, color);
         }
         break;
 
-      case b2Joint.e_mouseJoint:
+      case Joint.e_mouseJoint:
         {
           this.m_debugDraw.DrawSegment(p1, p2, color);
         }
@@ -1138,11 +1189,20 @@ export default class World {
     }
   }
 
-  public DrawShape(shape, xf, color) {
+  public DrawShape(shape: Shape, xf: Transform, color: Color) {
+    if (!this.m_debugDraw) {
+      return;
+    }
+
     switch (shape.m_type) {
-      case b2Shape.e_circleShape:
+      case Shape.e_circleShape:
         {
-          const circle = shape instanceof b2CircleShape ? shape : null;
+          if (!(shape instanceof CircleShape)) {
+            return;
+          }
+
+          const circle = shape as CircleShape;
+
           const center = MulX(xf, circle.m_p);
           const radius = circle.m_radius;
           const axis = xf.R.col1;
@@ -1151,10 +1211,14 @@ export default class World {
         }
         break;
 
-      case b2Shape.e_polygonShape:
+      case Shape.e_polygonShape:
         {
-          const poly = shape instanceof b2PolygonShape ? shape : null;
-          const vertexCount = parseInt(poly.GetVertexCount());
+          if (!(shape instanceof PolygonShape)) {
+            return;
+          }
+          const poly = shape as PolygonShape;
+
+          const vertexCount = parseInt(`${poly.GetVertexCount()}`, 10);
           const localVertices = poly.GetVertices();
           const vertices = new Array(vertexCount);
 
@@ -1165,9 +1229,12 @@ export default class World {
           this.m_debugDraw.DrawSolidPolygon(vertices, vertexCount, color);
         }
         break;
-      case b2Shape.e_edgeShape:
+      case Shape.e_edgeShape:
         {
-          const edge = shape instanceof b2EdgeShape ? shape : null;
+          if (!(shape instanceof EdgeShape)) {
+            return;
+          }
+          const edge = shape as EdgeShape;
 
           this.m_debugDraw.DrawSegment(
             MulX(xf, edge.GetVertex1()),

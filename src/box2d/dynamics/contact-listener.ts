@@ -1,8 +1,10 @@
-b2ContactListener.b2ContactListener = function() {};
-b2ContactListener.prototype.BeginContact = function(contact) {};
-b2ContactListener.prototype.EndContact = function(contact) {};
-b2ContactListener.prototype.PreSolve = function(contact, oldManifold) {};
-b2ContactListener.prototype.PostSolve = function(contact, impulse) {};
-Box2D.postDefs.push(function() {
-  Box2D.Dynamics.b2ContactListener.b2_defaultListener = new b2ContactListener();
-});
+// tslint:disable variable-name
+
+export default class ContactListener {
+  public static b2_defaultListener = new ContactListener();
+
+  public BeginContact(contact: any) {} // tslint:disable-line no-empty
+  public EndContact(contact: any) {} // tslint:disable-line no-empty
+  public PreSolve(contact: any, oldManifold: any) {} // tslint:disable-line no-empty
+  public PostSolve(contact: any, impulse: any) {} // tslint:disable-line no-empty
+}

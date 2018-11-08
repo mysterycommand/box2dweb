@@ -1,117 +1,150 @@
-b2ContactFactory.b2ContactFactory = function() {};
+// tslint:disable variable-name
 
-b2ContactFactory.prototype.b2ContactFactory = function(allocator) {
-  this.m_allocator = allocator;
-  this.InitializeRegisters();
-};
+import Shape from '../../collision/shapes/shape';
+import Fixture from '../fixture';
+import ContactRegister from './contact-register';
+import CircleContact from './circle-contact';
+import Contact from './contact';
+import PolyAndCircleContact from './poly-and-circle-contact';
+import PolygonContact from './polygon-contact';
+import EdgeAndCircleContact from './edge-and-circle-contact';
+import PolyAndEdgeContact from './poly-and-edge-contact';
 
-b2ContactFactory.prototype.AddType = function(
-  createFcn,
-  destroyFcn,
-  type1,
-  type2,
-) {
-  if (type1 === undefined) type1 = 0;
-  if (type2 === undefined) type2 = 0;
-  this.m_registers[type1][type2].createFcn = createFcn;
-  this.m_registers[type1][type2].destroyFcn = destroyFcn;
-  this.m_registers[type1][type2].primary = true;
-  if (type1 != type2) {
-    this.m_registers[type2][type1].createFcn = createFcn;
-    this.m_registers[type2][type1].destroyFcn = destroyFcn;
-    this.m_registers[type2][type1].primary = false;
+export default class ContactFactory {
+  public m_registers: Record<number, Record<number, ContactRegister>> = {};
+
+  constructor(public m_allocator: any) {
+    this.InitializeRegisters();
   }
-};
 
-b2ContactFactory.prototype.InitializeRegisters = function() {
-  this.m_registers = new Vector(b2Shape.e_shapeTypeCount);
+  public AddType(
+    createFn: (allocator: any) => Contact,
+    destroyFn: (contact: Contact, allocator: any) => void,
+    type1 = 0,
+    type2 = 0,
+  ) {
+    this.m_registers[type1][type2].createFn = createFn;
+    this.m_registers[type1][type2].destroyFn = destroyFn;
+    this.m_registers[type1][type2].primary = true;
 
-  for (var i = 0; i < b2Shape.e_shapeTypeCount; i++) {
-    this.m_registers[i] = new Vector(b2Shape.e_shapeTypeCount);
-    for (var j = 0; j < b2Shape.e_shapeTypeCount; j++) {
-      this.m_registers[i][j] = new b2ContactRegister();
+    if (type1 !== type2) {
+      this.m_registers[type2][type1].createFn = createFn;
+      this.m_registers[type2][type1].destroyFn = destroyFn;
+      this.m_registers[type2][type1].primary = false;
     }
   }
 
-  this.AddType(
-    b2CircleContact.Create,
-    b2CircleContact.Destroy,
-    b2Shape.e_circleShape,
-    b2Shape.e_circleShape,
-  );
+  public InitializeRegisters() {
+    this.m_registers = new Array(Shape.e_shapeTypeCount);
 
-  this.AddType(
-    b2PolyAndCircleContact.Create,
-    b2PolyAndCircleContact.Destroy,
-    b2Shape.e_polygonShape,
-    b2Shape.e_circleShape,
-  );
+    for (let i = 0; i < Shape.e_shapeTypeCount; i++) {
+      this.m_registers[i] = new Array(Shape.e_shapeTypeCount);
 
-  this.AddType(
-    b2PolygonContact.Create,
-    b2PolygonContact.Destroy,
-    b2Shape.e_polygonShape,
-    b2Shape.e_polygonShape,
-  );
+      for (let j = 0; j < Shape.e_shapeTypeCount; j++) {
+        this.m_registers[i][j] = new ContactRegister();
+      }
+    }
 
-  this.AddType(
-    b2EdgeAndCircleContact.Create,
-    b2EdgeAndCircleContact.Destroy,
-    b2Shape.e_edgeShape,
-    b2Shape.e_circleShape,
-  );
+    this.AddType(
+      CircleContact.Create,
+      CircleContact.Destroy,
+      Shape.e_circleShape,
+      Shape.e_circleShape,
+    );
 
-  this.AddType(
-    b2PolyAndEdgeContact.Create,
-    b2PolyAndEdgeContact.Destroy,
-    b2Shape.e_polygonShape,
-    b2Shape.e_edgeShape,
-  );
-};
+    this.AddType(
+      PolyAndCircleContact.Create,
+      PolyAndCircleContact.Destroy,
+      Shape.e_polygonShape,
+      Shape.e_circleShape,
+    );
 
-b2ContactFactory.prototype.Create = function(fixtureA, fixtureB) {
-  var type1 = parseInt(fixtureA.GetType());
-  var type2 = parseInt(fixtureB.GetType());
-  var reg = this.m_registers[type1][type2];
-  var c;
+    this.AddType(
+      PolygonContact.Create,
+      PolygonContact.Destroy,
+      Shape.e_polygonShape,
+      Shape.e_polygonShape,
+    );
 
-  if (reg.pool) {
-    c = reg.pool;
-    reg.pool = c.m_next;
-    reg.poolCount--;
-    c.Reset(fixtureA, fixtureB);
-    return c;
+    this.AddType(
+      EdgeAndCircleContact.Create,
+      EdgeAndCircleContact.Destroy,
+      Shape.e_edgeShape,
+      Shape.e_circleShape,
+    );
+
+    this.AddType(
+      PolyAndEdgeContact.Create,
+      PolyAndEdgeContact.Destroy,
+      Shape.e_polygonShape,
+      Shape.e_edgeShape,
+    );
   }
 
-  var createFcn = reg.createFcn;
-  if (createFcn != null) {
-    if (reg.primary) {
-      c = createFcn(this.m_allocator);
+  public Create(fixtureA: Fixture, fixtureB: Fixture) {
+    const type1 = parseInt(`${fixtureA.GetType()}`, 10);
+    const type2 = parseInt(`${fixtureB.GetType()}`, 10);
+    const reg = this.m_registers[type1][type2];
+
+    let c;
+    if (reg.pool) {
+      c = reg.pool;
+      reg.pool = c.m_next;
+      reg.poolCount--;
       c.Reset(fixtureA, fixtureB);
       return c;
+    }
+
+    const createFn = reg.createFn;
+    if (!createFn) {
+      return;
+    }
+
+    if (reg.primary) {
+      c = createFn(this.m_allocator);
+      c.Reset(fixtureA, fixtureB);
+
+      return c;
     } else {
-      c = createFcn(this.m_allocator);
+      c = createFn(this.m_allocator);
       c.Reset(fixtureB, fixtureA);
+
       return c;
     }
-  } else {
-    return null;
   }
-};
 
-b2ContactFactory.prototype.Destroy = function(contact) {
-  if (contact.m_manifold.m_pointCount > 0) {
-    contact.m_fixtureA.m_body.SetAwake(true);
-    contact.m_fixtureB.m_body.SetAwake(true);
+  public Destroy(contact: Contact) {
+    if (
+      !(
+        contact.m_fixtureA &&
+        contact.m_fixtureB &&
+        contact.m_fixtureA.m_body &&
+        contact.m_fixtureB.m_body
+      )
+    ) {
+      return;
+    }
+
+    if (contact.m_manifold.m_pointCount > 0) {
+      contact.m_fixtureA.m_body.SetAwake(true);
+      contact.m_fixtureB.m_body.SetAwake(true);
+    }
+
+    const type1 = parseInt(`${contact.m_fixtureA.GetType()}`, 10);
+    const type2 = parseInt(`${contact.m_fixtureB.GetType()}`, 10);
+    const reg = this.m_registers[type1][type2];
+
+    if (true) {
+      reg.poolCount++;
+      contact.m_next = reg.pool;
+      reg.pool = contact;
+    }
+
+    const destroyFn = reg.destroyFn;
+    if (!destroyFn) {
+      return;
+    }
+
+    destroyFn(contact, this.m_allocator);
   }
-  var type1 = parseInt(contact.m_fixtureA.GetType());
-  var type2 = parseInt(contact.m_fixtureB.GetType());
-  var reg = this.m_registers[type1][type2];
-  if (true) {
-    reg.poolCount++;
-    contact.m_next = reg.pool;
-    reg.pool = contact;
-  }
-  var destroyFcn = reg.destroyFcn;
-  destroyFcn(contact, this.m_allocator);
-};
+}

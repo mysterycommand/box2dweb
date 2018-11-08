@@ -1,33 +1,43 @@
-Box2D.inherit(b2CircleContact, Box2D.Dynamics.Contacts.b2Contact);
+// tslint:disable variable-name
 
-b2CircleContact.prototype.__super = Box2D.Dynamics.Contacts.b2Contact.prototype;
+import Contact from './contact';
+import Fixture from '../fixture';
+import { CollideCircles } from '../../collision';
+import CircleShape from '../../collision/shapes/circle-shape';
 
-b2CircleContact.b2CircleContact = function() {
-  Box2D.Dynamics.Contacts.b2Contact.b2Contact.apply(this, arguments);
-};
+export default class CircleContact extends Contact {
+  public static Create(allocator: any) {
+    return new CircleContact();
+  }
 
-b2CircleContact.Create = function(allocator) {
-  return new b2CircleContact();
-};
+  // tslint:disable-next-line no-empty
+  public static Destroy(contact: Contact, allocator: any) {}
 
-b2CircleContact.Destroy = function(contact, allocator) {};
+  public m_fixtureA?: Fixture;
+  public m_fixtureB?: Fixture;
 
-b2CircleContact.prototype.Reset = function(fixtureA, fixtureB) {
-  this.__super.Reset.call(this, fixtureA, fixtureB);
-};
+  public Evaluate() {
+    if (!(this.m_fixtureA && this.m_fixtureB)) {
+      return;
+    }
 
-b2CircleContact.prototype.Evaluate = function() {
-  var bA = this.m_fixtureA.GetBody();
-  var bB = this.m_fixtureB.GetBody();
-  b2Collision.CollideCircles(
-    this.m_manifold,
-    this.m_fixtureA.GetShape() instanceof b2CircleShape
-      ? this.m_fixtureA.GetShape()
-      : null,
-    bA.m_xf,
-    this.m_fixtureB.GetShape() instanceof b2CircleShape
-      ? this.m_fixtureB.GetShape()
-      : null,
-    bB.m_xf,
-  );
-};
+    const bodyA = this.m_fixtureA.GetBody();
+    const bodyB = this.m_fixtureB.GetBody();
+
+    const shapeA = this.m_fixtureA.GetShape();
+    const shapeB = this.m_fixtureB.GetShape();
+
+    if (
+      !(
+        bodyA &&
+        bodyB &&
+        shapeA instanceof CircleShape &&
+        shapeB instanceof CircleShape
+      )
+    ) {
+      return;
+    }
+
+    CollideCircles(this.m_manifold, shapeA, bodyA.m_xf, shapeB, bodyB.m_xf);
+  }
+}

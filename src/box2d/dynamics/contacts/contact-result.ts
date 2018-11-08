@@ -1,5 +1,8 @@
-b2ContactResult.b2ContactResult = function() {
-  this.position = new b2Vec2();
-  this.normal = new b2Vec2();
-  this.id = new b2ContactID();
-};
+import Vec2 from '../../common/math/vec2';
+import ContactId from '../../collision/contact-id';
+
+export default class ContactResult {
+  public position = new Vec2();
+  public normal = new Vec2();
+  public id = new ContactId();
+}

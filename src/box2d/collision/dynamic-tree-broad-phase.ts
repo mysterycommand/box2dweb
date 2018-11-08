@@ -51,7 +51,7 @@ export default class DynamicTreeBroadPhase {
     return this.m_proxyCount;
   }
 
-  public UpdatePairs(cb: (...args: any[]) => boolean) {
+  public UpdatePairs(cb: (...args: any[]) => void) {
     this.m_pairCount = 0;
 
     for (const queryProxy of this.m_moveBuffer) {

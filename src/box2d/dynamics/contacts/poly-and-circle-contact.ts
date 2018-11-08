@@ -1,36 +1,44 @@
-Box2D.inherit(b2PolyAndCircleContact, Box2D.Dynamics.Contacts.b2Contact);
+import Contact from './contact';
+import { CollidePolygonAndCircle } from '../../collision';
+import PolygonShape from '../../collision/shapes/polygon-shape';
+import CircleShape from '../../collision/shapes/circle-shape';
 
-b2PolyAndCircleContact.prototype.__super =
-  Box2D.Dynamics.Contacts.b2Contact.prototype;
+export default class PolyAndCircleContact extends Contact {
+  public static Create(allocator: any) {
+    return new PolyAndCircleContact();
+  }
 
-b2PolyAndCircleContact.b2PolyAndCircleContact = function() {
-  Box2D.Dynamics.Contacts.b2Contact.b2Contact.apply(this, arguments);
-};
+  // tslint:disable-next-line no-empty
+  public static Destroy(contact: Contact, allocator: any) {}
 
-b2PolyAndCircleContact.Create = function(allocator) {
-  return new b2PolyAndCircleContact();
-};
+  public Evaluate() {
+    if (!(this.m_fixtureA && this.m_fixtureB)) {
+      return;
+    }
 
-b2PolyAndCircleContact.Destroy = function(contact, allocator) {};
+    const bodyA = this.m_fixtureA.GetBody();
+    const bodyB = this.m_fixtureB.GetBody();
 
-b2PolyAndCircleContact.prototype.Reset = function(fixtureA, fixtureB) {
-  this.__super.Reset.call(this, fixtureA, fixtureB);
-  b2Settings.b2Assert(fixtureA.GetType() == b2Shape.e_polygonShape);
-  b2Settings.b2Assert(fixtureB.GetType() == b2Shape.e_circleShape);
-};
+    const shapeA = this.m_fixtureA.GetShape();
+    const shapeB = this.m_fixtureB.GetShape();
 
-b2PolyAndCircleContact.prototype.Evaluate = function() {
-  var bA = this.m_fixtureA.m_body;
-  var bB = this.m_fixtureB.m_body;
-  b2Collision.CollidePolygonAndCircle(
-    this.m_manifold,
-    this.m_fixtureA.GetShape() instanceof b2PolygonShape
-      ? this.m_fixtureA.GetShape()
-      : null,
-    bA.m_xf,
-    this.m_fixtureB.GetShape() instanceof b2CircleShape
-      ? this.m_fixtureB.GetShape()
-      : null,
-    bB.m_xf,
-  );
-};
+    if (
+      !(
+        bodyA &&
+        bodyB &&
+        shapeA instanceof PolygonShape &&
+        shapeB instanceof CircleShape
+      )
+    ) {
+      return;
+    }
+
+    CollidePolygonAndCircle(
+      this.m_manifold,
+      shapeA,
+      bodyA.m_xf,
+      shapeB,
+      bodyB.m_xf,
+    );
+  }
+}

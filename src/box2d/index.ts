@@ -18,7 +18,6 @@
 
 import b from './b';
 import g from './g';
-import h from './h';
 import i from './i';
 import j from './j';
 
@@ -98,7 +97,6 @@ b(Box2D);
 
 // definitions
 g(Box2D);
-h(Box2D);
 i(Box2D);
 j(Box2D);
 

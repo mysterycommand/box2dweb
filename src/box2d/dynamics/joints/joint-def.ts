@@ -1,8 +1,10 @@
-b2JointDef.b2JointDef = function() {};
-b2JointDef.prototype.b2JointDef = function() {
-  this.type = b2Joint.e_unknownJoint;
-  this.userData = null;
-  this.bodyA = null;
-  this.bodyB = null;
-  this.collideConnected = false;
-};
+import Joint from './joint';
+import Body from '../body';
+
+export default class JointDef {
+  public type = Joint.e_unknownJoint;
+  public userData?: any;
+  public bodyA?: Body;
+  public bodyB?: Body;
+  public collideConnected = false;
+}

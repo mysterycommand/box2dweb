@@ -1,34 +1,37 @@
-Box2D.inherit(b2PolygonContact, Box2D.Dynamics.Contacts.b2Contact);
+import Contact from './contact';
+import PolygonShape from '../../collision/shapes/polygon-shape';
+import { CollidePolygons } from '../../collision';
 
-b2PolygonContact.prototype.__super =
-  Box2D.Dynamics.Contacts.b2Contact.prototype;
+export default class PolygonContact extends Contact {
+  public static Create(allocator: any) {
+    return new PolygonContact();
+  }
 
-b2PolygonContact.b2PolygonContact = function() {
-  Box2D.Dynamics.Contacts.b2Contact.b2Contact.apply(this, arguments);
-};
+  // tslint:disable-next-line no-empty
+  public static Destroy(contact: Contact, allocator: any) {}
 
-b2PolygonContact.Create = function(allocator) {
-  return new b2PolygonContact();
-};
+  public Evaluate() {
+    if (!(this.m_fixtureA && this.m_fixtureB)) {
+      return;
+    }
 
-b2PolygonContact.Destroy = function(contact, allocator) {};
+    const bodyA = this.m_fixtureA.GetBody();
+    const bodyB = this.m_fixtureB.GetBody();
 
-b2PolygonContact.prototype.Reset = function(fixtureA, fixtureB) {
-  this.__super.Reset.call(this, fixtureA, fixtureB);
-};
+    const shapeA = this.m_fixtureA.GetShape();
+    const shapeB = this.m_fixtureB.GetShape();
 
-b2PolygonContact.prototype.Evaluate = function() {
-  var bA = this.m_fixtureA.GetBody();
-  var bB = this.m_fixtureB.GetBody();
-  b2Collision.CollidePolygons(
-    this.m_manifold,
-    this.m_fixtureA.GetShape() instanceof b2PolygonShape
-      ? this.m_fixtureA.GetShape()
-      : null,
-    bA.m_xf,
-    this.m_fixtureB.GetShape() instanceof b2PolygonShape
-      ? this.m_fixtureB.GetShape()
-      : null,
-    bB.m_xf,
-  );
-};
+    if (
+      !(
+        bodyA &&
+        bodyB &&
+        shapeA instanceof PolygonShape &&
+        shapeB instanceof PolygonShape
+      )
+    ) {
+      return;
+    }
+
+    CollidePolygons(this.m_manifold, shapeA, bodyA.m_xf, shapeB, bodyB.m_xf);
+  }
+}

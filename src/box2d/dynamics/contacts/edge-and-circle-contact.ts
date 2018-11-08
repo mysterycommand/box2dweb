@@ -1,43 +1,53 @@
-Box2D.inherit(b2EdgeAndCircleContact, Box2D.Dynamics.Contacts.b2Contact);
+import Contact from './contact';
+import EdgeShape from '../../collision/shapes/edge-shape';
+import CircleShape from '../../collision/shapes/circle-shape';
+import Manifold from '../../collision/manifold';
+import Transform from '../../common/math/transform';
 
-b2EdgeAndCircleContact.prototype.__super =
-  Box2D.Dynamics.Contacts.b2Contact.prototype;
+export default class EdgeAndCircleContact extends Contact {
+  public static Create(allocator: any) {
+    return new EdgeAndCircleContact();
+  }
 
-b2EdgeAndCircleContact.b2EdgeAndCircleContact = function() {
-  Box2D.Dynamics.Contacts.b2Contact.b2Contact.apply(this, arguments);
-};
+  // tslint:disable-next-line no-empty
+  public static Destroy(contact: Contact, allocator: any) {}
 
-b2EdgeAndCircleContact.Create = function(allocator) {
-  return new b2EdgeAndCircleContact();
-};
+  public Evaluate() {
+    if (!(this.m_fixtureA && this.m_fixtureB)) {
+      return;
+    }
 
-b2EdgeAndCircleContact.Destroy = function(contact, allocator) {};
+    const bodyA = this.m_fixtureA.GetBody();
+    const bodyB = this.m_fixtureB.GetBody();
 
-b2EdgeAndCircleContact.prototype.Reset = function(fixtureA, fixtureB) {
-  this.__super.Reset.call(this, fixtureA, fixtureB);
-};
+    const shapeA = this.m_fixtureA.GetShape();
+    const shapeB = this.m_fixtureB.GetShape();
 
-b2EdgeAndCircleContact.prototype.Evaluate = function() {
-  var bA = this.m_fixtureA.GetBody();
-  var bB = this.m_fixtureB.GetBody();
+    if (
+      !(
+        bodyA &&
+        bodyB &&
+        shapeA instanceof EdgeShape &&
+        shapeB instanceof CircleShape
+      )
+    ) {
+      return;
+    }
 
-  this.b2CollideEdgeAndCircle(
-    this.m_manifold,
-    this.m_fixtureA.GetShape() instanceof b2EdgeShape
-      ? this.m_fixtureA.GetShape()
-      : null,
-    bA.m_xf,
-    this.m_fixtureB.GetShape() instanceof b2CircleShape
-      ? this.m_fixtureB.GetShape()
-      : null,
-    bB.m_xf,
-  );
-};
+    this.CollideEdgeAndCircle(
+      this.m_manifold,
+      shapeA,
+      bodyA.m_xf,
+      shapeB,
+      bodyB.m_xf,
+    );
+  }
 
-b2EdgeAndCircleContact.prototype.b2CollideEdgeAndCircle = function(
-  manifold,
-  edge,
-  xf1,
-  circle,
-  xf2,
-) {};
+  public CollideEdgeAndCircle(
+    manifold: Manifold,
+    edge: EdgeShape,
+    xf1: Transform,
+    circle: CircleShape,
+    xf2: Transform,
+  ) {} // tslint:disable-line no-empty
+}
