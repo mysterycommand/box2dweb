@@ -1,13 +1,13 @@
-import World from './box2d/dynamics/world';
-import Vec2 from './box2d/common/math/vec2';
-import FixtureDef from './box2d/dynamics/fixture-def';
-import BodyDef from './box2d/dynamics/body-def';
-import Body from './box2d/dynamics/body';
-import PolygonShape from './box2d/collision/shapes/polygon-shape';
-import CircleShape from './box2d/collision/shapes/circle-shape';
-import DebugDraw from './box2d/dynamics/debug-draw';
-import MouseJointDef from './box2d/dynamics/joints/mouse-joint-def';
-import Aabb from './box2d/collision/aabb';
+import World from '../box2d/dynamics/world';
+import Vec2 from '../box2d/common/math/vec2';
+import FixtureDef from '../box2d/dynamics/fixture-def';
+import BodyDef from '../box2d/dynamics/body-def';
+import Body from '../box2d/dynamics/body';
+import PolygonShape from '../box2d/collision/shapes/polygon-shape';
+import CircleShape from '../box2d/collision/shapes/circle-shape';
+import DebugDraw from '../box2d/dynamics/debug-draw';
+import MouseJointDef from '../box2d/dynamics/joints/mouse-joint-def';
+import Aabb from '../box2d/collision/aabb';
 
 const scale = 1 / 29.075;
 

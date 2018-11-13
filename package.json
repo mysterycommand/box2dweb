@@ -8,7 +8,7 @@
   "private": true,
   "scripts": {
     "clean": "rm -rf .cache/ coverage/ dist/ node_modules/",
-    "build": "parcel build src/**/*.html --public-url /superfluity --experimental-scope-hoisting",
+    "build": "parcel build src/**/*.html --public-url /box2dweb --experimental-scope-hoisting",
     "start": "parcel src/**/*.html",
     "lint": "tslint 'src/**/*.ts'",
     "test": "jest",
@@ -17,7 +17,7 @@
   "engines": {
     "node": "10.13.0",
     "npm": "6.4.1",
-    "yarn": "1.12.1"
+    "yarn": "1.12.3"
   },
   "config": {
     "commitizen": {
