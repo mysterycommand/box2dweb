@@ -1,7 +1,6 @@
-<html>
-  <head>
-    <title>Emscripten Box2D demo</title>
-
+<!DOCTYPE html>
+<html lang="en">
+  <!--
     <script
       type="text/javascript"
       src="../../build/Box2D_v2.2.1_min.js"
@@ -26,7 +25,7 @@
     <script type="text/javascript" src="tests/pulleyJoint.js"></script>
     <script type="text/javascript" src="tests/ropeJoint.js"></script>
     <script type="text/javascript" src="tests/dominos.js"></script>
-    <!-- <script type="text/javascript" src="tests/template.js"></script> -->
+    <! - - <script type="text/javascript" src="tests/template.js"></script> - - >
 
     <script type="text/javascript">
       var Box2D;
@@ -39,93 +38,168 @@
         animate();
       };
     </script>
+  -->
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>
+      Emscripten's Box2D demo, but with a Box2DWeb fork ported to TypeScript
+    </title>
+    <style>
+      html,
+      body,
+      main {
+        width: 100%;
+        height: 100%;
+      }
+
+      body {
+        font-family: sans-serif;
+        margin: 0;
+      }
+
+      canvas {
+        background-color: #333;
+      }
+
+      main {
+        display: flex;
+        align-items: center;
+        flex-direction: column;
+      }
+
+      main > div {
+        width: 640px;
+      }
+
+      header,
+      footer {
+        padding: 8px;
+      }
+
+      footer {
+        background-color: #ddd;
+      }
+
+      footer > div {
+        text-align: center;
+      }
+
+      p {
+        margin-top: 0;
+      }
+
+      ul {
+        margin: 0;
+        padding: 0;
+      }
+
+      li {
+        list-style-type: none;
+      }
+    </style>
   </head>
   <body>
-    <div style="text-align:center">
-      <h2>Emscripten Box2D demo</h2>
-      This demo uses JavaScript generated from the Box2D C++ source code by the
-      <a href="https://github.com/kripken/emscripten/wiki">emscripten</a>
-      compiler.<br />
-      See
-      <a href="https://github.com/kripken/box2d.js"
-        >https://github.com/kripken/box2d.js</a
-      >
-      for more details.<br />
-      <br />
-      <!--
-        If you change the size of the canvas, you'll also need to change
-        the value of 'viewCenterPixel' in embox2d-html5canvas-testbed.js
-      -->
-      <div
-        style="margin:auto;width:640px;padding:2px;border:1px solid #888;text-align:left"
-      >
+    <main>
+      <div>
+        <header>
+          <h2>
+            Emscripten Box2D demo, but with a Box2DWeb fork ported to TypeScript
+          </h2>
+          <p>
+            This demo uses TypeScript manually ported from JavaScript that was
+            itself ported from an ActionScript port of the original C++.
+          </p>
+          <p>
+            See
+            <b>
+              <a href="https://github.com/mysterycommand/box2dweb"
+                >mysterycommand/box2dweb</a
+              >
+            </b>
+            for more details.
+          </p>
+        </header>
         <!--
-          <canvas id="canvas" width="480" height="320" tabindex='1'></canvas>
+          If you change the size of the canvas, you'll also need to change
+          the value of 'viewCenterPixel' in embox2d-html5canvas-testbed.js
         -->
         <canvas id="canvas" width="640" height="480" tabindex="1"></canvas>
-        <div style="width:636px;padding:2px;background-color:#ddd">
-          <div style="text-align:center">
-            <button id="reloadButton" onclick="resetScene();">Reset</button>
-            <button id="pauseButton" onclick="pause();">Pause</button>
-            <button id="stepButton" onclick="step();">Single step</button>
-            (Keyboard: R, P, S)<br />
-            Zoom <button id="zoomInButton" onclick="zoomIn();">+</button>
-            <button id="zoomOutButton" onclick="zoomOut();">-</button>
-            (Keyboard: X, Z)<br />
-            Hold down Shift while moving the mouse to pan (Keyboard: arrow
-            keys)<br />
-            You need to click on the canvas before using the keyboard.<br />
-            <br />
-            Test:
-            <select id="testSelection" onchange="changeTest();">
-              <option value="embox2dTest_car">Car (use j/k to move)</option>
-              <option value="embox2dTest_dominos">Dominos</option>
-              <option value="embox2dTest_ropeJoint">Rope joint</option>
-              <option value="embox2dTest_pulleyJoint">Pulley joint</option>
-              <option value="embox2dTest_fallingShapes">Falling shapes</option>
-              <option value="embox2dTest_pyramid">Pyramid</option>
-
-              <option value="embox2dTest_balancedMobile"
+        <footer>
+          <div>
+            <p>
+              <button id="reloadButton" onclick="resetScene();">Reset</button>
+              <button id="pauseButton" onclick="pause();">Pause</button>
+              <button id="stepButton" onclick="step();">Single step</button>
+              (Keyboard: R, P, S)
+            </p>
+            <p>
+              Zoom <button id="zoomInButton" onclick="zoomIn();">&plus;</button>
+              <button id="zoomOutButton" onclick="zoomOut();">&minus;</button>
+              (Keyboard: X, Z)
+            </p>
+            <p>Hold down Shift while moving the mouse to pan (Keyboard: arrow keys)</p>
+            <p>You need to click on the canvas before using the keyboard.</p>
+            <p>
+              <label for="testSelection">Test:</label>
+              <select id="testSelection" onchange="changeTest();">
+                <option value="embox2dTest_car">Car (use j/k to move)</option>
+                <option value="embox2dTest_dominos">Dominos</option>
+                <option value="embox2dTest_ropeJoint">Rope joint</option>
+                <option value="embox2dTest_pulleyJoint">Pulley joint</option>
+                <option value="embox2dTest_fallingShapes">Falling shapes</option>
+                <option value="embox2dTest_pyramid">Pyramid</option>
+                <option value="embox2dTest_balancedMobile"
                 >Balanced mobile</option
-              >
-            </select>
+                >
+              </select>
+            </p>
           </div>
-          <br />
 
-          Debug draw flags:<br />
-          <input
-            id="drawShapesCheck"
-            type="checkbox"
-            onclick="updateWorldFromDebugDrawCheckboxes();"
-          />Shapes<br />
-          <input
-            id="drawJointsCheck"
-            type="checkbox"
-            onclick="updateWorldFromDebugDrawCheckboxes();"
-          />Joints<br />
-          <input
-            id="drawAABBsCheck"
-            type="checkbox"
-            onclick="updateWorldFromDebugDrawCheckboxes();"
-          />AABBs<br />
-          <!--
-            <input id="drawPairsCheck" type="checkbox" onclick="updateWorldFromDebugDrawCheckboxes();">Pairs<br>
-          -->
-          <input
-            id="drawTransformsCheck"
-            type="checkbox"
-            onclick="updateWorldFromDebugDrawCheckboxes();"
-          />Transforms<br />
-          <br />
+          <p>Debug draw flags:</p>
+          <ul>
+            <li>
+                <input
+                  id="drawShapesCheck"
+                  type="checkbox"
+                  onclick="updateWorldFromDebugDrawCheckboxes();"
+                /><label for="drawShapesCheck">Shapes</label>
+            </li>
+            <li>
+                <input
+                  id="drawJointsCheck"
+                  type="checkbox"
+                  onclick="updateWorldFromDebugDrawCheckboxes();"
+                /><label for="drawJointsCheck">Joints</label>
+            </li>
+            <li>
+                <input
+                  id="drawAABBsCheck"
+                  type="checkbox"
+                  onclick="updateWorldFromDebugDrawCheckboxes();"
+                /><label for="drawAABBsCheck">AABBs</label>
+            </li>
+            <li>
+                <input
+                  id="drawTransformsCheck"
+                  type="checkbox"
+                  onclick="updateWorldFromDebugDrawCheckboxes();"
+                /><label for="drawTransformsCheck">Transforms</label>
+            </li>
+            <li>&nbsp;</li>
+            <li>
+                <input
+                  id="showStatsCheck"
+                  type="checkbox"
+                  onclick="updateContinuousRefreshStatus();"
+                /><label for="showStatsCheck">Show stats</label>
+            </li>
+          </ul>
 
-          <input
-            id="showStatsCheck"
-            type="checkbox"
-            onclick="updateContinuousRefreshStatus();"
-          />Show stats<br />
-          <span id="feedbackSpan"></span> <br />
-        </div>
+          <span id="feedbackSpan"></span>
+        </footer>
       </div>
-    </div>
+    </main>
   </body>
 </html>

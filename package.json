@@ -8,8 +8,8 @@
   "private": true,
   "scripts": {
     "clean": "rm -rf .cache/ coverage/ dist/ node_modules/",
-    "build": "parcel build src/**/*.html --public-url /box2dweb --experimental-scope-hoisting",
-    "start": "parcel src/**/*.html",
+    "build": "parcel build src/demo/box2dweb.html src/demo/html5canvas/testbed.html --public-url /box2dweb --experimental-scope-hoisting",
+    "start": "parcel src/demo/box2dweb.html src/demo/html5canvas/testbed.html",
     "lint": "tslint 'src/**/*.ts'",
     "test": "jest",
     "coverage": "open coverage/lcov-report/index.html"
